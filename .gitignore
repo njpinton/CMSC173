@@ -88,5 +88,7 @@ ipython_config.py
 *.npy
 *.npz
 
+.gitignore
+tex/
 # If you want to keep sample datasets in Git, comment out the section above
 
