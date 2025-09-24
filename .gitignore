@@ -88,7 +88,31 @@ ipython_config.py
 *.npy
 *.npz
 
-.gitignore
-tex/
-# If you want to keep sample datasets in Git, comment out the section above
+# ========================
+# LaTeX
+# ========================
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.nav
+*.out
+*.snm
+*.synctex.gz
+*.toc
+*.bbl
+*.blg
+*.idx
+*.ind
+*.lof
+*.lot
+*.bcf
+*.run.xml
+
+# ========================
+# Lecture guides and temporary files
+# ========================
+*lecture_guide*
+*guide.txt
+*guide.md
 
