@@ -5,7 +5,7 @@
 \usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{tikz}
-\usetikzlibrary{positioning}
+\usetikzlibrary{positioning,arrows.meta,decorations.pathreplacing,calc,shadows}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
 \usepackage{amsmath}
@@ -18,6 +18,56 @@
 \usecolortheme{wolverine}
 \metroset{progressbar=frametitle,block=fill}
 \setbeamertemplate{navigation symbols}{}
+
+% Define custom colors complementing the Wolverine theme
+\definecolor{maizelight}{RGB}{255, 203, 5}      % Light maize for examples
+\definecolor{maizedark}{RGB}{255, 167, 0}       % Darker maize for emphasis
+\definecolor{bluelight}{RGB}{0, 39, 76}         % Deep blue for blocks
+\definecolor{tealaccent}{RGB}{0, 128, 128}      % Teal for variety
+\definecolor{orangeaccent}{RGB}{255, 138, 51}   % Orange complement
+
+% Cross validation specific colors
+\definecolor{traincolor}{RGB}{33, 150, 243}     % Blue for training data
+\definecolor{validcolor}{RGB}{255, 193, 7}      % Amber for validation data
+\definecolor{testcolor}{RGB}{76, 175, 80}       % Green for test data
+\definecolor{foldcolor}{RGB}{156, 39, 176}      % Purple for fold highlighting
+
+% Customize block colors
+\setbeamercolor{block title}{bg=bluelight,fg=white}
+\setbeamercolor{block body}{bg=bluelight!10,fg=black}
+
+% Example blocks in complementary maize
+\setbeamercolor{block title example}{bg=maizelight,fg=black}
+\setbeamercolor{block body example}{bg=maizelight!15,fg=black}
+
+% Alert blocks in orange accent
+\setbeamercolor{block title alerted}{bg=orangeaccent,fg=white}
+\setbeamercolor{block body alerted}{bg=orangeaccent!15,fg=black}
+
+% Create custom colored blocks for variety
+\newenvironment<>{techblock}[1]{%
+  \setbeamercolor{block title}{bg=tealaccent,fg=white}%
+  \setbeamercolor{block body}{bg=tealaccent!10,fg=black}%
+  \begin{block}#2{#1}}{\end{block}}
+
+\newenvironment<>{tipblock}[1]{%
+  \setbeamercolor{block title}{bg=maizedark,fg=black}%
+  \setbeamercolor{block body}{bg=maizedark!15,fg=black}%
+  \begin{block}#2{#1}}{\end{block}}
+
+% TikZ styles for cross validation diagrams
+\tikzset{
+    data point/.style={circle, draw, minimum size=0.3cm, inner sep=0pt},
+    train data/.style={data point, fill=traincolor!30, draw=traincolor!70},
+    valid data/.style={data point, fill=validcolor!30, draw=validcolor!70},
+    test data/.style={data point, fill=testcolor!30, draw=testcolor!70},
+    fold/.style={rectangle, draw, minimum width=1.5cm, minimum height=0.8cm},
+    train fold/.style={fold, fill=traincolor!20, draw=traincolor!70},
+    valid fold/.style={fold, fill=validcolor!20, draw=validcolor!70},
+    test fold/.style={fold, fill=testcolor!20, draw=testcolor!70},
+    fold arrow/.style={->, thick, blue!70},
+    cv process/.style={rectangle, rounded corners, draw, fill=gray!10, minimum width=2cm, minimum height=0.6cm}
+}
 
 \title{Cross Validation \& Hyperparameter Tuning}
 \subtitle{CMSC 173 - Machine Learning}
@@ -81,7 +131,51 @@ We need to estimate generalization performance \textbf{without} using the test s
 
 \begin{frame}{The Three-Way Data Split}
 \centering
-\includegraphics[width=0.9\textwidth]{../figures/holdout_validation.png}
+
+\begin{tikzpicture}[scale=1.0, every node/.style={scale=1.0}]
+    % Original dataset
+    \node[rectangle, draw, fill=gray!20, minimum width=10cm, minimum height=1cm] (dataset) at (0,3) {};
+    \node[above=0.1cm of dataset] {\textbf{Original Dataset}};
+
+    % Data split arrows
+    \draw[fold arrow, very thick] (-3,2.3) -- (-3,1.7);
+    \draw[fold arrow, very thick] (0,2.3) -- (0,1.7);
+    \draw[fold arrow, very thick] (3,2.3) -- (3,1.7);
+
+    % Split proportions
+    \node at (-3,2) {\scriptsize 60\%};
+    \node at (0,2) {\scriptsize 20\%};
+    \node at (3,2) {\scriptsize 20\%};
+
+    % Training set
+    \node[train fold, minimum width=6cm, minimum height=1cm] (train) at (-3,1) {};
+    \node[above=0.1cm of train] {\textbf{Training Set}};
+    \node[below=0.1cm of train] {\scriptsize Used to train models};
+
+    % Validation set
+    \node[valid fold, minimum width=2cm, minimum height=1cm] (valid) at (0,1) {};
+    \node[above=0.1cm of valid] {\textbf{Validation Set}};
+    \node[below=0.1cm of valid] {\scriptsize Model selection \& tuning};
+
+    % Test set
+    \node[test fold, minimum width=2cm, minimum height=1cm] (test) at (3,1) {};
+    \node[above=0.1cm of test] {\textbf{Test Set}};
+    \node[below=0.1cm of test] {\scriptsize Final evaluation};
+
+    % Workflow arrows
+    \draw[fold arrow, very thick] (train) to[bend left=20] (-1,-0.5);
+    \draw[fold arrow, very thick] (valid) -- (0,-0.5);
+    \draw[fold arrow, very thick] (test) to[bend right=20] (1,-0.5);
+
+    % Model development process
+    \node[cv process, minimum width=3cm] (model) at (0,-1) {\textbf{Model Development}};
+    \node[below=0.1cm of model] {\scriptsize Training + Validation};
+
+    % Final evaluation
+    \draw[fold arrow, very thick] (model) -- (0,-2.5);
+    \node[cv process, fill=testcolor!20, minimum width=2.5cm] (final) at (0,-3) {\textbf{Final Test}};
+    \node[below=0.1cm of final] {\scriptsize Unbiased estimate};
+\end{tikzpicture}
 
 \vspace{0.3cm}
 
@@ -204,7 +298,57 @@ Holdout validation trades robustness for computational efficiency.
 
 \begin{frame}{K-Fold Cross-Validation Method}
 \centering
-\includegraphics[width=0.8\textwidth]{../figures/kfold_validation.png}
+
+\begin{tikzpicture}[scale=0.9, every node/.style={scale=0.9}]
+    % Title
+    \node at (0,4.5) {\textbf{5-Fold Cross-Validation Example}};
+
+    % Original dataset
+    \node[rectangle, draw, fill=gray!20, minimum width=10cm, minimum height=0.6cm] (dataset) at (0,4) {};
+    \node[left=0.2cm of dataset] {\scriptsize Original Data:};
+
+    % Fold 1
+    \node[valid fold, minimum width=2cm, minimum height=0.6cm] (f1v) at (-4,3) {};
+    \node[train fold, minimum width=8cm, minimum height=0.6cm] (f1t) at (0,3) {};
+    \node[left=0.2cm of f1v] {\scriptsize Fold 1:};
+    \node[below=0.05cm of f1v] {\tiny Valid};
+    \node[below=0.05cm of f1t] {\tiny Train};
+
+    % Fold 2
+    \node[train fold, minimum width=2cm, minimum height=0.6cm] (f2t1) at (-4,2.2) {};
+    \node[valid fold, minimum width=2cm, minimum height=0.6cm] (f2v) at (-2,2.2) {};
+    \node[train fold, minimum width=6cm, minimum height=0.6cm] (f2t2) at (1,2.2) {};
+    \node[left=0.2cm of f2t1] {\scriptsize Fold 2:};
+    \node[below=0.05cm of f2v] {\tiny Valid};
+
+    % Fold 3
+    \node[train fold, minimum width=4cm, minimum height=0.6cm] (f3t1) at (-3,1.4) {};
+    \node[valid fold, minimum width=2cm, minimum height=0.6cm] (f3v) at (0,1.4) {};
+    \node[train fold, minimum width=4cm, minimum height=0.6cm] (f3t2) at (3,1.4) {};
+    \node[left=0.2cm of f3t1] {\scriptsize Fold 3:};
+    \node[below=0.05cm of f3v] {\tiny Valid};
+
+    % Fold 4
+    \node[train fold, minimum width=6cm, minimum height=0.6cm] (f4t1) at (-2,0.6) {};
+    \node[valid fold, minimum width=2cm, minimum height=0.6cm] (f4v) at (2,0.6) {};
+    \node[train fold, minimum width=2cm, minimum height=0.6cm] (f4t2) at (4,0.6) {};
+    \node[left=0.2cm of f4t1] {\scriptsize Fold 4:};
+    \node[below=0.05cm of f4v] {\tiny Valid};
+
+    % Fold 5
+    \node[train fold, minimum width=8cm, minimum height=0.6cm] (f5t) at (-1,-0.2) {};
+    \node[valid fold, minimum width=2cm, minimum height=0.6cm] (f5v) at (4,-0.2) {};
+    \node[left=0.2cm of f5t] {\scriptsize Fold 5:};
+    \node[below=0.05cm of f5v] {\tiny Valid};
+
+    % Results aggregation
+    \draw[fold arrow, very thick] (-2,-0.8) -- (-2,-1.5);
+    \draw[fold arrow, very thick] (0,-0.8) -- (0,-1.5);
+    \draw[fold arrow, very thick] (2,-0.8) -- (2,-1.5);
+
+    \node[cv process, minimum width=6cm] (aggregate) at (0,-2) {\textbf{Average Results}};
+    \node[below=0.1cm of aggregate] {\scriptsize $CV_{score} = \frac{1}{k}\sum_{i=1}^{k} Score_i$};
+\end{tikzpicture}
 
 \vspace{0.3cm}
 
@@ -446,7 +590,7 @@ where:
 \end{column}
 
 \begin{column}{0.41\textwidth}
-\begin{block}{Examples}
+\begin{exampleblock}{Examples}
 \textbf{SVM:} $\lambda = (C, \gamma)$
 $$\Lambda = [10^{-3}, 10^3] \times [10^{-6}, 10^1]$$
 
@@ -455,7 +599,7 @@ $$\lambda = (n_{est}, \text{depth}, \text{features})$$
 
 \textbf{Neural Network:}
 $$\lambda = (lr, \text{batch}, \text{layers}, \text{dropout})$$
-\end{block}
+\end{exampleblock}
 \end{column}
 \end{columns}
 

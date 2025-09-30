@@ -116,3 +116,8 @@ ipython_config.py
 *guide.txt
 *guide.md
 
+# ========================
+# Prompt templates and creation guides
+# ========================
+create_ml_educational_package_prompt.txt
+
