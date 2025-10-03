@@ -15,15 +15,39 @@ import seaborn as sns
 from matplotlib.patches import Circle, FancyBboxPatch
 import matplotlib.patches as mpatches
 import os
+import warnings
+warnings.filterwarnings('ignore')
 
-# Set style for consistent figures
-plt.style.use('default')
-sns.set_palette("husl")
-plt.rcParams['figure.figsize'] = (10, 6)
-plt.rcParams['font.size'] = 12
+# PROFESSIONAL STYLING - ALWAYS USE THIS
+plt.rcParams['figure.facecolor'] = 'white'
+plt.rcParams['axes.facecolor'] = 'white'
+plt.rcParams['font.family'] = 'sans-serif'
+plt.rcParams['font.size'] = 11
 plt.rcParams['axes.labelsize'] = 12
+plt.rcParams['axes.titlesize'] = 14
 plt.rcParams['xtick.labelsize'] = 10
 plt.rcParams['ytick.labelsize'] = 10
+plt.rcParams['legend.fontsize'] = 10
+plt.rcParams['lines.linewidth'] = 2.5
+plt.rcParams['axes.spines.top'] = False
+plt.rcParams['axes.spines.right'] = False
+plt.rcParams['axes.grid'] = True
+plt.rcParams['grid.alpha'] = 0.3
+plt.rcParams['grid.linestyle'] = '--'
+
+# PROFESSIONAL COLOR PALETTE
+COLOR_PALETTE = {
+    'primary': '#2E86AB',      # Blue for primary concepts
+    'secondary': '#A23B72',    # Purple for secondary
+    'accent': '#F18F01',       # Orange for highlights
+    'success': '#06A77D',      # Green for optimal/correct
+    'danger': '#D32F2F',       # Red for errors/overfitting
+    'warning': '#F57C00',      # Orange for warnings
+    'info': '#0288D1',         # Light blue for info
+    'train': '#1976D2',        # Blue for training data
+    'val': '#E53935',          # Red for validation
+    'test': '#43A047',         # Green for test
+}
 
 def create_output_dir():
     """Create output directory for figures"""
@@ -83,7 +107,8 @@ def create_perceptron_diagram():
 
     plt.tight_layout()
     output_dir = create_output_dir()
-    plt.savefig(f"{output_dir}/perceptron_structure.png", dpi=300, bbox_inches='tight')
+    plt.savefig(f"{output_dir}/perceptron_structure.png", dpi=300, bbox_inches='tight',
+                facecolor='white', edgecolor='none')
     plt.close()
     print("✓ Generated perceptron_structure.png")
 
@@ -94,51 +119,60 @@ def create_activation_functions():
 
     # Sigmoid
     sigmoid = 1 / (1 + np.exp(-x))
-    axes[0, 0].plot(x, sigmoid, 'b-', linewidth=3, label='$\\sigma(x) = \\frac{1}{1+e^{-x}}$')
-    axes[0, 0].grid(True, alpha=0.3)
-    axes[0, 0].set_title('Sigmoid Activation', fontweight='bold')
+    axes[0, 0].plot(x, sigmoid, color=COLOR_PALETTE['primary'], linewidth=3,
+                    label='$\\sigma(x) = \\frac{1}{1+e^{-x}}$')
+    axes[0, 0].set_title('Sigmoid Activation', fontweight='bold', fontsize=14)
     axes[0, 0].set_xlabel('Input (x)')
     axes[0, 0].set_ylabel('Output')
-    axes[0, 0].legend()
+    axes[0, 0].legend(frameon=True, shadow=True)
     axes[0, 0].axhline(y=0, color='k', linewidth=0.5)
     axes[0, 0].axvline(x=0, color='k', linewidth=0.5)
+    axes[0, 0].spines['bottom'].set_linewidth(1.5)
+    axes[0, 0].spines['left'].set_linewidth(1.5)
 
     # Tanh
     tanh = np.tanh(x)
-    axes[0, 1].plot(x, tanh, 'r-', linewidth=3, label='$\\tanh(x) = \\frac{e^x - e^{-x}}{e^x + e^{-x}}$')
-    axes[0, 1].grid(True, alpha=0.3)
-    axes[0, 1].set_title('Tanh Activation', fontweight='bold')
+    axes[0, 1].plot(x, tanh, color=COLOR_PALETTE['danger'], linewidth=3,
+                    label='$\\tanh(x) = \\frac{e^x - e^{-x}}{e^x + e^{-x}}$')
+    axes[0, 1].set_title('Tanh Activation', fontweight='bold', fontsize=14)
     axes[0, 1].set_xlabel('Input (x)')
     axes[0, 1].set_ylabel('Output')
-    axes[0, 1].legend()
+    axes[0, 1].legend(frameon=True, shadow=True)
     axes[0, 1].axhline(y=0, color='k', linewidth=0.5)
     axes[0, 1].axvline(x=0, color='k', linewidth=0.5)
+    axes[0, 1].spines['bottom'].set_linewidth(1.5)
+    axes[0, 1].spines['left'].set_linewidth(1.5)
 
     # ReLU
     relu = np.maximum(0, x)
-    axes[1, 0].plot(x, relu, 'g-', linewidth=3, label='$\\text{ReLU}(x) = \\max(0, x)$')
-    axes[1, 0].grid(True, alpha=0.3)
-    axes[1, 0].set_title('ReLU Activation', fontweight='bold')
+    axes[1, 0].plot(x, relu, color=COLOR_PALETTE['success'], linewidth=3,
+                    label='$\\text{ReLU}(x) = \\max(0, x)$')
+    axes[1, 0].set_title('ReLU Activation', fontweight='bold', fontsize=14)
     axes[1, 0].set_xlabel('Input (x)')
     axes[1, 0].set_ylabel('Output')
-    axes[1, 0].legend()
+    axes[1, 0].legend(frameon=True, shadow=True)
     axes[1, 0].axhline(y=0, color='k', linewidth=0.5)
     axes[1, 0].axvline(x=0, color='k', linewidth=0.5)
+    axes[1, 0].spines['bottom'].set_linewidth(1.5)
+    axes[1, 0].spines['left'].set_linewidth(1.5)
 
     # Leaky ReLU
     leaky_relu = np.where(x > 0, x, 0.1 * x)
-    axes[1, 1].plot(x, leaky_relu, 'm-', linewidth=3, label='LeakyReLU(x)')
-    axes[1, 1].grid(True, alpha=0.3)
-    axes[1, 1].set_title('Leaky ReLU Activation', fontweight='bold')
+    axes[1, 1].plot(x, leaky_relu, color=COLOR_PALETTE['secondary'], linewidth=3,
+                    label='LeakyReLU(x)')
+    axes[1, 1].set_title('Leaky ReLU Activation', fontweight='bold', fontsize=14)
     axes[1, 1].set_xlabel('Input (x)')
     axes[1, 1].set_ylabel('Output')
-    axes[1, 1].legend()
+    axes[1, 1].legend(frameon=True, shadow=True)
     axes[1, 1].axhline(y=0, color='k', linewidth=0.5)
     axes[1, 1].axvline(x=0, color='k', linewidth=0.5)
+    axes[1, 1].spines['bottom'].set_linewidth(1.5)
+    axes[1, 1].spines['left'].set_linewidth(1.5)
 
     plt.tight_layout()
     output_dir = create_output_dir()
-    plt.savefig(f"{output_dir}/activation_functions.png", dpi=300, bbox_inches='tight')
+    plt.savefig(f"{output_dir}/activation_functions.png", dpi=300, bbox_inches='tight',
+                facecolor='white', edgecolor='none')
     plt.close()
     print("✓ Generated activation_functions.png")
 
@@ -150,54 +184,62 @@ def create_activation_derivatives():
     # Sigmoid derivative
     sigmoid = 1 / (1 + np.exp(-x))
     sigmoid_derivative = sigmoid * (1 - sigmoid)
-    axes[0, 0].plot(x, sigmoid_derivative, 'b-', linewidth=3, label="$\\sigma'(x) = \\sigma(x)(1-\\sigma(x))$")
-    axes[0, 0].grid(True, alpha=0.3)
-    axes[0, 0].set_title('Sigmoid Derivative', fontweight='bold')
+    axes[0, 0].plot(x, sigmoid_derivative, color=COLOR_PALETTE['primary'], linewidth=3,
+                    label="$\\sigma'(x) = \\sigma(x)(1-\\sigma(x))$")
+    axes[0, 0].set_title('Sigmoid Derivative', fontweight='bold', fontsize=14)
     axes[0, 0].set_xlabel('Input (x)')
     axes[0, 0].set_ylabel("$\\sigma'(x)$")
-    axes[0, 0].legend()
+    axes[0, 0].legend(frameon=True, shadow=True)
     axes[0, 0].axhline(y=0, color='k', linewidth=0.5)
     axes[0, 0].axvline(x=0, color='k', linewidth=0.5)
+    axes[0, 0].spines['bottom'].set_linewidth(1.5)
+    axes[0, 0].spines['left'].set_linewidth(1.5)
 
     # Tanh derivative
     tanh = np.tanh(x)
     tanh_derivative = 1 - tanh**2
-    axes[0, 1].plot(x, tanh_derivative, 'r-', linewidth=3, label="$\\tanh'(x) = 1 - \\tanh^2(x)$")
-    axes[0, 1].grid(True, alpha=0.3)
-    axes[0, 1].set_title('Tanh Derivative', fontweight='bold')
+    axes[0, 1].plot(x, tanh_derivative, color=COLOR_PALETTE['danger'], linewidth=3,
+                    label="$\\tanh'(x) = 1 - \\tanh^2(x)$")
+    axes[0, 1].set_title('Tanh Derivative', fontweight='bold', fontsize=14)
     axes[0, 1].set_xlabel('Input (x)')
     axes[0, 1].set_ylabel("$\\tanh'(x)$")
-    axes[0, 1].legend()
+    axes[0, 1].legend(frameon=True, shadow=True)
     axes[0, 1].axhline(y=0, color='k', linewidth=0.5)
     axes[0, 1].axvline(x=0, color='k', linewidth=0.5)
+    axes[0, 1].spines['bottom'].set_linewidth(1.5)
+    axes[0, 1].spines['left'].set_linewidth(1.5)
 
     # ReLU derivative
     relu_derivative = np.where(x > 0, 1, 0)
-    axes[1, 0].plot(x, relu_derivative, 'g-', linewidth=3, label="ReLU'(x)")
-    axes[1, 0].grid(True, alpha=0.3)
-    axes[1, 0].set_title('ReLU Derivative', fontweight='bold')
+    axes[1, 0].plot(x, relu_derivative, color=COLOR_PALETTE['success'], linewidth=3,
+                    label="ReLU'(x)")
+    axes[1, 0].set_title('ReLU Derivative', fontweight='bold', fontsize=14)
     axes[1, 0].set_xlabel('Input (x)')
     axes[1, 0].set_ylabel("$\\text{ReLU}'(x)$")
-    axes[1, 0].legend()
+    axes[1, 0].legend(frameon=True, shadow=True)
     axes[1, 0].axhline(y=0, color='k', linewidth=0.5)
     axes[1, 0].axvline(x=0, color='k', linewidth=0.5)
     axes[1, 0].set_ylim(-0.1, 1.1)
+    axes[1, 0].spines['bottom'].set_linewidth(1.5)
+    axes[1, 0].spines['left'].set_linewidth(1.5)
 
     # Comparison of gradients
-    axes[1, 1].plot(x, sigmoid_derivative, 'b-', linewidth=2, label='Sigmoid')
-    axes[1, 1].plot(x, tanh_derivative, 'r-', linewidth=2, label='Tanh')
-    axes[1, 1].plot(x, relu_derivative, 'g-', linewidth=2, label='ReLU')
-    axes[1, 1].grid(True, alpha=0.3)
-    axes[1, 1].set_title('Derivative Comparison', fontweight='bold')
+    axes[1, 1].plot(x, sigmoid_derivative, color=COLOR_PALETTE['primary'], linewidth=3, label='Sigmoid')
+    axes[1, 1].plot(x, tanh_derivative, color=COLOR_PALETTE['danger'], linewidth=3, label='Tanh')
+    axes[1, 1].plot(x, relu_derivative, color=COLOR_PALETTE['success'], linewidth=3, label='ReLU')
+    axes[1, 1].set_title('Derivative Comparison', fontweight='bold', fontsize=14)
     axes[1, 1].set_xlabel('Input (x)')
     axes[1, 1].set_ylabel('Derivative')
-    axes[1, 1].legend()
+    axes[1, 1].legend(frameon=True, shadow=True)
+    axes[1, 1].spines['bottom'].set_linewidth(1.5)
+    axes[1, 1].spines['left'].set_linewidth(1.5)
     axes[1, 1].axhline(y=0, color='k', linewidth=0.5)
     axes[1, 1].axvline(x=0, color='k', linewidth=0.5)
 
     plt.tight_layout()
     output_dir = create_output_dir()
-    plt.savefig(f"{output_dir}/activation_derivatives.png", dpi=300, bbox_inches='tight')
+    plt.savefig(f"{output_dir}/activation_derivatives.png", dpi=300, bbox_inches='tight',
+                facecolor='white', edgecolor='none')
     plt.close()
     print("✓ Generated activation_derivatives.png")
 
@@ -266,7 +308,8 @@ def create_multilayer_network():
 
     plt.tight_layout()
     output_dir = create_output_dir()
-    plt.savefig(f"{output_dir}/multilayer_network.png", dpi=300, bbox_inches='tight')
+    plt.savefig(f"{output_dir}/multilayer_network.png", dpi=300, bbox_inches='tight',
+                facecolor='white', edgecolor='none')
     plt.close()
     print("✓ Generated multilayer_network.png")
 

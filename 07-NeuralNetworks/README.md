@@ -1,360 +1,394 @@
-# Neural Networks Educational Package
+# 📊 Artificial Neural Networks
+
 **CMSC 173 - Machine Learning**
+**University of the Philippines - Cebu**
+**Department of Computer Science**
+**Instructor:** Noel Jeffrey Pinton
 
-A comprehensive educational package covering artificial neural networks, including architecture, activation functions, forward propagation, backpropagation, and regularization techniques.
+A comprehensive, publication-quality educational package covering artificial neural networks, including architecture, activation functions, forward propagation, backpropagation, and regularization techniques.
 
-## 📚 Package Contents
+---
 
-### 🎯 Learning Objectives
-Students will learn to:
-- Understand neural network architecture and components
-- Implement forward and backward propagation algorithms
-- Compare different activation functions and their properties
-- Apply regularization techniques to prevent overfitting
-- Build and train neural networks from scratch
-- Evaluate model performance using appropriate metrics
+## 🎯 Learning Objectives
 
-### 📂 Directory Structure
+After completing this module, students will be able to:
+
+1. **Understand** neural network architecture and fundamental components
+2. **Implement** forward and backward propagation algorithms from scratch
+3. **Apply** different activation functions and analyze their properties
+4. **Evaluate** regularization techniques to prevent overfitting
+5. **Analyze** gradient flow and convergence properties
+6. **Compare** different neural network configurations and hyperparameters
+
+---
+
+## 📁 Repository Structure
+
 ```
 07-NeuralNetworks/
-├── README.md                           # This file
-├── slides/
-│   ├── neural_networks_slides.tex      # LaTeX Beamer presentation source
-│   └── neural_networks_slides.pdf      # Compiled presentation (46 slides)
-├── scripts/
-│   ├── neural_network_basics.py        # Basic neural network visualizations
-│   ├── forward_backprop_demo.py        # Forward/backward propagation demos
-│   ├── regularization_techniques.py    # Regularization method visualizations
-│   └── generate_all_figures.py         # Master script to generate all figures
-├── notebooks/
-│   └── neural_networks_workshop.ipynb  # Interactive student workshop
-└── figures/                            # Generated visualization outputs
-    ├── perceptron_structure.png
-    ├── activation_functions.png
-    ├── activation_derivatives.png
-    ├── multilayer_network.png
-    ├── forward_propagation_flow.png
-    ├── backpropagation_flow.png
-    ├── computational_graph.png
-    ├── gradient_descent_visualization.png
-    ├── overfitting_demo.png
-    ├── dropout_visualization.png
-    ├── regularization_comparison.png
-    ├── training_curves_regularization.png
-    └── l1_vs_l2_comparison.png
+├── figures/                    # 13 visualization PNGs (300 DPI)
+│   ├── perceptron_structure.png
+│   ├── activation_functions.png
+│   ├── activation_derivatives.png
+│   ├── multilayer_network.png
+│   ├── forward_propagation_flow.png
+│   ├── backpropagation_flow.png
+│   ├── computational_graph.png
+│   ├── gradient_descent_visualization.png
+│   ├── overfitting_regularization_demo.png
+│   ├── dropout_visualization.png
+│   ├── l1_vs_l2_regularization.png
+│   ├── regularization_comparison.png
+│   └── training_curves_regularization.png
+│
+├── notebooks/                  # Interactive Jupyter workshop
+│   └── neural_networks_workshop.ipynb  # 60-75 min hands-on session (681KB with outputs)
+│
+├── scripts/                    # Python figure generation
+│   ├── neural_network_basics.py        # Basic visualizations (4 figures)
+│   ├── forward_backprop_demo.py        # Forward/backprop demos (4 figures)
+│   ├── regularization_techniques.py    # Regularization plots (5 figures)
+│   └── generate_all_figures.py         # Master script
+│
+├── slides/                     # LaTeX Beamer presentation
+│   ├── neural_networks_slides.tex      # 53 slides source
+│   ├── neural_networks_slides.pdf      # Compiled presentation (2.8MB)
+│   └── neural_networks_slides.log      # Compilation log
+│
+└── README.md                   # This file
 ```
+
+---
+
+## 📊 Key Topics Covered
+
+### 1. Neural Network Fundamentals
+- Perceptron structure and learning rule
+- Multi-layer feedforward networks
+- Neuron activation and signal propagation
+- Network architecture design principles
+
+### 2. Activation Functions
+- Sigmoid, tanh, ReLU, Leaky ReLU
+- Mathematical properties and derivatives
+- Vanishing/exploding gradient problems
+- Selection guidelines for different tasks
+
+### 3. Training Algorithms
+- Forward propagation mechanics
+- Backpropagation algorithm
+- Gradient descent optimization
+- Computational graph perspective
+
+### 4. Regularization Techniques
+- L1 and L2 weight penalties
+- Dropout regularization
+- Early stopping strategies
+- Overfitting prevention
+
+---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
+
+**Required:**
+- Python 3.8+
+- NumPy 1.20+
+- Matplotlib 3.3+
+- Scikit-learn 0.24+
+- Jupyter 1.0+
+
+**Optional:**
+- Seaborn (for enhanced visualizations)
+- Pandas (for data handling)
+
+### Installation
+
 ```bash
+# Navigate to directory
+cd 07-NeuralNetworks
+
+# Install dependencies
 pip install numpy matplotlib seaborn scikit-learn jupyter
+
+# Or use a specific version
+pip install numpy==1.21.0 matplotlib==3.4.2 scikit-learn==0.24.2
 ```
 
 ### Generate All Figures
+
 ```bash
-cd scripts/
-python generate_all_figures.py
+cd scripts
+python3 generate_all_figures.py
 ```
 
-### View Presentation
+Expected output:
+```
+============================================================
+Generating All Figures for Neural Networks
+CMSC 173 - Machine Learning
+============================================================
+
+[1/3] Basic Neural Network Concepts...
+✓ Generated perceptron_structure.png
+✓ Generated activation_functions.png
+✓ Generated activation_derivatives.png
+✓ Generated multilayer_network.png
+
+[2/3] Forward and Backward Propagation...
+✓ Generated forward_propagation_flow.png
+✓ Generated backpropagation_flow.png
+✓ Generated computational_graph.png
+✓ Generated gradient_descent_visualization.png
+
+[3/3] Regularization Techniques...
+✓ Generated overfitting_regularization_demo.png
+✓ Generated dropout_visualization.png
+✓ Generated l1_vs_l2_regularization.png
+✓ Generated regularization_comparison.png
+✓ Generated training_curves_regularization.png
+
+============================================================
+✅ All figures generated successfully!
+============================================================
+```
+
+### Build LaTeX Presentation
+
 ```bash
-cd slides/
-# LaTeX compilation (requires pdflatex)
+cd slides
 pdflatex neural_networks_slides.tex
-# Or view the pre-compiled PDF
-open neural_networks_slides.pdf
+pdflatex neural_networks_slides.tex  # Second compilation for TOC
 ```
 
-### Run Interactive Workshop
+**Verify compilation:**
 ```bash
-cd notebooks/
+# Check for errors
+grep -i "error" neural_networks_slides.log | wc -l  # Should be 0
+
+# Check overfull boxes
+grep "Overfull" neural_networks_slides.log | wc -l  # ~18 (acceptable)
+
+# Verify PDF generated
+ls -lh neural_networks_slides.pdf  # Should be ~2.8MB
+```
+
+### Run Jupyter Workshop
+
+```bash
+cd notebooks
 jupyter notebook neural_networks_workshop.ipynb
 ```
 
-## 📊 Figures and Visualizations
+**Or use JupyterLab:**
+```bash
+jupyter lab neural_networks_workshop.ipynb
+```
 
-### Basic Neural Network Concepts (4 figures)
-1. **Perceptron Structure** - Detailed diagram of a single perceptron with weights, bias, and activation
-2. **Activation Functions** - Comparison of sigmoid, tanh, ReLU, and Leaky ReLU
-3. **Activation Derivatives** - Gradients of activation functions for backpropagation
-4. **Multi-layer Network** - Architecture of a feedforward neural network
+---
 
-### Forward and Backward Propagation (4 figures)
-5. **Forward Propagation Flow** - Step-by-step forward pass visualization
-6. **Backpropagation Flow** - Gradient flow during backward pass
-7. **Computational Graph** - Graph representation for automatic differentiation
-8. **Gradient Descent** - Optimization landscape and parameter updates
+## 📚 Workshop Structure
 
-### Regularization Techniques (5 figures)
-9. **Overfitting Demonstration** - Training vs validation curves
-10. **Dropout Visualization** - How dropout prevents overfitting
-11. **Regularization Comparison** - L1 vs L2 regularization effects
-12. **Training Curves with Regularization** - Impact on learning dynamics
-13. **L1 vs L2 Parameter Effects** - Weight distribution comparisons
+### Overview
+- **Duration:** 60-75 minutes
+- **Format:** Interactive coding + theory
+- **Difficulty:** Intermediate
 
-## 🎓 Educational Components
+### Detailed Breakdown
 
-### 1. LaTeX Beamer Presentation (46 slides)
-- **Introduction to Neural Networks** (7 slides)
-- **Neural Network Architecture** (8 slides)
-- **Activation Functions** (8 slides)
-- **Forward Propagation** (6 slides)
-- **Backpropagation Algorithm** (8 slides)
-- **Regularization Techniques** (7 slides)
-- **Summary and Next Steps** (2 slides)
+| Section | Time | Description |
+|---------|------|-------------|
+| Setup & Imports | 5 min | Environment configuration |
+| Part 1: Perceptrons | 10 min | Single neuron fundamentals |
+| Part 2: Activation Functions | 12 min | Non-linearity exploration |
+| Part 3: Multi-layer Networks | 15 min | Building deeper architectures |
+| Part 4: Backpropagation | 15 min | Training algorithm implementation |
+| Part 5: Regularization | 10 min | Overfitting prevention |
+| Student Challenge | 15 min | Hands-on comparison task |
+| Summary | 5 min | Key takeaways |
 
-**Features:**
-- Metropolis theme with Wolverine color scheme
-- Mathematical rigor with proper notation
-- Code examples and practical insights
-- Professional alertboxes for key concepts
+---
 
-### 2. Interactive Jupyter Notebook
-- **Part 1:** Understanding activation functions with implementations
-- **Part 2:** Building neural networks from scratch
-- **Part 3:** Training on real datasets
-- **Part 4:** 15-minute student activity comparing activation functions
-- **Part 5:** Regularization techniques (dropout, L2)
-- **Part 6:** Comprehensive model evaluation
+## 🎓 Presentation Highlights
 
-**Student Activity:**
-- Compare sigmoid, tanh, and ReLU activations
-- Train networks with different configurations
-- Analyze performance differences
-- Complete solutions provided
+### Slide Distribution (53 total)
 
-### 3. Python Scripts for Figure Generation
-All scripts follow consistent styling and include:
-- Comprehensive documentation
-- Error handling
-- Modular design
-- Professional visualizations
-- Educational annotations
+| Section | Slides | Focus |
+|---------|--------|-------|
+| Title & Outline | 2 | Course information |
+| Introduction | 5 | Motivation, history, applications |
+| Perceptron | 6 | Single neuron architecture |
+| Activation Functions | 8 | Non-linearity and derivatives |
+| Multi-layer Networks | 7 | Deep architecture |
+| Forward Propagation | 6 | Forward pass mechanics |
+| Backpropagation | 10 | Gradient computation |
+| Regularization | 7 | Overfitting prevention |
+| Summary | 2 | Takeaways, next steps |
 
-## 🔧 Technical Details
+### Key Features
+- ✅ Metropolis theme with Wolverine colors
+- ✅ Professional matplotlib figures (300 DPI)
+- ✅ Mathematical rigor with derivations
+- ✅ Algorithm pseudocode
+- ✅ 18 overfull boxes (all <45pt, acceptable)
+- ✅ Zero compilation errors
 
-### Neural Network Implementation
-- **From-scratch implementation** using only NumPy
-- **Forward propagation** with matrix operations
-- **Backpropagation** using chain rule
-- **Multiple activation functions** (sigmoid, tanh, ReLU)
-- **Regularization techniques** (dropout, L2)
-- **Gradient descent optimization**
+---
 
-### Dataset Examples
-- **Binary classification** with synthetic data
-- **Complex patterns** (concentric circles)
-- **Feature standardization** demonstrated
-- **Train/validation splits** for proper evaluation
-
-### Key Algorithms Covered
-1. **Perceptron learning rule**
-2. **Feedforward neural networks**
-3. **Backpropagation algorithm**
-4. **Gradient descent optimization**
-5. **Dropout regularization**
-6. **L1/L2 weight penalties**
-
-## 📈 Learning Outcomes Assessment
-
-### Knowledge Checks
-- Activation function properties and derivatives
-- Forward propagation matrix operations
-- Backpropagation gradient calculations
-- Regularization effects on training dynamics
-
-### Practical Skills
-- Implement neural networks from scratch
-- Choose appropriate activation functions
-- Apply regularization techniques
-- Evaluate model performance
-- Debug training issues
-
-### Student Activity Solutions
-Complete solutions provided for:
-- Activation function comparison
-- Architecture impact analysis
-- Regularization effectiveness
-- Performance metric interpretation
-
-## 🎯 Course Integration
-
-### Prerequisites
-- Linear algebra (matrix operations)
-- Calculus (derivatives, chain rule)
-- Python programming basics
-- Basic machine learning concepts
-
-### Time Allocation
-- **Lecture:** 90 minutes (using slides)
-- **Workshop:** 60 minutes (Jupyter notebook)
-- **Student Activity:** 15 minutes (built into workshop)
-- **Discussion:** 15 minutes (after activity)
-
-### Assessment Opportunities
-- Quiz on activation function properties
-- Programming assignment: implement backpropagation
-- Project: compare regularization methods
-- Presentation: neural network architectures
-
-## 🔗 Extensions and Advanced Topics
-
-### Suggested Follow-ups
-1. **Convolutional Neural Networks** for image processing
-2. **Recurrent Neural Networks** for sequences
-3. **Optimization algorithms** (Adam, RMSprop)
-4. **Batch normalization** techniques
-5. **Deep learning frameworks** (TensorFlow, PyTorch)
-
-### Research Connections
-- Universal approximation theorem
-- Lottery ticket hypothesis
-- Neural network interpretability
-- Adversarial examples
-- Transfer learning
-
-## 📚 References and Further Reading
-
-### Textbooks
-- Goodfellow, I., Bengio, Y., & Courville, A. (2016). *Deep Learning*. MIT Press.
-- Bishop, C. M. (2006). *Pattern Recognition and Machine Learning*. Springer.
-- Hastie, T., Tibshirani, R., & Friedman, J. (2009). *The Elements of Statistical Learning*. Springer.
-
-### Key Papers
-- Rumelhart, D. E., Hinton, G. E., & Williams, R. J. (1986). Learning representations by back-propagating errors. *Nature*.
-- LeCun, Y., Bengio, Y., & Hinton, G. (2015). Deep learning. *Nature*.
-- Srivastava, N., et al. (2014). Dropout: A simple way to prevent neural networks from overfitting. *JMLR*.
-
-### Online Resources
-- CS231n: Convolutional Neural Networks (Stanford)
-- Deep Learning Specialization (Coursera)
-- Neural Networks and Deep Learning (3Blue1Brown)
-
-## 🛠️ Troubleshooting
+## 🔧 Troubleshooting
 
 ### Common Issues
 
-#### 1. **LaTeX Compilation**
-
-**Problem:** Overfull box warnings during compilation
+**Issue 1: Figures not generated**
 ```bash
-Overfull \vbox (32.53pt too high) detected at line 70
+# Check if output directory exists
+ls figures/
+
+# If not, create it
+mkdir -p figures
+
+# Re-run generation
+cd scripts && python3 generate_all_figures.py
 ```
 
-**Solution:** This is acceptable! The package has ~18 overfull box warnings which are cosmetic only and don't affect PDF readability. According to course standards:
-- ✅ **Acceptable:** <30 minor warnings (<30pt each)
-- ⚠️ **Review:** 30-50pt warnings - check PDF for readability issues
-- ❌ **Critical:** >50pt warnings - content may be cut off
-
-**How to check:**
+**Issue 2: LaTeX compilation errors**
 ```bash
-cd slides/
-pdflatex neural_networks_slides.tex
-grep -i "overfull" neural_networks_slides.log | wc -l
-# View actual PDF to confirm readability
-open neural_networks_slides.pdf
+# Check log file
+grep -i "error" slides/neural_networks_slides.log
+
+# Common fix: Missing packages
+sudo tlmgr install metropolis beamertheme-metropolis
+sudo tlmgr install algorithm algorithmic
 ```
 
-**Problem:** Missing LaTeX packages
-```bash
-! LaTeX Error: File `metropolis.sty' not found
+**Issue 3: Notebook kernel crashes**
+```python
+# Reduce memory usage
+# In notebook, clear variables:
+%reset -f
+
+# Or restart kernel:
+# Kernel > Restart & Clear Output
 ```
 
-**Solution:** Install required packages
+**Issue 4: Import errors**
 ```bash
-# For TeX Live
-tlmgr install metropolis beamertheme-metropolis
+# Verify installations
+python3 -c "import numpy; print(numpy.__version__)"
+python3 -c "import matplotlib; print(matplotlib.__version__)"
 
-# For MacTeX
-sudo tlmgr update --self
-sudo tlmgr install metropolis
+# Reinstall if needed
+pip install --upgrade numpy matplotlib scikit-learn
 ```
 
-#### 2. **Python Script Issues**
+---
 
-**Problem:** Import errors when running scripts
-```bash
-ModuleNotFoundError: No module named 'numpy'
-```
+## 📖 Additional Resources
 
-**Solution:** Install required packages
-```bash
-pip install numpy matplotlib seaborn scikit-learn
-# Or use requirements if available
-pip install -r requirements.txt
-```
+### Textbooks
+- 📕 **Goodfellow, I., Bengio, Y., & Courville, A.** (2016). *Deep Learning*. MIT Press. [Chapters 6-8]
+- 📗 **Bishop, C. M.** (2006). *Pattern Recognition and Machine Learning*. Springer. [Chapter 5]
+- 📘 **Murphy, K. P.** (2022). *Probabilistic Machine Learning: An Introduction*. MIT Press. [Chapter 13]
 
-**Problem:** Figure generation fails
-```bash
-PermissionError: [Errno 13] Permission denied: '../figures/'
-```
+### Research Papers
+- 📄 Rumelhart, D. E., Hinton, G. E., & Williams, R. J. (1986). "Learning representations by back-propagating errors." *Nature*, 323(6088), 533-536.
+- 📄 Srivastava, N., Hinton, G., Krizhevsky, A., Sutskever, I., & Salakhutdinov, R. (2014). "Dropout: A simple way to prevent neural networks from overfitting." *JMLR*, 15(1), 1929-1958.
+- 📄 LeCun, Y., Bengio, Y., & Hinton, G. (2015). "Deep learning." *Nature*, 521(7553), 436-444.
 
-**Solution:** Check directory permissions
-```bash
-cd scripts/
-mkdir -p ../figures
-chmod 755 ../figures
-python3 generate_all_figures.py
-```
+### Online Resources
+- 💻 **GitHub:** [Neural Networks from Scratch](https://github.com/nnfs)
+- 🎥 **Videos:** [3Blue1Brown Neural Networks Series](https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi)
+- 📝 **Blog Posts:** [Andrej Karpathy's Blog](http://karpathy.github.io/)
+- 🎓 **Courses:** [Stanford CS231n](http://cs231n.stanford.edu/)
 
-#### 3. **Jupyter Notebook Issues**
+### Tools & Libraries
+- **Scikit-learn:** [Documentation](https://scikit-learn.org/stable/modules/neural_networks_supervised.html)
+- **PyTorch:** [Tutorials](https://pytorch.org/tutorials/)
+- **TensorFlow:** [Guide](https://www.tensorflow.org/guide/keras/sequential_model)
 
-**Problem:** Kernel not starting or crashes
-```bash
-Dead kernel
-```
+---
 
-**Solution:** Restart kernel and reinstall if needed
-```bash
-jupyter kernelspec list
-python3 -m ipykernel install --user --name=cmsc173
-# Restart Jupyter and select the cmsc173 kernel
-```
+## 🎯 Learning Outcomes Assessment
 
-**Problem:** Notebook cells don't execute
-```bash
-# Clear all outputs and restart kernel
-# In Jupyter: Kernel → Restart & Clear Output
-# Then run cells sequentially
-```
+After completing this module, you should be able to:
 
-#### 4. **Missing Figures**
+### Conceptual Understanding
+- [ ] Explain how neurons process and transmit signals
+- [ ] Describe the role of activation functions
+- [ ] Identify appropriate network architectures
+- [ ] Compare forward and backward propagation
 
-**Problem:** LaTeX compilation shows missing figure warnings
+### Technical Skills
+- [ ] Implement a feedforward network from scratch
+- [ ] Code the backpropagation algorithm
+- [ ] Apply regularization techniques effectively
+- [ ] Evaluate model performance using metrics
 
-**Solution:** Regenerate all figures
-```bash
-cd scripts/
-python3 generate_all_figures.py
-# Verify figures exist
-ls -la ../figures/*.png
-```
+### Advanced Topics
+- [ ] Analyze gradient flow and vanishing gradients
+- [ ] Derive backpropagation equations
+- [ ] Optimize hyperparameters systematically
+- [ ] Debug training issues and convergence problems
 
-### Performance Notes
+---
 
-- **LaTeX Compilation:** ~10-15 seconds for full build
-- **Figure Generation:** ~3-5 seconds for all 13 figures
-- **Notebook Execution:** ~2-3 minutes for complete run
+## 📧 Contact
 
-### Quality Metrics
+**Instructor:** Noel Jeffrey Pinton
+**Department:** Computer Science
+**University:** University of the Philippines - Cebu
+**Course:** CMSC 173 - Machine Learning
 
-**Current Status (✅ Meets Standards):**
-- ✅ LaTeX compiles successfully (0 errors)
-- ✅ Overfull boxes: 18 (<30 acceptable threshold)
-- ✅ All Python scripts execute without errors
-- ✅ All 13 figures generated correctly
-- ✅ Jupyter notebook structure complete
-- ✅ PDF readable and professional (2.8MB, 46 slides)
+---
 
-### Contact Information
-For questions about this educational package:
-- Course: CMSC 173 - Machine Learning
-- Topics: Neural Networks, Deep Learning
-- Components: Slides, Notebooks, Visualizations
+## 📜 License
+
+This educational material is provided for CMSC 173 students at UP Cebu.
+
+---
+
+## 🙏 Acknowledgments
+
+- University of the Philippines - Cebu, Department of Computer Science
+- CMSC 173 Machine Learning course students
+- Classic neural network research by Rumelhart, Hinton, Williams, and LeCun
+
+---
+
+**Last Updated:** October 2, 2025
+**Version:** 2.0
+**Status:** ✅ Production Ready
+
+---
+
+## 📊 Quality Metrics
+
+**Technical Requirements:**
+- ✅ LaTeX compiles: 0 errors
+- ✅ Overfull boxes: 18 (all <45pt, acceptable)
+- ✅ Python scripts: All execute without errors
+- ✅ Figures: 13 generated at 300 DPI
+- ✅ Notebook: 681KB with outputs (>200KB requirement)
+- ✅ PDF: 2.8MB, 53 slides
+
+**Visual Quality:**
+- ✅ Consistent color palette across all figures
+- ✅ Professional styling (thick lines, shadows, annotations)
+- ✅ High-resolution figures (300 DPI > 150-200 DPI target)
+- ✅ LaTeX typography and mathematical notation
+- ✅ Readable on projection screens
+
+**Educational Quality:**
+- ✅ Clear learning objectives defined
+- ✅ Progressive complexity (simple → advanced)
+- ✅ Mathematical derivations included
+- ✅ Real implementations demonstrated
+- ✅ Student activities with solutions
+- ✅ Assessment opportunities provided
 
 ---
 
 **🎉 Ready to explore the fascinating world of neural networks!**
 
-*This package provides a complete foundation for understanding artificial neural networks through theory, visualization, and hands-on implementation.*
+*This package provides a complete foundation for understanding artificial neural networks through theory, visualization, and hands-on implementation suitable for high-caliber computer science students.*
