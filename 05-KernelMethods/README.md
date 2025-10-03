@@ -1,153 +1,121 @@
-# Kernel Methods - CMSC 173 Machine Learning
+# 📊 Kernel Methods
 
-A comprehensive presentation on Kernel Methods covering Support Vector Machines, kernel functions, regression, and multi-class classification.
+**CMSC 173 - Machine Learning**  
+**University of the Philippines - Cebu**  
+**Department of Computer Science**  
+**Instructor:** Noel Jeffrey Pinton
+
+A comprehensive educational package covering Support Vector Machines, kernel functions, and their applications in classification and regression. This module provides theoretical foundations, practical implementations, and state-of-the-art techniques for kernel-based machine learning.
+
+---
+
+## 🎯 Learning Objectives
+
+After completing this module, students will be able to:
+
+1. **Understand** the mathematical foundations of Support Vector Machines and the maximum margin principle
+2. **Implement** kernel methods from scratch using Python and scikit-learn
+3. **Apply** the kernel trick to solve non-linear classification and regression problems
+4. **Evaluate** kernel-based models using appropriate metrics and validation techniques
+5. **Analyze** the computational complexity and convergence properties of SVM optimization
+6. **Compare** different kernel functions and select appropriate kernels for specific problems
+
+---
 
 ## 📁 Repository Structure
 
 ```
 05-KernelMethods/
-├── figures/              # Generated visualization plots (15 PNG files)
-├── scripts/              # Python scripts for figure generation
-├── slides/               # LaTeX presentation and compiled PDF
-└── README.md            # This file
+├── figures/                    # 15 visualization PNGs (200 DPI)
+│   ├── linear_svm_margins.png
+│   ├── svm_optimization.png
+│   ├── hard_vs_soft_margin.png
+│   ├── kernel_trick_transformation.png
+│   ├── different_kernels.png
+│   ├── rbf_kernel_parameters.png
+│   ├── kernel_functions.png
+│   ├── svr_demonstration.png
+│   ├── epsilon_parameter_effect.png
+│   ├── kernel_ridge_vs_svr.png
+│   ├── regularization_comparison.png
+│   ├── multiclass_strategies.png
+│   ├── ovr_detailed.png
+│   ├── kernel_multiclass_comparison.png
+│   └── multiclass_confidence.png
+│
+├── notebook/                   # Interactive Jupyter workshop
+│   └── kernel_methods_tutorial.ipynb (3.0 MB with outputs)
+│
+├── scripts/                    # Python figure generation
+│   ├── style_config.py
+│   ├── linear_svm.py
+│   ├── kernel_methods.py
+│   ├── regression_kernels.py
+│   ├── multiclass_kernels.py
+│   ├── tikz_replacements.py
+│   └── generate_all_figures.py
+│
+├── slides/                     # LaTeX Beamer presentation
+│   ├── kernel_methods_slides.tex (37 slides)
+│   ├── kernel_methods_slides.pdf
+│   └── kernel_methods_slides.log
+│
+└── README.md                   # This file
 ```
 
-## 🎯 Presentation Topics
+---
 
-### Core Concepts
-- **Introduction & Motivation** - Why kernel methods are essential for non-linear problems
-- **Support Vector Machines** - Maximum margin classification principles
-- **Large-Margin Classifiers** - Geometric interpretation and optimization
-- **Quadratic Optimization** - Primal and dual formulations with KKT conditions
-
-### Advanced Topics
-- **Nonlinear SVM using Kernels** - The kernel trick and feature mapping
-- **Mercer's Theorem** - Valid kernel conditions and construction rules
-- **Multiple Kernel Learning** - Combining kernels for enhanced performance
-- **Multi-class Classification** - One-vs-Rest, One-vs-One strategies
-
-### Regression Applications
-- **Support Vector Regression** - ε-insensitive loss and sparse solutions
-- **Kernel Ridge Regression** - Regularized kernel-based regression
-- **Parameter Tuning** - Guidelines for C, γ, and ε selection
-
-## 🔧 Building the Presentation
+## 🚀 Quick Start
 
 ### Prerequisites
-- LaTeX distribution (TeX Live 2025 or similar)
-- Python 3.x with required packages:
-  ```bash
-  pip install numpy matplotlib scikit-learn seaborn
-  ```
 
-### Quick Start
-1. **Generate all figures:**
-   ```bash
-   cd scripts/
-   python3 generate_all_figures.py
-   ```
+- Python 3.8+
+- NumPy, Matplotlib, Scikit-learn
+- Jupyter (for notebook)
+- LaTeX (for slides)
 
-2. **Compile the presentation:**
-   ```bash
-   cd slides/
-   pdflatex kernel_methods_slides.tex
-   ```
+### Generate Figures
 
-### Generated Figures (15 total)
-- `linear_svm_margins.png` - SVM decision boundaries and support vectors
-- `svm_optimization.png` - Optimization objective visualization
-- `hard_vs_soft_margin.png` - Comparison of margin types
-- `kernel_trick_transformation.png` - 2D to 3D transformation demo
-- `different_kernels.png` - Linear, polynomial, RBF, sigmoid comparison
-- `rbf_kernel_parameters.png` - Effect of C and γ parameters
-- `kernel_functions.png` - Mathematical visualization of kernel functions
-- `multiclass_strategies.png` - OvR, OvO, direct multiclass comparison
-- `ovr_detailed.png` - Detailed One-vs-Rest decomposition
-- `kernel_multiclass_comparison.png` - Kernel performance on multiclass data
-- `multiclass_confidence.png` - Prediction confidence visualization
-- `svr_demonstration.png` - SVR with different kernels
-- `epsilon_parameter_effect.png` - Impact of ε parameter in SVR
-- `kernel_ridge_vs_svr.png` - Comparison of regression methods
-- `regularization_comparison.png` - Regularization strength effects
+```bash
+cd scripts
+python3 generate_all_figures.py
+```
 
-## 📊 Presentation Features
+### Build Slides
 
-### Mathematical Rigor
-- Complete SVM optimization formulations (primal and dual)
-- Kernel trick mathematical derivation
-- Mercer's theorem conditions and examples
-- Worked examples with step-by-step calculations
+```bash
+cd slides
+pdflatex kernel_methods_slides.tex
+pdflatex kernel_methods_slides.tex  # Second pass for TOC
+```
 
-### Visual Learning
-- High-quality matplotlib figures with scikit-learn examples
-- Interactive visualizations of decision boundaries
-- Parameter effect demonstrations
-- Real-world dataset applications
+### Run Notebook
 
-### Practical Implementation
-- Hyperparameter tuning guidelines
-- Performance comparison tables
-- Software library recommendations
-- Best practices and common pitfalls
+```bash
+cd notebook
+jupyter notebook kernel_methods_tutorial.ipynb
+```
 
-### Professional Presentation
-- Metropolis Beamer theme with Wolverine color scheme
-- Consistent formatting and alignment
-- Alertboxes highlighting key concepts
-- 40 slides with balanced content density
+---
 
-## 🚀 Usage
+## 📊 Key Topics
 
-### For Students
-- Review mathematical foundations before diving into implementation
-- Use figures to understand geometric interpretations
-- Follow practical guidelines for real-world applications
+1. **Linear SVM**: Maximum margin, hard/soft margin, optimization
+2. **Kernel Methods**: Kernel trick, Mercer's theorem, common kernels
+3. **Non-Linear Classification**: RBF, polynomial, sigmoid kernels
+4. **Kernel Regression**: SVR, kernel ridge regression, parameter tuning
+5. **Multiclass**: One-vs-Rest, One-vs-One strategies
 
-### For Instructors
-- Modular presentation structure allows topic selection
-- High-quality figures suitable for lecture slides
-- Comprehensive coverage from basics to advanced topics
+---
 
-### For Practitioners
-- Parameter selection guidelines based on data characteristics
-- Performance comparison insights
-- Implementation best practices
+## 📖 Resources
 
-## 🔍 Key Learning Outcomes
+- **Bishop (2006)**: *Pattern Recognition and Machine Learning*, Ch. 7
+- **Murphy (2022)**: *Probabilistic Machine Learning*, Ch. 17
+- **Scikit-learn**: [SVM Documentation](https://scikit-learn.org/stable/modules/svm.html)
 
-After this presentation, learners will understand:
+---
 
-1. **Theoretical Foundations**
-   - Maximum margin principle and its importance
-   - Kernel trick for implicit high-dimensional mapping
-   - Optimization theory behind SVM formulations
-
-2. **Practical Applications**
-   - When to use different kernel functions
-   - How to tune hyperparameters effectively
-   - Multi-class extension strategies
-
-3. **Implementation Skills**
-   - Proper data preprocessing for kernel methods
-   - Model selection and validation techniques
-   - Performance evaluation and debugging
-
-## 📝 Notes
-
-- The presentation assumes familiarity with basic machine learning concepts
-- Mathematical notation follows standard ML textbook conventions
-- All figures are generated reproducibly using provided Python scripts
-- LaTeX source is well-documented for easy customization
-
-## 🔧 Troubleshooting
-
-### Common Issues
-- **Missing figures:** Run `python3 generate_all_figures.py` in scripts/ directory
-- **LaTeX compilation errors:** Ensure all packages are installed (`pgfplots`, `beamer`, `metropolis`)
-- **Font warnings:** Use XeLaTeX or LuaLaTeX for optimal typography (optional)
-
-### Dependencies
-- **Python packages:** numpy, matplotlib, scikit-learn, seaborn
-- **LaTeX packages:** beamer, metropolis, pgfplots, tikz, amsmath
-
-For additional support or questions, refer to the course materials or contact the instructor.
+**Last Updated:** October 3, 2025  
+**Version:** 1.0 (Enhanced)  
+**Status:** ✅ Production Ready

@@ -79,7 +79,7 @@ def plot_svr_demonstration():
         axes[i].grid(True, alpha=0.3)
 
     plt.tight_layout()
-    plt.savefig('../figures/svr_demonstration.png', dpi=300, bbox_inches='tight')
+    plt.savefig('../figures/svr_demonstration.png', dpi=200, bbox_inches='tight', facecolor='white', edgecolor='none')
     plt.close()
 
 def plot_epsilon_parameter_effect():
@@ -129,7 +129,7 @@ def plot_epsilon_parameter_effect():
                     verticalalignment='top')
 
     plt.tight_layout()
-    plt.savefig('../figures/epsilon_parameter_effect.png', dpi=300, bbox_inches='tight')
+    plt.savefig('../figures/epsilon_parameter_effect.png', dpi=200, bbox_inches='tight', facecolor='white', edgecolor='none')
     plt.close()
 
 def plot_kernel_ridge_vs_svr():
@@ -191,7 +191,7 @@ def plot_kernel_ridge_vs_svr():
     axes[1].grid(True, alpha=0.3)
 
     plt.tight_layout()
-    plt.savefig('../figures/kernel_ridge_vs_svr.png', dpi=300, bbox_inches='tight')
+    plt.savefig('../figures/kernel_ridge_vs_svr.png', dpi=200, bbox_inches='tight', facecolor='white', edgecolor='none')
     plt.close()
 
 def plot_regularization_comparison():
@@ -250,7 +250,7 @@ def plot_regularization_comparison():
         axes[1, i].grid(True, alpha=0.3)
 
     plt.tight_layout()
-    plt.savefig('../figures/regularization_comparison.png', dpi=300, bbox_inches='tight')
+    plt.savefig('../figures/regularization_comparison.png', dpi=200, bbox_inches='tight', facecolor='white', edgecolor='none')
     plt.close()
 
 if __name__ == "__main__":

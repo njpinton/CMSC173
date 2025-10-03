@@ -65,7 +65,7 @@ def plot_multiclass_strategies():
         axes[i].grid(True, alpha=0.3)
 
     plt.tight_layout()
-    plt.savefig('../figures/multiclass_strategies.png', dpi=300, bbox_inches='tight')
+    plt.savefig('../figures/multiclass_strategies.png', dpi=200, bbox_inches='tight', facecolor='white', edgecolor='none')
     plt.close()
 
 def plot_ovr_detailed():
@@ -119,7 +119,7 @@ def plot_ovr_detailed():
         axes[class_idx].grid(True, alpha=0.3)
 
     plt.tight_layout()
-    plt.savefig('../figures/ovr_detailed.png', dpi=300, bbox_inches='tight')
+    plt.savefig('../figures/ovr_detailed.png', dpi=200, bbox_inches='tight', facecolor='white', edgecolor='none')
     plt.close()
 
 def plot_kernel_multiclass_comparison():
@@ -177,7 +177,7 @@ def plot_kernel_multiclass_comparison():
                     verticalalignment='top')
 
     plt.tight_layout()
-    plt.savefig('../figures/kernel_multiclass_comparison.png', dpi=300, bbox_inches='tight')
+    plt.savefig('../figures/kernel_multiclass_comparison.png', dpi=200, bbox_inches='tight', facecolor='white', edgecolor='none')
     plt.close()
 
 def plot_multiclass_confidence():
@@ -233,7 +233,7 @@ def plot_multiclass_confidence():
     plt.colorbar(im, ax=axes[3], label='Max Probability')
 
     plt.tight_layout()
-    plt.savefig('../figures/multiclass_confidence.png', dpi=300, bbox_inches='tight')
+    plt.savefig('../figures/multiclass_confidence.png', dpi=200, bbox_inches='tight', facecolor='white', edgecolor='none')
     plt.close()
 
 if __name__ == "__main__":

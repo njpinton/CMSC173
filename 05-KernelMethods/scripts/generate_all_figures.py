@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """
-Master script to generate all figures for Kernel Methods presentation.
+Master script to generate all figures for Kernel Methods
+CMSC 173 - Machine Learning
+University of the Philippines - Cebu
+Instructor: Noel Jeffrey Pinton
 """
 
 import sys
@@ -9,53 +12,64 @@ import os
 # Add current directory to path for imports
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-try:
-    import linear_svm
-    import kernel_methods
-    import regression_kernels
-    import multiclass_kernels
+def main():
+    """Generate all kernel methods figures"""
+    try:
+        import linear_svm
+        import kernel_methods
+        import regression_kernels
+        import multiclass_kernels
 
-    print("=" * 60)
-    print("GENERATING ALL KERNEL METHODS FIGURES")
-    print("=" * 60)
+        print("=" * 60)
+        print("Generating All Kernel Methods Figures")
+        print("CMSC 173 - Machine Learning")
+        print("=" * 60)
 
-    print("\n1. Generating Linear SVM figures...")
-    linear_svm.plot_linear_svm_margins()
-    linear_svm.plot_svm_optimization()
-    linear_svm.plot_hard_vs_soft_margin()
-    print("✓ Linear SVM figures complete")
+        print("\n[1/4] Linear SVM Figures...")
+        linear_svm.main()
 
-    print("\n2. Generating Kernel Methods figures...")
-    kernel_methods.plot_kernel_trick_transformation()
-    kernel_methods.plot_different_kernels()
-    kernel_methods.plot_rbf_kernel_parameters()
-    kernel_methods.plot_kernel_functions()
-    print("✓ Kernel Methods figures complete")
+        print("\n[2/4] Kernel Methods Figures...")
+        kernel_methods.plot_kernel_trick_transformation()
+        print("✓ Generated kernel_trick_transformation.png")
+        kernel_methods.plot_different_kernels()
+        print("✓ Generated different_kernels.png")
+        kernel_methods.plot_rbf_kernel_parameters()
+        print("✓ Generated rbf_kernel_parameters.png")
+        kernel_methods.plot_kernel_functions()
+        print("✓ Generated kernel_functions.png")
 
-    print("\n3. Generating Regression Kernels figures...")
-    regression_kernels.plot_svr_demonstration()
-    regression_kernels.plot_epsilon_parameter_effect()
-    regression_kernels.plot_kernel_ridge_vs_svr()
-    regression_kernels.plot_regularization_comparison()
-    print("✓ Regression Kernels figures complete")
+        print("\n[3/4] Regression Kernels Figures...")
+        regression_kernels.plot_svr_demonstration()
+        print("✓ Generated svr_demonstration.png")
+        regression_kernels.plot_epsilon_parameter_effect()
+        print("✓ Generated epsilon_parameter_effect.png")
+        regression_kernels.plot_kernel_ridge_vs_svr()
+        print("✓ Generated kernel_ridge_vs_svr.png")
+        regression_kernels.plot_regularization_comparison()
+        print("✓ Generated regularization_comparison.png")
 
-    print("\n4. Generating Multiclass Kernels figures...")
-    multiclass_kernels.plot_multiclass_strategies()
-    multiclass_kernels.plot_ovr_detailed()
-    multiclass_kernels.plot_kernel_multiclass_comparison()
-    multiclass_kernels.plot_multiclass_confidence()
-    print("✓ Multiclass Kernels figures complete")
+        print("\n[4/4] Multiclass Kernels Figures...")
+        multiclass_kernels.plot_multiclass_strategies()
+        print("✓ Generated multiclass_strategies.png")
+        multiclass_kernels.plot_ovr_detailed()
+        print("✓ Generated ovr_detailed.png")
+        multiclass_kernels.plot_kernel_multiclass_comparison()
+        print("✓ Generated kernel_multiclass_comparison.png")
+        multiclass_kernels.plot_multiclass_confidence()
+        print("✓ Generated multiclass_confidence.png")
 
-    print("\n" + "=" * 60)
-    print("ALL FIGURES GENERATED SUCCESSFULLY!")
-    print("Check the '../figures/' directory for all PNG files.")
-    print("=" * 60)
+        print("\n" + "=" * 60)
+        print("✅ All figures generated successfully!")
+        print("=" * 60)
 
-except ImportError as e:
-    print(f"Error importing modules: {e}")
-    print("Make sure all required packages are installed:")
-    print("pip install numpy matplotlib scikit-learn seaborn")
-except Exception as e:
-    print(f"Error generating figures: {e}")
-    import traceback
-    traceback.print_exc()
+    except ImportError as e:
+        print(f"❌ Error importing modules: {e}")
+        print("Make sure all required packages are installed:")
+        print("pip install numpy matplotlib scikit-learn")
+    except Exception as e:
+        print(f"❌ Error generating figures: {e}")
+        import traceback
+        traceback.print_exc()
+
+if __name__ == "__main__":
+    main()

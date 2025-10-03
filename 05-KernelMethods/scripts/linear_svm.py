@@ -1,17 +1,57 @@
 #!/usr/bin/env python3
 """
-Generate linear SVM visualization figures for Kernel Methods presentation.
+Kernel Methods - Linear SVM Figure Generation
+CMSC 173 - Machine Learning
+University of the Philippines - Cebu
+Instructor: Noel Jeffrey Pinton
+
+This script generates visualizations for linear Support Vector Machines.
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import svm
 from sklearn.datasets import make_blobs
-import seaborn as sns
+import warnings
+warnings.filterwarnings('ignore')
 
-# Set style
-plt.style.use('default')
-sns.set_palette("husl")
+# PROFESSIONAL STYLING - ALWAYS USE THIS
+plt.rcParams['figure.facecolor'] = 'white'
+plt.rcParams['axes.facecolor'] = 'white'
+plt.rcParams['font.family'] = 'sans-serif'
+plt.rcParams['font.size'] = 11
+plt.rcParams['axes.labelsize'] = 12
+plt.rcParams['axes.titlesize'] = 14
+plt.rcParams['xtick.labelsize'] = 10
+plt.rcParams['ytick.labelsize'] = 10
+plt.rcParams['legend.fontsize'] = 10
+plt.rcParams['lines.linewidth'] = 2.5
+plt.rcParams['axes.spines.top'] = False
+plt.rcParams['axes.spines.right'] = False
+plt.rcParams['axes.grid'] = True
+plt.rcParams['grid.alpha'] = 0.3
+plt.rcParams['grid.linestyle'] = '--'
+
+# PROFESSIONAL COLOR PALETTE
+COLOR_PALETTE = {
+    'primary': '#2E86AB',      # Blue for primary concepts
+    'secondary': '#A23B72',    # Purple for secondary
+    'accent': '#F18F01',       # Orange for highlights
+    'success': '#06A77D',      # Green for optimal/correct
+    'danger': '#D32F2F',       # Red for errors/overfitting
+    'warning': '#F57C00',      # Orange for warnings
+    'info': '#0288D1',         # Light blue for info
+    'train': '#1976D2',        # Blue for training data
+    'val': '#E53935',          # Red for validation
+    'test': '#43A047',         # Green for test
+}
+
+def create_output_dir():
+    """Create output directory for figures"""
+    import os
+    output_dir = "../figures"
+    os.makedirs(output_dir, exist_ok=True)
+    return output_dir
 
 def generate_linear_svm_data():
     """Generate linearly separable data for SVM demonstration."""
@@ -44,30 +84,46 @@ def plot_linear_svm_margins():
 
     # Plot decision boundary and margins
     plt.contour(xx, yy, Z, colors='k', levels=[-1, 0, 1], alpha=0.5,
-               linestyles=['--', '-', '--'], linewidths=[2, 3, 2])
+               linestyles=['--', '-', '--'], linewidths=[2.5, 3.5, 2.5])
 
-    # Plot data points
-    scatter = plt.scatter(X[:, 0], X[:, 1], c=y, cmap='RdYlBu', s=100, alpha=0.8)
+    # Plot data points with professional styling
+    plt.scatter(X[y==0, 0], X[y==0, 1], s=100, alpha=0.8,
+               c=COLOR_PALETTE['primary'], edgecolors='white',
+               linewidth=1.5, label='Class 0')
+    plt.scatter(X[y==1, 0], X[y==1, 1], s=100, alpha=0.8,
+               c=COLOR_PALETTE['accent'], edgecolors='white',
+               linewidth=1.5, label='Class 1')
 
     # Highlight support vectors
     plt.scatter(clf.support_vectors_[:, 0], clf.support_vectors_[:, 1],
-               s=200, linewidth=2, facecolors='none', edgecolors='black')
+               s=250, linewidth=3, facecolors='none', edgecolors='black',
+               label='Support Vectors')
 
-    plt.xlabel('Feature 1', fontsize=14)
-    plt.ylabel('Feature 2', fontsize=14)
-    plt.title('Linear SVM: Decision Boundary and Margins', fontsize=16, fontweight='bold')
-    plt.grid(True, alpha=0.3)
+    plt.xlabel('Feature 1', fontsize=12, fontweight='bold')
+    plt.ylabel('Feature 2', fontsize=12, fontweight='bold')
+    plt.title('Linear SVM: Decision Boundary and Margins',
+             fontsize=16, fontweight='bold', pad=20)
 
-    # Add legend
-    plt.colorbar(scatter, label='Class')
+    # Professional legend
+    plt.legend(frameon=True, shadow=True, fancybox=True,
+              framealpha=0.95, loc='best')
 
-    # Add annotations
-    plt.text(0.02, 0.98, 'Support Vectors', transform=plt.gca().transAxes,
-            bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.8),
-            fontsize=12, verticalalignment='top')
+    # Add annotation
+    plt.annotate('Maximum\nMargin',
+                xy=(0, 0), xytext=(2, -1),
+                fontsize=11,
+                bbox=dict(boxstyle='round,pad=0.5',
+                         facecolor=COLOR_PALETTE['warning'],
+                         edgecolor=COLOR_PALETTE['danger'],
+                         linewidth=2, alpha=0.8),
+                arrowprops=dict(arrowstyle='->', lw=2,
+                              color=COLOR_PALETTE['danger']))
 
     plt.tight_layout()
-    plt.savefig('../figures/linear_svm_margins.png', dpi=300, bbox_inches='tight')
+
+    output_dir = create_output_dir()
+    plt.savefig(f"{output_dir}/linear_svm_margins.png", dpi=200,
+               bbox_inches='tight', facecolor='white', edgecolor='none')
     plt.close()
 
 def plot_svm_optimization():
@@ -80,9 +136,15 @@ def plot_svm_optimization():
     clf.fit(X, y)
 
     # Plot data and decision boundary
-    ax1.scatter(X[:, 0], X[:, 1], c=y, cmap='RdYlBu', s=100, alpha=0.8)
+    ax1.scatter(X[y==0, 0], X[y==0, 1], s=100, alpha=0.8,
+               c=COLOR_PALETTE['primary'], edgecolors='white',
+               linewidth=1.5, label='Class 0')
+    ax1.scatter(X[y==1, 0], X[y==1, 1], s=100, alpha=0.8,
+               c=COLOR_PALETTE['accent'], edgecolors='white',
+               linewidth=1.5, label='Class 1')
     ax1.scatter(clf.support_vectors_[:, 0], clf.support_vectors_[:, 1],
-               s=200, linewidth=2, facecolors='none', edgecolors='black')
+               s=250, linewidth=3, facecolors='none', edgecolors='black',
+               label='Support Vectors')
 
     # Add margin lines
     w = clf.coef_[0]
@@ -93,35 +155,46 @@ def plot_svm_optimization():
     yy_down = yy - np.sqrt(1 + a**2) * margin
     yy_up = yy + np.sqrt(1 + a**2) * margin
 
-    ax1.plot(xx, yy, 'k-', linewidth=3, label='Decision Boundary')
-    ax1.plot(xx, yy_down, 'k--', linewidth=2, alpha=0.7, label='Margin')
-    ax1.plot(xx, yy_up, 'k--', linewidth=2, alpha=0.7)
-    ax1.fill_between(xx, yy_down, yy_up, alpha=0.2, color='gray')
+    ax1.plot(xx, yy, color='black', linewidth=3.5, label='Decision Boundary')
+    ax1.plot(xx, yy_down, 'k--', linewidth=2.5, alpha=0.7, label='Margin')
+    ax1.plot(xx, yy_up, 'k--', linewidth=2.5, alpha=0.7)
+    ax1.fill_between(xx, yy_down, yy_up, alpha=0.15, color=COLOR_PALETTE['info'])
 
-    ax1.set_xlabel('Feature 1', fontsize=12)
-    ax1.set_ylabel('Feature 2', fontsize=12)
-    ax1.set_title('Maximum Margin Classifier', fontsize=14, fontweight='bold')
-    ax1.legend()
-    ax1.grid(True, alpha=0.3)
+    ax1.set_xlabel('Feature 1', fontsize=12, fontweight='bold')
+    ax1.set_ylabel('Feature 2', fontsize=12, fontweight='bold')
+    ax1.set_title('Maximum Margin Classifier', fontsize=14, fontweight='bold', pad=15)
+    ax1.legend(frameon=True, shadow=True, fancybox=True, framealpha=0.95)
 
     # Right plot: Objective function visualization
     C_values = np.logspace(-2, 2, 100)
     margin_term = 1 / C_values
     loss_term = C_values * 0.1  # Simplified representation
 
-    ax2.loglog(C_values, margin_term, 'b-', linewidth=3, label='Margin Term (1/C)')
-    ax2.loglog(C_values, loss_term, 'r-', linewidth=3, label='Loss Term (C×L)')
-    ax2.loglog(C_values, margin_term + loss_term, 'g-', linewidth=3,
-              label='Total Objective')
+    ax2.loglog(C_values, margin_term, color=COLOR_PALETTE['primary'],
+              linewidth=3, label='Margin Term (1/C)', marker='o',
+              markersize=4, markevery=10, markeredgecolor='white',
+              markeredgewidth=1)
+    ax2.loglog(C_values, loss_term, color=COLOR_PALETTE['danger'],
+              linewidth=3, label='Loss Term (C×L)', marker='s',
+              markersize=4, markevery=10, markeredgecolor='white',
+              markeredgewidth=1)
+    ax2.loglog(C_values, margin_term + loss_term,
+              color=COLOR_PALETTE['success'], linewidth=3,
+              label='Total Objective', marker='^',
+              markersize=4, markevery=10, markeredgecolor='white',
+              markeredgewidth=1)
 
-    ax2.set_xlabel('Regularization Parameter C', fontsize=12)
-    ax2.set_ylabel('Objective Value', fontsize=12)
-    ax2.set_title('SVM Objective Function Components', fontsize=14, fontweight='bold')
-    ax2.legend()
-    ax2.grid(True, alpha=0.3)
+    ax2.set_xlabel('Regularization Parameter C', fontsize=12, fontweight='bold')
+    ax2.set_ylabel('Objective Value', fontsize=12, fontweight='bold')
+    ax2.set_title('SVM Objective Function Components', fontsize=14,
+                 fontweight='bold', pad=15)
+    ax2.legend(frameon=True, shadow=True, fancybox=True, framealpha=0.95)
 
     plt.tight_layout()
-    plt.savefig('../figures/svm_optimization.png', dpi=300, bbox_inches='tight')
+
+    output_dir = create_output_dir()
+    plt.savefig(f"{output_dir}/svm_optimization.png", dpi=200,
+               bbox_inches='tight', facecolor='white', edgecolor='none')
     plt.close()
 
 def plot_hard_vs_soft_margin():
@@ -150,12 +223,21 @@ def plot_hard_vs_soft_margin():
 
     for ax, clf, title, C_val in [(ax1, clf_hard, 'Hard Margin (C=1000)', 1000),
                                   (ax2, clf_soft, 'Soft Margin (C=0.1)', 0.1)]:
-        # Plot data
-        scatter = ax.scatter(X[:, 0], X[:, 1], c=y, cmap='RdYlBu', s=80, alpha=0.8)
+        # Plot data with professional colors
+        mask_pos = y == 1
+        mask_neg = y == -1
+
+        ax.scatter(X[mask_pos, 0], X[mask_pos, 1], s=80, alpha=0.8,
+                  c=COLOR_PALETTE['primary'], edgecolors='white',
+                  linewidth=1.5, label='Class +1')
+        ax.scatter(X[mask_neg, 0], X[mask_neg, 1], s=80, alpha=0.8,
+                  c=COLOR_PALETTE['accent'], edgecolors='white',
+                  linewidth=1.5, label='Class -1')
 
         # Plot support vectors
         ax.scatter(clf.support_vectors_[:, 0], clf.support_vectors_[:, 1],
-                  s=150, linewidth=2, facecolors='none', edgecolors='black')
+                  s=200, linewidth=3, facecolors='none', edgecolors='black',
+                  label='Support Vectors')
 
         # Plot decision boundary
         xlim = ax.get_xlim()
@@ -167,20 +249,39 @@ def plot_hard_vs_soft_margin():
         Z = clf.decision_function(xy).reshape(XX.shape)
 
         ax.contour(XX, YY, Z, colors='k', levels=[-1, 0, 1], alpha=0.5,
-                  linestyles=['--', '-', '--'], linewidths=[2, 3, 2])
+                  linestyles=['--', '-', '--'], linewidths=[2.5, 3.5, 2.5])
 
-        ax.set_xlabel('Feature 1', fontsize=12)
-        ax.set_ylabel('Feature 2', fontsize=12)
-        ax.set_title(title, fontsize=14, fontweight='bold')
-        ax.grid(True, alpha=0.3)
+        ax.set_xlabel('Feature 1', fontsize=12, fontweight='bold')
+        ax.set_ylabel('Feature 2', fontsize=12, fontweight='bold')
+        ax.set_title(title, fontsize=14, fontweight='bold', pad=15)
+        ax.legend(frameon=True, shadow=True, fancybox=True, framealpha=0.95)
 
     plt.tight_layout()
-    plt.savefig('../figures/hard_vs_soft_margin.png', dpi=300, bbox_inches='tight')
+
+    output_dir = create_output_dir()
+    plt.savefig(f"{output_dir}/hard_vs_soft_margin.png", dpi=200,
+               bbox_inches='tight', facecolor='white', edgecolor='none')
     plt.close()
 
-if __name__ == "__main__":
-    print("Generating linear SVM figures...")
+def main():
+    """Generate all linear SVM figures"""
+    print("=" * 60)
+    print("Generating Linear SVM Figures")
+    print("CMSC 173 - Machine Learning")
+    print("=" * 60)
+
     plot_linear_svm_margins()
+    print("✓ Generated linear_svm_margins.png")
+
     plot_svm_optimization()
+    print("✓ Generated svm_optimization.png")
+
     plot_hard_vs_soft_margin()
-    print("Linear SVM figures saved to ../figures/")
+    print("✓ Generated hard_vs_soft_margin.png")
+
+    print("=" * 60)
+    print("✅ Linear SVM figures generated successfully!")
+    print("=" * 60)
+
+if __name__ == "__main__":
+    main()

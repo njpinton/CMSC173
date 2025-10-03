@@ -73,7 +73,7 @@ def plot_kernel_trick_transformation():
     ax3.grid(True, alpha=0.3)
 
     plt.tight_layout()
-    plt.savefig('../figures/kernel_trick_transformation.png', dpi=300, bbox_inches='tight')
+    plt.savefig('../figures/kernel_trick_transformation.png', dpi=200, bbox_inches='tight', facecolor='white', edgecolor='none')
     plt.close()
 
 def plot_different_kernels():
@@ -125,7 +125,7 @@ def plot_different_kernels():
         axes[i].grid(True, alpha=0.3)
 
     plt.tight_layout()
-    plt.savefig('../figures/different_kernels.png', dpi=300, bbox_inches='tight')
+    plt.savefig('../figures/different_kernels.png', dpi=200, bbox_inches='tight', facecolor='white', edgecolor='none')
     plt.close()
 
 def plot_rbf_kernel_parameters():
@@ -170,7 +170,7 @@ def plot_rbf_kernel_parameters():
                 axes[i, j].set_ylabel('Feature 2', fontsize=11)
 
     plt.tight_layout()
-    plt.savefig('../figures/rbf_kernel_parameters.png', dpi=300, bbox_inches='tight')
+    plt.savefig('../figures/rbf_kernel_parameters.png', dpi=200, bbox_inches='tight', facecolor='white', edgecolor='none')
     plt.close()
 
 def plot_kernel_functions():
@@ -214,7 +214,7 @@ def plot_kernel_functions():
     plt.colorbar(im4, ax=axes[1, 1])
 
     plt.tight_layout()
-    plt.savefig('../figures/kernel_functions.png', dpi=300, bbox_inches='tight')
+    plt.savefig('../figures/kernel_functions.png', dpi=200, bbox_inches='tight', facecolor='white', edgecolor='none')
     plt.close()
 
 if __name__ == "__main__":

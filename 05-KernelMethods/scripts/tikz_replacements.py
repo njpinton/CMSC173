@@ -56,7 +56,7 @@ def plot_supervised_learning_overview():
     ax.spines['left'].set_visible(False)
 
     plt.tight_layout()
-    plt.savefig('../figures/supervised_learning_overview.png', dpi=300, bbox_inches='tight')
+    plt.savefig('../figures/supervised_learning_overview.png', dpi=200, bbox_inches='tight', facecolor='white', edgecolor='none')
     plt.close()
 
 def plot_linear_vs_nonlinear_data():
@@ -140,7 +140,7 @@ def plot_linear_vs_nonlinear_data():
     ax2.set_aspect('equal')
 
     plt.tight_layout()
-    plt.savefig('../figures/linear_vs_nonlinear_data.png', dpi=300, bbox_inches='tight')
+    plt.savefig('../figures/linear_vs_nonlinear_data.png', dpi=200, bbox_inches='tight', facecolor='white', edgecolor='none')
     plt.close()
 
 def plot_perceptron_vs_svm():
@@ -242,7 +242,7 @@ def plot_perceptron_vs_svm():
     ax2.set_ylim(0, 5)
 
     plt.tight_layout()
-    plt.savefig('../figures/perceptron_vs_svm.png', dpi=300, bbox_inches='tight')
+    plt.savefig('../figures/perceptron_vs_svm.png', dpi=200, bbox_inches='tight', facecolor='white', edgecolor='none')
     plt.close()
 
 def plot_xor_problem():
@@ -281,7 +281,7 @@ def plot_xor_problem():
     ax.plot(0.5 * np.ones_like(x_line), x_line, 'k--', alpha=0.5, linewidth=1)
 
     plt.tight_layout()
-    plt.savefig('../figures/xor_problem.png', dpi=300, bbox_inches='tight')
+    plt.savefig('../figures/xor_problem.png', dpi=200, bbox_inches='tight', facecolor='white', edgecolor='none')
     plt.close()
 
 def plot_svm_geometry():
@@ -368,7 +368,7 @@ def plot_svm_geometry():
     ax.grid(True, alpha=0.3)
 
     plt.tight_layout()
-    plt.savefig('../figures/svm_geometry.png', dpi=300, bbox_inches='tight')
+    plt.savefig('../figures/svm_geometry.png', dpi=200, bbox_inches='tight', facecolor='white', edgecolor='none')
     plt.close()
 
 if __name__ == "__main__":
