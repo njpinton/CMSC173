@@ -36,23 +36,21 @@
 \begin{frame}{Review: Supervised Learning Framework}
 \centering
 \textbf{Supervised Learning: Learning from Labeled Examples}
-\vspace{0.3cm}
 
-\includegraphics[width=0.75\textwidth]{../figures/supervised_learning_overview.png}
+\includegraphics[width=0.7\textwidth]{../figures/supervised_learning_overview.png}
 
-\vspace{0.3cm}
+\vspace{0.1cm}
 \begin{block}{Core Concept}
-Given labeled training data $\{(x_1, y_1), (x_2, y_2), \ldots, (x_n, y_n)\}$, learn a function $f: \mathcal{X} \to \mathcal{Y}$ that maps inputs to outputs.
+Given labeled training data, learn $f: \mathcal{X} \to \mathcal{Y}$.
 \end{block}
 
 \begin{columns}[t]
 \begin{column}{0.48\textwidth}
 \begin{block}{Regression Tasks}
 \begin{itemize}
-\setlength{\itemsep}{1pt}
-\item Continuous output values
-\item Examples: price prediction, temperature
-\item Algorithms: Linear/Polynomial regression, SVR
+\setlength{\itemsep}{0pt}
+\item Continuous output
+\item Ex: price prediction
 \end{itemize}
 \end{block}
 \end{column}
@@ -60,10 +58,9 @@ Given labeled training data $\{(x_1, y_1), (x_2, y_2), \ldots, (x_n, y_n)\}$, le
 \begin{column}{0.48\textwidth}
 \begin{block}{Classification Tasks}
 \begin{itemize}
-\setlength{\itemsep}{1pt}
-\item Discrete class labels
-\item Examples: spam detection, image recognition
-\item Algorithms: Logistic regression, SVM
+\setlength{\itemsep}{0pt}
+\item Discrete labels
+\item Ex: spam detection
 \end{itemize}
 \end{block}
 \end{column}
@@ -685,15 +682,17 @@ RBF kernel achieves non-linear separation directly in original 2D space.
 
 \begin{frame}{Common Kernel Functions}
 \begin{center}
-\includegraphics[width=0.9\textwidth]{../figures/kernel_functions.png}
+\includegraphics[width=0.75\textwidth]{../figures/kernel_functions.png}
 \end{center}
+\end{frame}
 
+\begin{frame}{Common Kernel Functions: Definitions}
 \begin{columns}[t]
 \begin{column}{0.48\textwidth}
 \begin{block}{Linear Kernel}
 $$K(x, x') = x^T x'$$
 \begin{itemize}
-\setlength{\itemsep}{1pt}
+\setlength{\itemsep}{0pt}
 \item Equivalent to no transformation
 \item Fastest computation
 \item Good baseline
@@ -703,10 +702,9 @@ $$K(x, x') = x^T x'$$
 \begin{block}{Polynomial Kernel}
 $$K(x, x') = (\gamma x^T x' + r)^d$$
 \begin{itemize}
-\setlength{\itemsep}{1pt}
-\item Captures interactions up to degree $d$
+\setlength{\itemsep}{0pt}
+\item Captures interactions to degree $d$
 \item Parameters: $\gamma, r, d$
-\item Can model complex boundaries
 \end{itemize}
 \end{block}
 \end{column}
@@ -715,7 +713,7 @@ $$K(x, x') = (\gamma x^T x' + r)^d$$
 \begin{block}{RBF (Gaussian) Kernel}
 $$K(x, x') = \exp\left(-\gamma \|x - x'\|^2\right)$$
 \begin{itemize}
-\setlength{\itemsep}{1pt}
+\setlength{\itemsep}{0pt}
 \item Most popular kernel
 \item Infinite-dimensional feature space
 \item Smooth, localized similarity
@@ -725,9 +723,8 @@ $$K(x, x') = \exp\left(-\gamma \|x - x'\|^2\right)$$
 \begin{block}{Sigmoid Kernel}
 $$K(x, x') = \tanh(\gamma x^T x' + r)$$
 \begin{itemize}
-\setlength{\itemsep}{1pt}
+\setlength{\itemsep}{0pt}
 \item Neural network inspired
-\item Not always positive definite
 \item Less commonly used
 \end{itemize}
 \end{block}
@@ -737,30 +734,29 @@ $$K(x, x') = \tanh(\gamma x^T x' + r)$$
 
 \begin{frame}{Comparing Different Kernels}
 \begin{center}
-\includegraphics[width=\textwidth]{../figures/different_kernels.png}
+\includegraphics[width=0.85\textwidth]{../figures/different_kernels.png}
 \end{center}
 
 \begin{columns}[t]
 \begin{column}{0.48\textwidth}
-\textbf{Kernel Selection Guidelines:}
+\textbf{Kernel Selection:}
 \begin{itemize}
-\setlength{\itemsep}{1pt}
-\item \textcolor{blue}{\textbf{Linear:}} High-dimensional data, text classification
-\item \textcolor{red}{\textbf{Polynomial:}} Known polynomial relationships
-\item \textcolor{green}{\textbf{RBF:}} General-purpose, unknown data structure
-\item \textcolor{purple}{\textbf{Sigmoid:}} Neural network replacement
+\setlength{\itemsep}{0pt}
+\item \textbf{Linear:} High-dim data
+\item \textbf{Polynomial:} Known relationships
+\item \textbf{RBF:} General-purpose
+\item \textbf{Sigmoid:} Neural network
 \end{itemize}
 \end{column}
 
 \begin{column}{0.48\textwidth}
 \textbf{Performance Factors:}
 \begin{itemize}
-\setlength{\itemsep}{1pt}
+\setlength{\itemsep}{0pt}
 \item Data dimensionality
 \item Training set size
 \item Noise level
-\item Prior domain knowledge
-\item Computational constraints
+\item Domain knowledge
 \end{itemize}
 \end{column}
 \end{columns}
@@ -768,30 +764,12 @@ $$K(x, x') = \tanh(\gamma x^T x' + r)$$
 
 \begin{frame}{RBF Kernel Parameter Effects}
 \begin{center}
-\includegraphics[width=0.85\textwidth]{../figures/rbf_kernel_parameters.png}
+\includegraphics[width=0.65\textwidth]{../figures/rbf_kernel_parameters.png}
 \end{center}
 
-\begin{columns}[t]
-\begin{column}{0.48\textwidth}
-\textbf{Gamma ($\gamma$) Parameter:}
-\begin{itemize}
-\setlength{\itemsep}{1pt}
-\item \textcolor{blue}{\textbf{Small $\gamma$:}} Wide RBF, smooth decision boundary
-\item \textcolor{red}{\textbf{Large $\gamma$:}} Narrow RBF, complex boundary
-\item Controls locality of influence
-\end{itemize}
-\end{column}
+\textbf{Gamma ($\gamma$):} Small $\Rightarrow$ smooth, Large $\Rightarrow$ complex
 
-\begin{column}{0.48\textwidth}
-\textbf{Regularization ($C$) Parameter:}
-\begin{itemize}
-\setlength{\itemsep}{1pt}
-\item \textcolor{green}{\textbf{Small $C$:}} Soft margin, simpler boundary
-\item \textcolor{orange}{\textbf{Large $C$:}} Hard margin, complex boundary
-\item Controls bias-variance tradeoff
-\end{itemize}
-\end{column}
-\end{columns}
+\textbf{Regularization ($C$):} Small $\Rightarrow$ soft margin, Large $\Rightarrow$ hard margin
 \end{frame}
 
 \section{Mercer's Theorem}
@@ -1091,113 +1069,78 @@ RBF & 0.6 & 0.85 \\
 
 \begin{frame}{One-vs-Rest Detailed Analysis}
 \begin{center}
-\includegraphics[width=0.9\textwidth]{../figures/ovr_detailed.png}
+\includegraphics[width=0.7\textwidth]{../figures/ovr_detailed.png}
 \end{center}
 
 \begin{columns}[t]
 \begin{column}{0.48\textwidth}
 \textbf{OvR Strategy:}
-\vspace{0.2cm}
 
-For $k$-class problem:
+For $k$ classes:
 \begin{enumerate}
-\setlength{\itemsep}{1pt}
-\item Train classifier 1: Class 0 vs {1,2,3}
-\item Train classifier 2: Class 1 vs {0,2,3}
-\item Train classifier 3: Class 2 vs {0,1,3}
-\item Train classifier 4: Class 3 vs {0,1,2}
+\setlength{\itemsep}{0pt}
+\item Class 0 vs {1,2,3}
+\item Class 1 vs {0,2,3}
+\item Class 2 vs {0,1,3}
+\item Class 3 vs {0,1,2}
 \end{enumerate}
 
-\vspace{0.3cm}
 \textbf{Prediction:}
 $$\hat{y} = \arg\max_{j} f_j(x)$$
-where $f_j(x)$ is the decision function of classifier $j$.
 \end{column}
 
 \begin{column}{0.48\textwidth}
 \textbf{Advantages:}
 \begin{itemize}
-\setlength{\itemsep}{1pt}
-\item Simple to implement
-\item Training scales linearly with $k$
-\item Can use any binary classifier
-\item Probabilistic interpretation possible
+\setlength{\itemsep}{0pt}
+\item Simple implementation
+\item Linear scaling with $k$
+\item Any binary classifier
 \end{itemize}
 
-\vspace{0.3cm}
 \textbf{Disadvantages:}
 \begin{itemize}
-\setlength{\itemsep}{1pt}
-\item Class imbalance in binary problems
-\item Inconsistent decision regions
-\item Ambiguous predictions possible
+\setlength{\itemsep}{0pt}
+\item Class imbalance
+\item Inconsistent regions
 \end{itemize}
 
-\vspace{0.3cm}
 \textbf{Complexity:}
-\begin{itemize}
-\setlength{\itemsep}{1pt}
-\item Training: $\mathcal{O}(k \cdot \text{binary training})$
-\item Prediction: $\mathcal{O}(k \cdot \text{binary prediction})$
-\end{itemize}
+$$\mathcal{O}(k \cdot \text{binary})$$
 \end{column}
 \end{columns}
 \end{frame}
 
 \begin{frame}{Multi-class Kernel Comparison}
 \begin{center}
-\includegraphics[width=\textwidth]{../figures/kernel_multiclass_comparison.png}
+\includegraphics[width=0.75\textwidth]{../figures/kernel_multiclass_comparison.png}
 \end{center}
 
 \begin{columns}[t]
 \begin{column}{0.48\textwidth}
-\textbf{Performance Analysis:}
-\vspace{0.2cm}
-
+\textbf{Performance:}
 \begin{itemize}
-\setlength{\itemsep}{1pt}
-\item \textcolor{blue}{\textbf{Linear Kernel:}} Simple boundaries, good for high-dim data
-\item \textcolor{red}{\textbf{Polynomial Kernel:}} Captures feature interactions
-\item \textcolor{green}{\textbf{RBF Kernel:}} Most flexible, handles complex patterns
-\end{itemize}
-
-\vspace{0.3cm}
-\textbf{Selection Criteria:}
-\begin{itemize}
-\setlength{\itemsep}{1pt}
-\item Dataset size and dimensionality
-\item Computational resources
-\item Interpretability requirements
-\item Cross-validation performance
+\setlength{\itemsep}{0pt}
+\item \textbf{Linear:} High-dim data
+\item \textbf{Polynomial:} Feature interactions
+\item \textbf{RBF:} Most flexible
 \end{itemize}
 \end{column}
 
 \begin{column}{0.48\textwidth}
-\textbf{Multi-class Considerations:}
-\vspace{0.2cm}
-
+\textbf{Selection Criteria:}
 \begin{itemize}
-\setlength{\itemsep}{1pt}
-\item \textbf{Class balance:} Equal vs imbalanced classes
-\item \textbf{Separability:} Linear vs non-linear boundaries
-\item \textbf{Noise sensitivity:} Robust vs sensitive kernels
+\setlength{\itemsep}{0pt}
+\item Dataset size
+\item Computational cost
+\item Cross-validation
 \end{itemize}
-
-\vspace{0.3cm}
-\textbf{Hyperparameter Tuning:}
-\begin{itemize}
-\setlength{\itemsep}{1pt}
-\item Grid search over kernel parameters
-\item Cross-validation for each class combination
-\item Balanced accuracy metrics
-\end{itemize}
-
-\vspace{0.3cm}
-\begin{alertblock}{Best Practice}
-Start with RBF kernel and tune $C$ and $\gamma$ using cross-validation.
-\end{alertblock}
 \end{column}
 \end{columns}
+
+\begin{alertblock}{Best Practice}
+Start with RBF kernel and tune $C$, $\gamma$ via cross-validation.
+\end{alertblock}
 \end{frame}
 
 \section{Kernel Methods for Regression}
@@ -1363,51 +1306,45 @@ Set $\epsilon \approx \frac{\text{std}(y)}{10}$ as starting point.
 
 \begin{frame}{Kernel Ridge Regression vs SVR}
 \begin{center}
-\includegraphics[width=\textwidth]{../figures/kernel_ridge_vs_svr.png}
+\includegraphics[width=0.75\textwidth]{../figures/kernel_ridge_vs_svr.png}
 \end{center}
+\end{frame}
 
+\begin{frame}{Kernel Ridge Regression vs SVR: Comparison}
 \begin{columns}[t]
 \begin{column}{0.48\textwidth}
-\begin{block}{Kernel Ridge Regression}
+\begin{block}{Kernel Ridge}
 \textbf{Objective:}
 $$\min_\alpha \|\mathbf{K}\alpha - y\|^2 + \lambda \alpha^T \mathbf{K} \alpha$$
 
 \textbf{Solution:}
 $$\alpha = (\mathbf{K} + \lambda \mathbf{I})^{-1} y$$
-
-\textbf{Prediction:}
-$$f(x) = \sum_{i=1}^n \alpha_i K(x_i, x)$$
 \end{block}
 
-\vspace{0.3cm}
 \textbf{Properties:}
 \begin{itemize}
-\setlength{\itemsep}{1pt}
-\item Non-sparse solution
-\item Closed-form solution
-\item Fast training for small datasets
+\setlength{\itemsep}{0pt}
+\item Non-sparse
+\item Closed-form
+\item Fast for small data
 \end{itemize}
 \end{column}
 
 \begin{column}{0.48\textwidth}
-\begin{block}{Support Vector Regression}
+\begin{block}{SVR}
 \textbf{Objective:}
 $$\min_{w,b,\xi} \frac{1}{2}\|w\|^2 + C\sum_i (\xi_i + \xi_i^*)$$
 
 \textbf{Constraints:}
 $$|y_i - f(x_i)| \leq \epsilon + \xi_i$$
-
-\textbf{Prediction:}
-$$f(x) = \sum_{\text{SV}} (\alpha_i - \alpha_i^*) K(x_i, x) + b$$
 \end{block}
 
-\vspace{0.3cm}
 \textbf{Properties:}
 \begin{itemize}
-\setlength{\itemsep}{1pt}
-\item Sparse solution (support vectors)
-\item Robust to outliers ($\epsilon$-insensitive)
-\item Requires quadratic programming
+\setlength{\itemsep}{0pt}
+\item Sparse (SVs)
+\item Robust to outliers
+\item Quadratic program
 \end{itemize}
 \end{column}
 \end{columns}
@@ -1417,48 +1354,32 @@ $$f(x) = \sum_{\text{SV}} (\alpha_i - \alpha_i^*) K(x_i, x) + b$$
 
 \begin{frame}{Regularization in Kernel Regression}
 \begin{center}
-\includegraphics[width=\textwidth]{../figures/regularization_comparison.png}
+\includegraphics[width=0.7\textwidth]{../figures/regularization_comparison.png}
 \end{center}
 
 \begin{columns}[t]
 \begin{column}{0.48\textwidth}
-\textbf{Kernel Ridge Regularization ($\alpha$):}
-\vspace{0.2cm}
-
+\textbf{Kernel Ridge ($\alpha$):}
 \begin{itemize}
-\setlength{\itemsep}{1pt}
-\item \textbf{Small $\alpha$ (0.01):} Low regularization, overfitting risk
-\item \textbf{Medium $\alpha$ (1.0):} Balanced regularization
-\item \textbf{Large $\alpha$ (100):} High regularization, underfitting risk
+\setlength{\itemsep}{0pt}
+\item Small: Overfitting risk
+\item Medium: Balanced
+\item Large: Underfitting risk
 \end{itemize}
 
-\vspace{0.3cm}
-\textbf{Regularization Effect:}
-$$\min_f \sum_{i=1}^n (y_i - f(x_i))^2 + \alpha \|f\|_{\mathcal{H}}^2$$
-
-Controls smoothness of function $f$ in reproducing kernel Hilbert space $\mathcal{H}$.
+$$\min_f \sum_{i} (y_i - f(x_i))^2 + \alpha \|f\|^2$$
 \end{column}
 
 \begin{column}{0.48\textwidth}
-\textbf{SVR Regularization ($C$):}
-\vspace{0.2cm}
-
+\textbf{SVR ($C$):}
 \begin{itemize}
-\setlength{\itemsep}{1pt}
-\item \textbf{High $C$ (1000):} Low regularization, complex model
-\item \textbf{Medium $C$ (10):} Balanced complexity
-\item \textbf{Low $C$ (0.1):} High regularization, simple model
+\setlength{\itemsep}{0pt}
+\item High: Complex model
+\item Medium: Balanced
+\item Low: Simple model
 \end{itemize}
 
-\vspace{0.3cm}
-\textbf{Parameter Relationships:}
-\begin{align}
-\text{Kernel Ridge: } &\alpha \text{ large} \Rightarrow \text{more regularization} \\
-\text{SVR: } &C \text{ large} \Rightarrow \text{less regularization}
-\end{align}
-
-\vspace{0.2cm}
-Approximately: $C \approx \frac{1}{\alpha}$
+\textbf{Relationship:} $C \approx \frac{1}{\alpha}$
 \end{column}
 \end{columns}
 \end{frame}
