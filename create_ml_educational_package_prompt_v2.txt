@@ -159,8 +159,101 @@ Create a comprehensive, **publication-quality** educational package for **[TOPIC
 4. **Methods/Algorithms** (10-15 slides)
    - Step-by-step algorithm explanations
    - Pseudocode with algorithmic environment
+   - **Step-by-step worked examples** (REQUIRED - see below)
    - Complexity analysis
    - Convergence guarantees
+
+**CRITICAL: Include Step-by-Step Algorithm Examples**
+
+For each major algorithm, create 4-6 slides showing complete worked example:
+
+```latex
+% Example: K-Means Step-by-Step
+\begin{frame}{Algorithm Name: Toy Dataset}
+\textbf{Let's apply [Algorithm] to a simple example with K=2}
+
+\begin{columns}[T]
+\begin{column}{0.45\textwidth}
+\begin{block}{Dataset (4-6 points)}
+\begin{center}
+\begin{tabular}{ccc}
+\toprule
+Point & $x_1$ & $x_2$ \\
+\midrule
+A & 1 & 2 \\
+B & 2 & 1 \\
+C & 5 & 4 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{block}
+\end{column}
+
+\begin{column}{0.52\textwidth}
+\centering
+% TikZ diagram or simple visualization
+\begin{tikzpicture}[scale=0.9]
+\draw[-stealth] (0,0) -- (7,0) node[right] {$x_1$};
+\draw[-stealth] (0,0) -- (0,6) node[above] {$x_2$};
+% Plot points
+\fill[blue] (1,2) circle (3pt) node[above left] {A};
+\fill[blue] (2,1) circle (3pt) node[below] {B};
+\fill[blue] (5,4) circle (3pt) node[above] {C};
+\end{tikzpicture}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Step 1: Initialization}
+Show initial state with calculations
+
+\begin{columns}[T]
+\begin{column}{0.52\textwidth}
+\begin{block}{Calculations}
+\textbf{Point A (1,2):}
+\begin{itemize}
+\setlength{\itemsep}{0pt}
+\item Distance to centroid 1: $\sqrt{(1-...)^2 + (2-...)^2} = ...$
+\item Distance to centroid 2: $\sqrt{...} = ...$
+\item $\Rightarrow$ Assign to Cluster 1
+\end{itemize}
+% Repeat for all points
+\end{block}
+\end{column}
+
+\begin{column}{0.45\textwidth}
+\centering
+% Visualization showing assignments
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Step 2: Update}
+Show update calculations step-by-step
+
+\textbf{Cluster 1} contains: A(1,2), B(2,1)
+
+$$\mu_1 = \frac{1}{2}[(1,2) + (2,1)] = \left(\frac{3}{2}, \frac{3}{2}\right)$$
+
+[Continue for all steps...]
+\end{frame}
+
+\begin{frame}{Final Result}
+Show convergence with visualization
+\end{frame}
+```
+
+**Best Practices for Step-by-Step Examples:**
+- Use **toy datasets (4-6 points)** for clarity
+- Show **every calculation** with formulas
+- Use **color coding** to track assignments
+- Include **visual diagrams** at each step
+- Display **before/after** states clearly
+- For 1D data, use number line visualization
+- For 2D data, use scatter plots
+- Annotate changes between iterations
+- Use TikZ for simple diagrams (NOT complex plots)
+- Keep examples **beginner-friendly** - assume no prior knowledge
 
 5. **Evaluation & Metrics** (5-8 slides)
    - Performance measures
@@ -203,6 +296,8 @@ Create a comprehensive, **publication-quality** educational package for **[TOPIC
 ```latex
 % Use minimal spacing between blocks
 \vspace{0.05cm}  % Instead of 0.2cm or 0.3cm
+\vspace{0.08cm}  % Between major sections
+\vspace{0.15cm}  % After images before blocks
 
 % Remove vspace before alertblocks if needed
 \begin{alertblock}{Title}
@@ -210,20 +305,62 @@ Content without preceding vspace
 \end{alertblock}
 ```
 
-**Image Sizing:**
+**Image Sizing & Alignment:**
 ```latex
-% Single figures
-\includegraphics[width=0.7\textwidth]{figure.png}  % Instead of 0.85
+% Single figures - place below text when horizontal
+\centering
+\includegraphics[width=0.75\textwidth]{figure.png}  % 0.72-0.88 range
 
-% Two-column figures
-\begin{columns}[t]
+% Two-column layout with proper alignment
+\begin{columns}[T]  % Use [T] for top alignment, NOT [c]
 \begin{column}{0.48\textwidth}
+\centering
+\vspace{0pt}  % Ensures alignment starts from top
 \includegraphics[width=\textwidth]{fig1.png}
 \end{column}
 \begin{column}{0.48\textwidth}
+\centering
+\vspace{0pt}
 \includegraphics[width=\textwidth]{fig2.png}
 \end{column}
 \end{columns}
+
+% Image on top, text blocks below (for horizontal images)
+\centering
+\includegraphics[width=0.78\textwidth]{horizontal_image.png}
+
+\vspace{0.15cm}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\begin{block}{Left Content}
+...
+\end{block}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{block}{Right Content}
+...
+\end{block}
+\end{column}
+\end{columns}
+
+% Formulas in columns, image below
+\begin{block}{Title}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+Formula 1
+Formula 2
+\end{column}
+\begin{column}{0.48\textwidth}
+Formula 3
+Formula 4
+\end{column}
+\end{columns}
+\end{block}
+
+\vspace{0.1cm}
+\centering
+\includegraphics[width=0.75\textwidth]{diagram.png}
 ```
 
 **Text Optimization:**
@@ -236,6 +373,46 @@ Content without preceding vspace
 % Use abbreviations
 "vs" instead of "versus"
 "e.g." instead of "for example"
+
+% Compact itemize spacing
+\begin{itemize}
+\setlength{\itemsep}{0pt}  % Remove space between items
+\item Item 1
+\item Item 2
+\end{itemize}
+```
+
+**Column Width Optimization:**
+```latex
+% Balanced text-image layouts (NOT 0.38/0.60 which is cramped)
+\begin{columns}[T]
+\begin{column}{0.45\textwidth}  % Text column
+...
+\end{column}
+\begin{column}{0.52\textwidth}  % Image column
+...
+\end{column}
+\end{columns}
+
+% For equal importance
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+...
+\end{column}
+\begin{column}{0.48\textwidth}
+...
+\end{column}
+\end{columns}
+
+% For text-heavy + narrow image
+\begin{columns}[T]
+\begin{column}{0.58\textwidth}
+...
+\end{column}
+\begin{column}{0.40\textwidth}
+...
+\end{column}
+\end{columns}
 ```
 
 **Target Metrics:**
@@ -250,6 +427,8 @@ Content without preceding vspace
 3. **Lines with alertblocks:** Remove vspace before block
 4. **Lines with itemize:** Use `\setlength{\itemsep}{0pt}`
 5. **Lines at frame end:** Reduce last vspace or remove alertblock
+6. **Horizontal images:** Place image on top, content below (not side-by-side)
+7. **Column alignment:** Always use `[T]` not `[c]`, add `\vspace{0pt}` after column start
 
 ---
 

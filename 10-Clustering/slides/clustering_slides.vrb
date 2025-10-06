@@ -1,0 +1,28 @@
+\frametitle{K-Means Algorithm (Lloyd's Algorithm)}
+\begin{algorithm}[H]
+\caption{K-Means Clustering}
+\begin{algorithmic}[1]
+\REQUIRE Dataset $X = \{\mathbf{x}_1, \ldots, \mathbf{x}_n\}$, number of clusters $K$
+\ENSURE Cluster assignments and centroids
+
+\STATE \textbf{Initialize} $K$ centroids $\{\boldsymbol{\mu}_1, \ldots, \boldsymbol{\mu}_K\}$ randomly
+\REPEAT
+    \STATE \textbf{Assignment Step:}
+    \FOR{each data point $\mathbf{x}_i$}
+        \STATE Assign $\mathbf{x}_i$ to cluster $k^* = \arg\min_k \|\mathbf{x}_i - \boldsymbol{\mu}_k\|^2$
+    \ENDFOR
+
+    \STATE \textbf{Update Step:}
+    \FOR{each cluster $k = 1, \ldots, K$}
+        \STATE Update centroid: $\boldsymbol{\mu}_k = \frac{1}{|C_k|} \sum_{\mathbf{x}_i \in C_k} \mathbf{x}_i$
+    \ENDFOR
+\UNTIL{centroids do not change (or max iterations reached)}
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{0.1cm}
+
+\begin{alertblock}{Key Properties}
+\textbf{Convergence:} Guaranteed (objective always decreases). \quad
+\textbf{Complexity:} $O(nKdT)$ where $T$ = iterations
+\end{alertblock}
