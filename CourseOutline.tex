@@ -1,0 +1,295 @@
+\documentclass[a4paper,10pt]{article}
+
+% Packages
+\usepackage[bottom=1.5in, top=1in, left=1in, right=1in]{geometry} % set smaller margins (default ~1.5in)
+\usepackage{fancyhdr}   % for header/footer customization
+\usepackage{graphicx}   % for including images
+\usepackage{lipsum}     % just for dummy text (remove if not needed)
+\usepackage{fontawesome5}
+\usepackage{enumitem}
+\usepackage{multicol}
+
+\setlist{itemsep=0pt, topsep=0pt}
+
+% Header setup
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+
+% Insert logos: left and right
+\fancyhead[L]{\includegraphics[width=2.8cm]{images/upc-logo.png}}
+\fancyhead[R]{\includegraphics[width=2.8cm]{images/dcs-logo-full.png}}
+
+% Center text in header (two lines: top small, bottom main title)
+\fancyhead[C]{%
+  \textbf{\Large University of the Philippines Cebu} \\[4pt]%
+  \small College of Science \\%
+  \textbf{\small Department of Computer Science} \\%
+  \faIcon{phone} 032 232 8187 \faIcon{envelope} dcs.upcebu@up.edu.ph
+
+}
+
+% Keep horizontal line below header
+\renewcommand{\headrulewidth}{0.4pt}
+
+% Increase top margin so body text starts clearly below the line
+\setlength{\headheight}{85pt}  % must be >= height of logos/text
+\setlength{\footskip}{25pt}    % distance from bottom of text to footer
+\setlength{\headsep}{15pt}     % distance from header to text
+
+% Footer
+\fancyfoot[C]{\thepage} % page number at center bottom
+\renewcommand{\footrulewidth}{0.4pt} % line above footer
+
+\begin{document}
+
+
+\begin{center}
+    \textbf{\Large COURSE GUIDE}
+\end{center}
+\vspace{0.5em}
+
+\begin{tabular}{ll}
+\textbf{Course Number}   & CMSC 173 \\
+\textbf{Course Title}    & Machine Learning \\
+\textbf{Number of Units} & 3 units (3 hours lecture) \\
+\textbf{Prerequisites}   & CMSC 170 \\
+\textbf{Instructor}      & Noel Jeffrey Pinton \\
+\end{tabular}
+
+\vspace{1.5em}
+
+\begin{center}
+    \textbf{\Large COURSE OUTLINE}
+\end{center}
+
+\begin{enumerate}[label=\Roman*.]
+    \item \textbf{Overview}
+    \begin{enumerate}[label=\alph*.]
+        \item What is Machine Learning?
+        \item Supervised Learning
+        \item Unsupervised Learning
+        \item Semi-supervised Learning
+        \item Reinforcement Learning
+    \end{enumerate}
+
+    \item \textbf{Parameter Estimation}
+    \begin{enumerate}[label=\alph*.]
+        \item Method of Moments
+        \item Maximum Likelihood Estimation
+    \end{enumerate}
+
+    \item \textbf{Regression}
+    \begin{enumerate}[label=\alph*.]
+        \item Linear Regression
+        \item Least Squares Method
+        \item Lasso and Ridge Regularization
+        \item Cubic Splines Regression
+    \end{enumerate}
+
+    \item \textbf{Model Selection and Evaluation}
+    \begin{enumerate}[label=\alph*.]
+        \item Bias-Variance Decomposition
+        \item Model Validation and Evaluation
+        \item Regularization
+    \end{enumerate}
+
+    \item \textbf{Classification}
+    \begin{enumerate}[label=\alph*.]
+        \item Logistic Regression
+        \item Naïve Bayes
+        \item Nearest Neighbors
+        \item Decision Trees
+        \item Support Vector Machines
+    \end{enumerate}
+
+    \item \textbf{Clustering}
+    \begin{enumerate}[label=\alph*.]
+        \item Partitional
+        \item Hierarchical
+    \end{enumerate}
+
+    \item \textbf{Dimensionality Reduction}
+    \begin{enumerate}[label=\alph*.]
+        \item Principal Component Analysis
+        \item Kernel Principal Component Analysis
+    \end{enumerate}
+
+    \item \textbf{Neural Networks}
+    \begin{enumerate}[label=\alph*.]
+        \item Multilayer Perceptron / Feedforward
+        \item Convolutional NN
+        \item Generative Models
+        \item Transformers
+        \item Diffusion
+    \end{enumerate}
+\end{enumerate}
+
+\vspace{1.5em}
+
+\newpage
+
+\noindent \textbf{Grading Scale}
+\begin{multicols}{2}
+\noindent
+    \begin{tabular}{ll}
+        96 -- 100 & -- 1.0 \\
+        91 -- 95  & -- 1.25 \\
+        86 -- 90  & -- 1.5 \\
+        81 -- 85  & -- 1.75 \\
+        76 -- 80  & -- 2.0 \\
+    \end{tabular}
+    
+    \columnbreak
+    
+    \begin{tabular}{ll}
+        72 -- 75  & -- 2.25 \\
+        68 -- 71  & -- 2.5 \\
+        64 -- 67  & -- 2.75 \\
+        60 -- 63  & -- 3.0 \\
+        50 -- 59  & -- 4.0 \\
+        $<$50        & -- 5.0 \\
+    \end{tabular}
+\end{multicols}
+
+\vspace{1em}
+
+
+\noindent \textbf{Grading System}
+\begin{tabbing}
+Machine Problems and Exams \hspace{3em} \= 50\% \\
+Group Project \> 50\% \\
+\hspace{6em} \= \textbf{Total 100\%} \\
+\end{tabbing}
+
+\vspace{1.0em}
+
+
+\section*{Group Project Guidelines and Process}
+
+\subsection*{Group Formation}
+\begin{itemize}
+    \item Groups may have up to \textbf{3 members}.
+    \item Groups of \textbf{2 members} or even \textbf{solo projects} are allowed, but the project scope should be scaled accordingly.
+    \item Each group must register by \textbf{Midterms} with names, emails, and a tentative project title.
+\end{itemize}
+
+\subsection*{1. Project Proposal}
+\textbf{Deliverable:} 2--3 page write-up.
+\begin{itemize}
+    \item Title -- concise and descriptive.
+    \item Problem Statement -- define the machine learning task (classification, regression, clustering, etc.).
+    \item Motivation and Importance -- why the problem matters (social, industry, academic relevance).
+    \item Objectives -- specific aims of the project.
+    \item Proposed Dataset -- source and characteristics of the data.
+    \item Planned Methods -- initial choice of algorithms or models.
+\end{itemize}
+\textbf{Instructor Checkpoints:} feasibility, ethical concerns, scope appropriateness.
+
+\subsection*{2. Data Gathering}
+\begin{itemize}
+    \item Use open datasets (Kaggle, UCI, government portals, etc.) or collect your own (e.g., scraping, surveys).
+    \item Ensure dataset size is sufficient ($n \geq 500$ preferred).
+    \item Document the source, license, and collection methodology.
+\end{itemize}
+\textbf{Checkpoint:} Dataset must be approved by the end of Week 5.
+
+\subsection*{3. Data Cleaning \& Preprocessing}
+\begin{itemize}
+    \item Handle missing values (imputation, removal).
+    \item Outlier detection (z-score, IQR, visualization).
+    \item Feature engineering (encoding, normalization, dimensionality reduction).
+    \item Data splitting (e.g., 70--15--15 train/validation/test).
+\end{itemize}
+\textbf{Deliverable:} Report + Jupyter notebook of preprocessing steps.
+
+\subsection*{4. Model Training}
+\begin{itemize}
+    \item Establish baselines: regression, decision trees, Naïve Bayes, KNN.
+    \item Explore advanced models: SVM, Random Forest, Gradient Boosting, Neural Networks.
+    \item Apply regularization (Lasso, Ridge) to prevent overfitting.
+    \item Hyperparameter tuning via grid/random search.
+\end{itemize}
+
+
+\subsection*{5. Model Evaluation}
+\textbf{Metrics:}
+\begin{itemize}
+    \item Regression: RMSE, MAE, $R^2$.
+    \item Classification: Accuracy, Precision, Recall, F1, ROC-AUC.
+    \item Clustering: Silhouette score, Davies-Bouldin index.
+\end{itemize}
+\textbf{Deliverables:} Evaluation report with metrics, baseline vs. advanced model comparisons, and visualizations (confusion matrix, ROC curves, error plots).
+
+\subsection*{6. Final Presentation \& Report }
+\textbf{Presentation (10 min per group):}
+\begin{enumerate}
+    \item Introduction and Motivation
+    \item Data and Preprocessing
+    \item Methods and Models
+    \item Results and Evaluation
+    \item Discussion and Limitations
+\end{enumerate}
+
+\textbf{Final Report:}
+\begin{itemize}
+    \item Must document the full pipeline: proposal, preprocessing, training, evaluation, conclusions.
+    \item Include mathematical formulations of at least one chosen model.
+    \item Submit reproducible code (well-documented Jupyter notebook).
+\end{itemize}
+
+\subsection*{Grading Breakdown}
+\begin{center}
+\begin{tabular}{l c}
+    \hline
+    Component & Weight \\
+    \hline
+    Proposal & 10\% \\
+    Data \& Preprocessing & 15\% \\
+    Model Training & 20\% \\
+    Evaluation & 20\% \\
+    Final Report & 20\% \\
+    Presentation & 15\% \\
+    \hline
+\end{tabular}
+\end{center}
+
+\newpage
+\subsection*{Rubric}
+\renewcommand{\arraystretch}{1.4}
+\begin{center}
+\begin{tabular}{|p{3cm}|p{3cm}|p{3cm}|p{3cm}|p{3cm}|}
+    \hline
+    \textbf{Criteria} & \textbf{Excellent (4)} & \textbf{Good (3)} & \textbf{Fair (2)} & \textbf{Poor (1)} \\
+    \hline
+    Proposal & Clear, original, feasible, well-motivated & Clear but lacks originality or depth & Somewhat unclear, weak justification & Incomplete, vague, or irrelevant \\
+    \hline
+    Data \& Preprocessing & Well-documented, rigorous cleaning, justified methods & Adequate cleaning, some justification & Minimal preprocessing, limited documentation & Missing or inappropriate methods \\
+    \hline
+    Model Training & Comprehensive, compares multiple models, well-tuned & Uses several models, some tuning & Limited models, basic training & Single model, poorly trained \\
+    \hline
+    Evaluation & Uses correct metrics, strong analysis, insightful comparisons & Appropriate metrics, some analysis & Limited metrics, shallow analysis & Missing or incorrect evaluation \\
+    \hline
+    Final Report & Professional, detailed, reproducible, includes math & Clear, complete, minor gaps & Some missing sections, limited detail & Poorly written, incomplete \\
+    \hline
+    Presentation & Engaging, clear visuals, excellent delivery & Clear, good visuals, adequate delivery & Somewhat unclear, weak visuals & Unclear, disorganized, poor delivery \\
+    \hline
+\end{tabular}
+\end{center}
+
+\subsection*{Report Grading Process}
+
+To ensure fairness and real-world alignment, the final project reports will be graded not only by the instructor but also by invited professors from related fields (e.g., Computer Science, Statistics, Engineering) and practitioners from the data science and machine learning industry. These external evaluators will use the same rubric above when assigning scores. The final grade will be computed as an aggregate of the evaluations.
+
+\vspace{1em}
+
+\noindent \textbf{Suggested References}
+\begin{enumerate}
+    \item Bishop, C. M., \& Nasrabadi, N. M. (2006). \textit{Pattern recognition and machine learning} (Vol. 4, No. 4, p. 738). New York: Springer.
+    \item Mohri, M., Rostamizadeh, A., \& Talwalkar, A. (2018). \textit{Foundations of machine learning}. MIT Press.
+    \item Alpaydin, E. (2021). \textit{Machine learning}. MIT Press.
+\end{enumerate}
+
+
+
+
+\end{document}

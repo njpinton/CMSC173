@@ -1,0 +1,33 @@
+\frametitle{Decision Tree Algorithm (Pseudocode)}
+
+\begin{algorithm}[H]
+\caption{CART Decision Tree (Recursive)}
+\begin{algorithmic}[1]
+\REQUIRE Dataset $D$, features $F$, max\_depth, min\_samples
+\ENSURE Decision tree $T$
+
+\STATE \textbf{function} BuildTree($D$, depth)
+\IF{stopping criterion met}
+    \STATE \textbf{return} LeafNode(majority class in $D$)
+\ENDIF
+
+\STATE $\text{best\_gain} \gets 0$
+\STATE $(j^*, t^*) \gets \text{None}$
+
+\FOR{each feature $j \in F$}
+    \FOR{each threshold $t$ (midpoints of sorted values)}
+        \STATE Split: $D_L \gets \{\mathbf{x} \in D : x_j \leq t\}$, $D_R \gets \{\mathbf{x} \in D : x_j > t\}$
+        \STATE $\text{gain} \gets \text{InformationGain}(D, D_L, D_R)$
+        \IF{gain $>$ best\_gain}
+            \STATE $\text{best\_gain} \gets \text{gain}$
+            \STATE $(j^*, t^*) \gets (j, t)$
+        \ENDIF
+    \ENDFOR
+\ENDFOR
+
+\STATE $D_L, D_R \gets$ Split $D$ on feature $j^*$ at threshold $t^*$
+\STATE $T_L \gets$ BuildTree($D_L$, depth + 1)
+\STATE $T_R \gets$ BuildTree($D_R$, depth + 1)
+\STATE \textbf{return} DecisionNode($j^*, t^*, T_L, T_R$)
+\end{algorithmic}
+\end{algorithm}
