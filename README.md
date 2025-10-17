@@ -8,24 +8,30 @@ Welcome! This repository contains comprehensive educational materials for **CMSC
 
 ## 📚 Course Modules
 
-### Foundational Topics
-- **00-IntroToMachineLearning** - Course overview, ML taxonomy, and applications
-- **01-LinearRegression** - Least squares, gradient descent, model evaluation
-- **02-LogisticRegression** - Binary/multi-class classification, decision boundaries
-- **03-Regularization** - L1/L2 regularization, Ridge, Lasso, Elastic Net
-- **04-ExploratoryDataAnalysis** - Data preprocessing, visualization, feature engineering
+The modules are organized to build complexity progressively, following sound pedagogical principles:
 
-### Advanced Methods
-- **05-KernelMethods** - Kernel trick, SVM, kernel functions
-- **06-CrossValidation** - Model selection, k-fold CV, hyperparameter tuning
-- **07-NeuralNetworks** - Feedforward networks, backpropagation, optimization
-- **08-ParameterEstimation** - MLE, MAP, Bayesian estimation
-- **09-ModelSelection** - Bias-variance tradeoff, evaluation metrics
-- **10-Clustering** - K-means, hierarchical clustering, DBSCAN
+### Foundation (Modules 0-4)
+- **00-IntroToMachineLearning** - Course overview, ML taxonomy, workflow, applications, ethics
+- **01-ParameterEstimation** - Method of Moments, MLE, MAP estimation
+- **02-LinearRegression** - Simple/multiple regression, least squares, gradient descent
+- **03-Regularization** - Ridge (L2), Lasso (L1), Elastic Net, overfitting prevention
+- **04-ExploratoryDataAnalysis** - Data preprocessing, visualization, feature engineering, outliers
 
-### Specialized Topics
-- **11-PCA** - Dimensionality reduction, eigenfaces, feature extraction
-- **12-Classification** - KNN, Decision Trees, Naive Bayes
+### Model Evaluation & Preparation (Modules 5-7)
+- **05-ModelSelection** - Bias-variance tradeoff, evaluation metrics, model comparison
+- **06-CrossValidation** - k-fold CV, Leave-One-Out, hyperparameter tuning
+- **07-PCA** - Dimensionality reduction, eigenfaces, feature extraction, Kernel PCA
+
+### Supervised Learning (Modules 8-10)
+- **08-LogisticRegression** - Binary/multi-class classification, decision boundaries
+- **09-Classification** - KNN, Decision Trees, Naive Bayes
+- **10-KernelMethods** - Kernel trick, SVM, kernel functions
+
+### Unsupervised Learning (Module 11)
+- **11-Clustering** - K-means, hierarchical clustering, DBSCAN
+
+### Deep Learning (Modules 12-13)
+- **12-NeuralNetworks** - Feedforward networks, backpropagation, optimization
 - **13-AdvancedNeuralNetworks** - CNNs, Transformers, GANs, Diffusion Models
 
 ## 🎯 Module Structure
@@ -100,10 +106,12 @@ This course emphasizes:
 ## 🔄 Updates
 
 This repository is actively maintained throughout the semester. Recent additions:
-- Four new modules (Intro ML, PCA, Classification, Advanced Neural Networks)
-- Enhanced visual design with thematic images and quotes
-- Beginner-friendly workshops for advanced topics
-- Updated to v2.1 educational package guidelines
+- **Reorganized module numbering** to follow improved pedagogical flow
+- **Four new modules** (Intro ML, PCA, Classification, Advanced Neural Networks)
+- **Enhanced visual design** with thematic images and quotes
+- **Beginner-friendly workshops** for advanced topics
+- **Updated to v2.1** educational package guidelines
+- **PCA moved before Classification** to enable use as preprocessing tool
 
 ## 🤝 Contributing
 
