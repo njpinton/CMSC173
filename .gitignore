@@ -49,7 +49,9 @@ env/
 venv/
 ENV/
 .venv/
-.ipynb_checkpoints/
+ml_env/
+workshop_env/
+*_env/
 
 # ========================
 # Jupyter Notebooks
@@ -76,20 +78,33 @@ ipython_config.py
 .idea/
 *.swp
 *.swo
+*~
 
 # ========================
-# Data files (optional)
+# Data files (large datasets)
 # ========================
-*.csv
-*.tsv
-*.dat
-*.h5
-*.pkl
-*.npy
-*.npz
+# Uncomment if you don't want to track data
+# *.csv
+# *.tsv
+# *.dat
+# *.h5
+# *.pkl
+# *.npy
+# *.npz
+
+# Model checkpoints and weights
+*.pth
+*.pt
+*.ckpt
+*.hdf5
+*.pb
+*.onnx
+checkpoints/
+models/
+weights/
 
 # ========================
-# LaTeX
+# LaTeX auxiliary files
 # ========================
 *.aux
 *.fdb_latexmk
@@ -108,6 +123,15 @@ ipython_config.py
 *.lot
 *.bcf
 *.run.xml
+*.vrb
+*.backup
+*.bak
+*.tex.bak
+*_latexmk
+.texpadtmp/
+
+# Keep PDFs but ignore intermediate LaTeX files
+# PDFs are the final deliverable for students
 
 # ========================
 # Lecture guides and temporary files
@@ -115,9 +139,40 @@ ipython_config.py
 *lecture_guide*
 *guide.txt
 *guide.md
+*notes.txt
+*scratch*
+*TODO.md
+*ENHANCEMENTS.md
 
 # ========================
 # Prompt templates and creation guides
 # ========================
 create_ml_educational_package_prompt.txt
+create_ml_educational_package_prompt_v2.txt
+*_prompt*.txt
+*_draft.txt
+*_old.txt
+
+# ========================
+# Cache and compiled files
+# ========================
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.pyc
+
+# ========================
+# macOS LaTeX metadata
+# ========================
+.texpadtmp/
+*.synctex.gz(busy)
+
+# ========================
+# Image editing temporary files
+# ========================
+*.psd
+*.xcf
+*-tmp.png
+*-temp.jpg
 
