@@ -9,6 +9,30 @@
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
+    <!-- Mermaid.js for diagrams -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#FFCB05',
+                primaryTextColor: '#00274C',
+                primaryBorderColor: '#00274C',
+                lineColor: '#00274C',
+                secondaryColor: '#FFE6A3',
+                tertiaryColor: '#008080',
+                background: '#ffffff',
+                mainBkg: '#FFCB05',
+                secondBkg: '#FFE6A3',
+                tertiaryBkg: '#008080',
+                textColor: '#00274C',
+                fontSize: '16px',
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+            }
+        });
+    </script>
+
     <style>
         * {
             margin: 0;
@@ -239,6 +263,25 @@
             display: block;
             border-radius: 12px;
             box-shadow: var(--shadow);
+        }
+
+        /* Mermaid Diagram Styles */
+        .mermaid-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 1.5rem auto;
+            max-width: 90%;
+            min-height: 300px;
+        }
+
+        .mermaid {
+            background: transparent !important;
+        }
+
+        .mermaid svg {
+            max-width: 100%;
+            height: auto;
         }
 
         /* Math */
@@ -540,7 +583,32 @@
         <!-- Slide 5: Historical Context -->
         <div class="slide" data-slide="5">
             <h1>Historical Context</h1>
-            <img src="../figures/aihistory.jpg" alt="AI History" class="slide-image">
+            <div class="mermaid-container">
+                <pre class="mermaid">
+timeline
+    title AI & Machine Learning Evolution
+    1950s : Turing Test
+          : "Can machines think?"
+    1957 : Perceptron invented
+         : Frank Rosenblatt
+    1970s : AI Winter #1
+          : Perceptron limitations
+    1986 : Backpropagation
+         : Neural networks revived
+    1990s : Support Vector Machines
+          : Statistical learning theory
+    1997 : Deep Blue beats Kasparov
+         : Chess milestone
+    2006 : Deep Learning Renaissance
+         : GPU acceleration begins
+    2012 : AlexNet wins ImageNet
+         : CNN breakthrough
+    2016 : AlphaGo defeats Lee Sedol
+         : Go game mastered
+    2020s : Large Language Models
+          : GPT, BERT, Transformers
+                </pre>
+            </div>
             <div class="quote">"A computer would deserve to be called intelligent if it could deceive a human into believing that it was human." — Alan Turing</div>
 
             <div class="two-column">
@@ -577,7 +645,40 @@
         <!-- Slide 6: Real-World Applications -->
         <div class="slide" data-slide="6">
             <h1>Real-World Applications</h1>
-            <img src="../figures/mlapps.jpg" alt="ML Applications" class="slide-image">
+            <div class="mermaid-container">
+                <pre class="mermaid">
+mindmap
+  root((Machine Learning Applications))
+    Computer Vision
+      Medical Imaging
+      Autonomous Vehicles
+      Facial Recognition
+      Object Detection
+      Image Generation
+    Natural Language
+      Translation
+      Chatbots
+      Sentiment Analysis
+      Text Summarization
+      Question Answering
+    Finance
+      Fraud Detection
+      Algorithmic Trading
+      Credit Scoring
+      Risk Assessment
+    Healthcare
+      Drug Discovery
+      Disease Diagnosis
+      Personalized Medicine
+      Patient Monitoring
+    Other Domains
+      E-commerce Recommendations
+      Gaming AI
+      Manufacturing QC
+      Agriculture Monitoring
+      Climate Prediction
+                </pre>
+            </div>
             <div class="quote">"Machine learning is the last invention that humanity will ever need to make." — Nick Bostrom</div>
 
             <div class="two-column">
@@ -704,7 +805,24 @@
         <!-- Slide 11: Supervised Learning Details -->
         <div class="slide" data-slide="11">
             <h1>Supervised Learning</h1>
-            <img src="../figures/supervised.jpg" alt="Supervised Learning" class="slide-image">
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart LR
+    A[Training Data<br/>x, y pairs] --> B{Choose<br/>Hypothesis<br/>Class}
+    B --> C[Define<br/>Loss Function]
+    C --> D[Optimize<br/>Parameters]
+    D --> E[Trained Model<br/>f x]
+    E --> F[New Input<br/>x*]
+    F --> G[Prediction<br/>ŷ]
+
+    H[Validation] -.->|Feedback| B
+    E -.->|Evaluate| H
+
+    style A fill:#FFCB05
+    style E fill:#06A77D
+    style G fill:#008080
+                </pre>
+            </div>
             <div class="quote">"Learning is finding out what you already know. Doing is demonstrating that you know it." — Richard Bach</div>
 
             <div class="two-column">
@@ -740,7 +858,24 @@
         <!-- Slide 12: Regression -->
         <div class="slide" data-slide="12">
             <h1>Regression: Predicting Continuous Values</h1>
-            <img src="../figures/regression.jpg" alt="Regression" class="slide-image">
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TB
+    A[Input Features<br/>x1, x2, ..., xd] --> B[Linear Combination<br/>w1·x1 + w2·x2 + ... + b]
+    B --> C[Regression Model<br/>ŷ = f x; θ]
+    C --> D[Continuous Output<br/>ŷ ∈ ℝ]
+
+    E[True Value<br/>y] --> F{Loss Function<br/>MSE, MAE}
+    D --> F
+    F --> G[Error Signal] --> H[Optimization<br/>Update θ]
+    H -.->|Backprop| B
+
+    style A fill:#FFE6A3
+    style C fill:#FFCB05
+    style D fill:#06A77D
+    style F fill:#FF8A33
+                </pre>
+            </div>
             <div class="quote">"All models are wrong, but some are useful." — George Box</div>
 
             <div class="two-column">
@@ -790,7 +925,28 @@
         <!-- Slide 13: Classification -->
         <div class="slide" data-slide="13">
             <h1>Classification: Predicting Categories</h1>
-            <img src="../figures/classification.jpg" alt="Classification" class="slide-image">
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TB
+    A[Input Features<br/>x = x1, x2, ..., xd] --> B{Decision<br/>Boundary}
+    B -->|Region 1| C[Class 1<br/>P y=1|x]
+    B -->|Region 2| D[Class 2<br/>P y=2|x]
+    B -->|Region K| E[Class K<br/>P y=K|x]
+
+    C & D & E --> F[argmax<br/>Probabilities]
+    F --> G[Predicted Class<br/>ŷ ∈ 1,2,...,K]
+
+    H[True Label<br/>y] --> I{Cross-Entropy<br/>Loss}
+    G --> I
+    I --> J[Update Model]
+    J -.-> B
+
+    style A fill:#FFE6A3
+    style B fill:#FFCB05
+    style G fill:#06A77D
+    style I fill:#FF8A33
+                </pre>
+            </div>
             <div class="quote">"The goal is to turn data into information, and information into insight." — Carly Fiorina</div>
 
             <div class="two-column">
@@ -884,7 +1040,22 @@
         <!-- Slide 16: Clustering -->
         <div class="slide" data-slide="16">
             <h1>Clustering: Grouping Similar Data</h1>
-            <img src="../figures/clustering.jpg" alt="Clustering" class="slide-image">
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TB
+    Start([Start: Unlabeled Data<br/>x1, x2, ..., xn]) --> Init[Initialize K Centroids<br/>μ1, μ2, ..., μK]
+    Init --> Assign{Assignment Step<br/>Assign each point<br/>to nearest centroid}
+    Assign --> Update[Update Step<br/>Recompute centroids<br/>μk = mean of cluster]
+    Update --> Check{Converged?<br/>Centroids unchanged?}
+    Check -->|No| Assign
+    Check -->|Yes| Final([Clusters Found<br/>C1, C2, ..., CK])
+
+    style Start fill:#FFE6A3
+    style Assign fill:#FFCB05
+    style Update fill:#008080
+    style Final fill:#06A77D
+                </pre>
+            </div>
             <div class="quote">"Without data, you're just another person with an opinion." — W. Edwards Deming</div>
 
             <div class="two-column">
@@ -927,7 +1098,23 @@
         <!-- Slide 17: Dimensionality Reduction -->
         <div class="slide" data-slide="17">
             <h1>Dimensionality Reduction</h1>
-            <img src="../figures/dimension.jpg" alt="Dimensionality Reduction" class="slide-image">
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart LR
+    A["High-Dimensional Space<br/>x ∈ ℝᵈ<br/>(d = 1000)"] --> B[PCA Transform<br/>Find Principal<br/>Components]
+    B --> C[Projection Matrix<br/>W ∈ ℝᵈˣᵏ]
+    C --> D["Low-Dimensional Space<br/>z = Wᵀx ∈ ℝᵏ<br/>(k = 2 or 3)"]
+
+    E[Covariance Matrix<br/>Σ = XᵀX] --> F[Eigendecomposition<br/>Σv = λv]
+    F --> G[Top k Eigenvectors<br/>Maximum Variance]
+    G --> C
+
+    style A fill:#FF8A33
+    style D fill:#06A77D
+    style B fill:#FFCB05
+    style C fill:#008080
+                </pre>
+            </div>
             <div class="quote">"In God we trust, all others must bring data." — W. Edwards Deming</div>
 
             <div class="two-column">
@@ -1030,7 +1217,30 @@
         <!-- Slide 21: RL Details -->
         <div class="slide" data-slide="21">
             <h1>Reinforcement Learning</h1>
-            <img src="../figures/robot.jpg" alt="Reinforcement Learning" class="slide-image">
+            <div class="mermaid-container">
+                <pre class="mermaid">
+stateDiagram-v2
+    [*] --> State
+    State --> Agent: Observe State st
+    Agent --> Action: Choose Action at
+    Action --> Environment: Execute at
+    Environment --> Reward: Receive Reward rt
+    Environment --> NextState: Transition to st+1
+    Reward --> Agent: Update Policy π
+    NextState --> State: Continue Episode
+
+    note right of Agent
+        Policy: π(st) → at
+        Goal: Maximize
+        Σ γᵗ·rt
+    end note
+
+    note right of Environment
+        Dynamics: P(st+1|st, at)
+        Reward: R(st, at, st+1)
+    end note
+                </pre>
+            </div>
             <div class="quote">"You can use a spoon to eat soup, but it's better to use a ladle. Learning is choosing the right tool." — Yann LeCun</div>
 
             <div class="two-column">
@@ -1116,7 +1326,25 @@
         <!-- Slide 24: Data Preprocessing -->
         <div class="slide" data-slide="24">
             <h1>Data Preprocessing</h1>
-            <img src="../figures/dataprep.jpg" alt="Data Preprocessing" class="slide-image">
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart LR
+    A[Raw Data<br/>Messy & Incomplete] --> B[Data Cleaning<br/>Handle Missing Values<br/>Remove Duplicates<br/>Fix Inconsistencies]
+    B --> C[Exploratory Analysis<br/>Understand Distributions<br/>Detect Outliers<br/>Find Correlations]
+    C --> D[Feature Engineering<br/>Create New Features<br/>Encode Categoricals<br/>Polynomial Terms]
+    D --> E[Feature Scaling<br/>Standardization<br/>Normalization<br/>Robust Scaling]
+    E --> F[Train/Test Split<br/>Stratified Sampling<br/>Time-based Split]
+    F --> G[Ready for ML<br/>Clean & Scaled Data]
+
+    style A fill:#FF8A33
+    style B fill:#FFE6A3
+    style C fill:#FFCB05
+    style D fill:#008080
+    style E fill:#00274C,color:#fff
+    style F fill:#06A77D
+    style G fill:#06A77D
+                </pre>
+            </div>
             <div class="quote">"Garbage in, garbage out." — George Fuechsel</div>
 
             <div class="two-column">
@@ -1510,7 +1738,34 @@
         <!-- Slide 34: Best Practices -->
         <div class="slide" data-slide="34">
             <h1>Best Practices in Machine Learning</h1>
-            <img src="../figures/workflow.jpg" alt="ML Workflow" class="slide-image">
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TB
+    Start([Define Problem]) --> Baseline[Establish Baseline<br/>Simple Model]
+    Baseline --> Data[Collect & Clean Data<br/>Exploratory Analysis]
+    Data --> Features[Feature Engineering<br/>Domain Knowledge]
+    Features --> Model[Select Model<br/>Start Simple]
+    Model --> Train[Train Model<br/>Track Experiments]
+    Train --> Eval{Evaluate<br/>Performance}
+    Eval -->|Good| Valid[Validate on<br/>Hold-out Set]
+    Eval -->|Poor| Debug{Diagnose Issue}
+    Debug -->|Underfitting| Features
+    Debug -->|Overfitting| Reg[Add Regularization<br/>More Data]
+    Reg --> Train
+    Debug -->|Data Quality| Data
+    Valid --> Deploy{Ready for<br/>Production?}
+    Deploy -->|Yes| Prod[Deploy Model<br/>Monitor Performance]
+    Deploy -->|No| Tune[Hyperparameter<br/>Tuning]
+    Tune --> Train
+    Prod --> Monitor[Monitor & Maintain]
+    Monitor -.->|Drift Detected| Data
+
+    style Start fill:#FFCB05
+    style Prod fill:#06A77D
+    style Eval fill:#FF8A33
+    style Debug fill:#FF8A33
+                </pre>
+            </div>
             <div class="quote">"The best way to predict the future is to invent it." — Alan Kay</div>
 
             <div class="two-column">
@@ -1551,7 +1806,63 @@
         <!-- Slide 35: Ethics & Responsible AI -->
         <div class="slide" data-slide="35">
             <h1>Ethics & Responsible AI</h1>
-            <img src="../figures/ethics.jpg" alt="AI Ethics" class="slide-image">
+            <div class="mermaid-container">
+                <pre class="mermaid">
+mindmap
+  root((Responsible AI))
+    Fairness & Bias
+      Identify Bias Sources
+        Training Data Bias
+        Historical Inequities
+        Sampling Bias
+      Mitigation Strategies
+        Diverse Datasets
+        Bias Detection Tools
+        Fairness Metrics
+      Equal Treatment
+        Across Demographics
+        Protected Attributes
+    Privacy & Security
+      Data Protection
+        Anonymization
+        Encryption
+        Access Control
+      Compliance
+        GDPR
+        HIPAA
+        Local Regulations
+      User Rights
+        Consent
+        Right to Delete
+        Data Portability
+    Transparency
+      Explainability
+        Model Interpretability
+        Feature Importance
+        Decision Reasoning
+      Documentation
+        Model Cards
+        Data Sheets
+        Audit Trails
+      Communication
+        Limitations
+        Uncertainties
+        Assumptions
+    Safety & Robustness
+      Testing
+        Adversarial Testing
+        Edge Cases
+        Stress Testing
+      Reliability
+        Error Handling
+        Fallback Mechanisms
+        Human Oversight
+      Impact Assessment
+        Societal Effects
+        Unintended Consequences
+        Risk Mitigation
+                </pre>
+            </div>
             <div class="quote">"With great power comes great responsibility." — Stan Lee (adapted from Voltaire)</div>
 
             <div class="two-column">
