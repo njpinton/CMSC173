@@ -153,10 +153,11 @@
         h1 {
             font-size: 2.8rem;
             color: var(--primary-blue);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             font-weight: 700;
             border-bottom: 4px solid var(--primary-maize);
-            padding-bottom: 0.5rem;
+            padding-bottom: 0.75rem;
+            letter-spacing: -0.5px;
         }
 
         h2 {
@@ -193,8 +194,9 @@
         .two-column {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 3rem;
+            gap: 2.5rem;
             height: 100%;
+            align-items: start;
         }
 
         .column {
@@ -202,14 +204,19 @@
             flex-direction: column;
         }
 
-        /* Block Styles */
+        /* Block Styles - Material Design Elevation */
         .block {
-            background: linear-gradient(135deg, rgba(0, 39, 76, 0.05) 0%, rgba(0, 39, 76, 0.02) 100%);
-            border-left: 5px solid var(--primary-blue);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background: #ffffff;
+            border-left: 4px solid var(--primary-blue);
+            padding: 1.5rem 1.75rem;
+            margin-bottom: 1.25rem;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+        }
+
+        .block:hover {
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.12);
         }
 
         .block h3 {
@@ -218,29 +225,41 @@
         }
 
         .example-block {
-            background: linear-gradient(135deg, rgba(255, 203, 5, 0.15) 0%, rgba(255, 203, 5, 0.05) 100%);
-            border-left: 5px solid var(--primary-maize);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background: rgba(255, 203, 5, 0.08);
+            border-left: 4px solid var(--primary-maize);
+            padding: 1.5rem 1.75rem;
+            margin-bottom: 1.25rem;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+        }
+
+        .example-block:hover {
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.12);
         }
 
         .example-block h3 {
-            color: var(--maize-dark);
+            color: var(--primary-blue);
+            font-weight: 600;
         }
 
         .alert-block {
-            background: linear-gradient(135deg, rgba(255, 138, 51, 0.15) 0%, rgba(255, 138, 51, 0.05) 100%);
-            border-left: 5px solid var(--orange-accent);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background: rgba(255, 138, 51, 0.08);
+            border-left: 4px solid var(--orange-accent);
+            padding: 1.5rem 1.75rem;
+            margin-bottom: 1.25rem;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+        }
+
+        .alert-block:hover {
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.12);
         }
 
         .alert-block h3 {
             color: var(--orange-accent);
+            font-weight: 600;
         }
 
         /* Quote Style */
@@ -265,23 +284,47 @@
             box-shadow: var(--shadow);
         }
 
-        /* Mermaid Diagram Styles */
+        /* Mermaid Diagram Styles - Google Material Design Inspired */
         .mermaid-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 1.5rem auto;
-            max-width: 90%;
-            min-height: 300px;
+            margin: 2rem auto;
+            width: 100%;
+            min-height: 400px;
+            padding: 1rem;
+        }
+
+        .mermaid-container.large {
+            min-height: 500px;
+        }
+
+        .mermaid-container.compact {
+            min-height: 350px;
         }
 
         .mermaid {
             background: transparent !important;
+            width: 100%;
         }
 
         .mermaid svg {
             max-width: 100%;
             height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* Improve diagram text readability */
+        .mermaid .node rect,
+        .mermaid .node circle,
+        .mermaid .node polygon {
+            stroke-width: 2px;
+        }
+
+        .mermaid text {
+            font-size: 14px !important;
+            font-weight: 500;
         }
 
         /* Math */
@@ -583,7 +626,7 @@
         <!-- Slide 5: Historical Context -->
         <div class="slide" data-slide="5">
             <h1>Historical Context</h1>
-            <div class="mermaid-container">
+            <div class="mermaid-container large">
                 <pre class="mermaid">
 timeline
     title AI & Machine Learning Evolution
@@ -609,35 +652,14 @@ timeline
           : GPT, BERT, Transformers
                 </pre>
             </div>
-            <div class="quote">"A computer would deserve to be called intelligent if it could deceive a human into believing that it was human." — Alan Turing</div>
 
-            <div class="two-column">
-                <div class="column">
-                    <div class="block">
-                        <h3>Major Milestones</h3>
-                        <ul style="font-size: 0.95rem;">
-                            <li><strong>1950s:</strong> Alan Turing - "Can machines think?"</li>
-                            <li><strong>1957:</strong> Perceptron (Frank Rosenblatt)</li>
-                            <li><strong>1986:</strong> Backpropagation popularized</li>
-                            <li><strong>1990s:</strong> Support Vector Machines</li>
-                            <li><strong>2012:</strong> AlexNet wins ImageNet</li>
-                            <li><strong>2016:</strong> AlphaGo defeats Lee Sedol</li>
-                            <li><strong>2020s:</strong> Large Language Models</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="column">
-                    <div class="alert-block">
-                        <h3>Current Era</h3>
-                        <p>We're in the <strong>Deep Learning Revolution:</strong></p>
-                        <ul>
-                            <li>Big data availability</li>
-                            <li>GPU acceleration</li>
-                            <li>Novel architectures (Transformers)</li>
-                            <li>Widespread deployment</li>
-                        </ul>
-                    </div>
+            <div class="alert-block" style="max-width: 800px; margin: 2rem auto;">
+                <h3>Current Era: Deep Learning Revolution</h3>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1rem;">
+                    <div>✓ Big data availability</div>
+                    <div>✓ GPU acceleration</div>
+                    <div>✓ Novel architectures (Transformers)</div>
+                    <div>✓ Widespread deployment</div>
                 </div>
             </div>
         </div>
@@ -645,7 +667,7 @@ timeline
         <!-- Slide 6: Real-World Applications -->
         <div class="slide" data-slide="6">
             <h1>Real-World Applications</h1>
-            <div class="mermaid-container">
+            <div class="mermaid-container large">
                 <pre class="mermaid">
 mindmap
   root((Machine Learning Applications))
@@ -679,49 +701,10 @@ mindmap
       Climate Prediction
                 </pre>
             </div>
-            <div class="quote">"Machine learning is the last invention that humanity will ever need to make." — Nick Bostrom</div>
 
-            <div class="two-column">
-                <div class="column">
-                    <div class="block">
-                        <h3>Computer Vision</h3>
-                        <ul>
-                            <li>Medical image diagnosis</li>
-                            <li>Autonomous vehicles</li>
-                            <li>Facial recognition</li>
-                            <li>Image generation (DALL-E, Midjourney)</li>
-                        </ul>
-                    </div>
-
-                    <div class="block">
-                        <h3>Natural Language Processing</h3>
-                        <ul>
-                            <li>Machine translation</li>
-                            <li>Chatbots & virtual assistants</li>
-                            <li>Sentiment analysis</li>
-                            <li>Question answering</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="column">
-                    <div class="block">
-                        <h3>Other Domains</h3>
-                        <ul>
-                            <li><strong>Finance:</strong> Fraud detection, trading</li>
-                            <li><strong>Healthcare:</strong> Drug discovery</li>
-                            <li><strong>E-commerce:</strong> Recommendations</li>
-                            <li><strong>Gaming:</strong> AI opponents</li>
-                            <li><strong>Manufacturing:</strong> Quality control</li>
-                            <li><strong>Agriculture:</strong> Crop monitoring</li>
-                        </ul>
-                    </div>
-
-                    <div class="alert-block">
-                        <h3>Impact</h3>
-                        <p>ML is transforming every industry!</p>
-                    </div>
-                </div>
+            <div class="alert-block" style="max-width: 600px; margin: 0 auto; text-align: center;">
+                <h3>Impact</h3>
+                <p style="font-size: 1.2rem;">ML is transforming every industry!</p>
             </div>
         </div>
 
@@ -805,7 +788,7 @@ mindmap
         <!-- Slide 11: Supervised Learning Details -->
         <div class="slide" data-slide="11">
             <h1>Supervised Learning</h1>
-            <div class="mermaid-container">
+            <div class="mermaid-container compact">
                 <pre class="mermaid">
 flowchart LR
     A[Training Data<br/>x, y pairs] --> B{Choose<br/>Hypothesis<br/>Class}
@@ -823,7 +806,6 @@ flowchart LR
     style G fill:#008080
                 </pre>
             </div>
-            <div class="quote">"Learning is finding out what you already know. Doing is demonstrating that you know it." — Richard Bach</div>
 
             <div class="two-column">
                 <div class="column">
@@ -858,7 +840,7 @@ flowchart LR
         <!-- Slide 12: Regression -->
         <div class="slide" data-slide="12">
             <h1>Regression: Predicting Continuous Values</h1>
-            <div class="mermaid-container">
+            <div class="mermaid-container compact">
                 <pre class="mermaid">
 flowchart TB
     A[Input Features<br/>x1, x2, ..., xd] --> B[Linear Combination<br/>w1·x1 + w2·x2 + ... + b]
@@ -876,7 +858,6 @@ flowchart TB
     style F fill:#FF8A33
                 </pre>
             </div>
-            <div class="quote">"All models are wrong, but some are useful." — George Box</div>
 
             <div class="two-column">
                 <div class="column">
@@ -925,7 +906,7 @@ flowchart TB
         <!-- Slide 13: Classification -->
         <div class="slide" data-slide="13">
             <h1>Classification: Predicting Categories</h1>
-            <div class="mermaid-container">
+            <div class="mermaid-container compact">
                 <pre class="mermaid">
 flowchart TB
     A[Input Features<br/>x = x1, x2, ..., xd] --> B{Decision<br/>Boundary}
@@ -947,7 +928,6 @@ flowchart TB
     style I fill:#FF8A33
                 </pre>
             </div>
-            <div class="quote">"The goal is to turn data into information, and information into insight." — Carly Fiorina</div>
 
             <div class="two-column">
                 <div class="column">
@@ -1040,7 +1020,7 @@ flowchart TB
         <!-- Slide 16: Clustering -->
         <div class="slide" data-slide="16">
             <h1>Clustering: Grouping Similar Data</h1>
-            <div class="mermaid-container">
+            <div class="mermaid-container compact">
                 <pre class="mermaid">
 flowchart TB
     Start([Start: Unlabeled Data<br/>x1, x2, ..., xn]) --> Init[Initialize K Centroids<br/>μ1, μ2, ..., μK]
@@ -1056,7 +1036,6 @@ flowchart TB
     style Final fill:#06A77D
                 </pre>
             </div>
-            <div class="quote">"Without data, you're just another person with an opinion." — W. Edwards Deming</div>
 
             <div class="two-column">
                 <div class="column">
@@ -1098,7 +1077,7 @@ flowchart TB
         <!-- Slide 17: Dimensionality Reduction -->
         <div class="slide" data-slide="17">
             <h1>Dimensionality Reduction</h1>
-            <div class="mermaid-container">
+            <div class="mermaid-container compact">
                 <pre class="mermaid">
 flowchart LR
     A["High-Dimensional Space<br/>x ∈ ℝᵈ<br/>(d = 1000)"] --> B[PCA Transform<br/>Find Principal<br/>Components]
@@ -1115,7 +1094,6 @@ flowchart LR
     style C fill:#008080
                 </pre>
             </div>
-            <div class="quote">"In God we trust, all others must bring data." — W. Edwards Deming</div>
 
             <div class="two-column">
                 <div class="column">
@@ -1217,7 +1195,7 @@ flowchart LR
         <!-- Slide 21: RL Details -->
         <div class="slide" data-slide="21">
             <h1>Reinforcement Learning</h1>
-            <div class="mermaid-container">
+            <div class="mermaid-container large">
                 <pre class="mermaid">
 stateDiagram-v2
     [*] --> State
@@ -1241,7 +1219,6 @@ stateDiagram-v2
     end note
                 </pre>
             </div>
-            <div class="quote">"You can use a spoon to eat soup, but it's better to use a ladle. Learning is choosing the right tool." — Yann LeCun</div>
 
             <div class="two-column">
                 <div class="column">
@@ -1326,7 +1303,7 @@ stateDiagram-v2
         <!-- Slide 24: Data Preprocessing -->
         <div class="slide" data-slide="24">
             <h1>Data Preprocessing</h1>
-            <div class="mermaid-container">
+            <div class="mermaid-container large">
                 <pre class="mermaid">
 flowchart LR
     A[Raw Data<br/>Messy & Incomplete] --> B[Data Cleaning<br/>Handle Missing Values<br/>Remove Duplicates<br/>Fix Inconsistencies]
@@ -1345,7 +1322,6 @@ flowchart LR
     style G fill:#06A77D
                 </pre>
             </div>
-            <div class="quote">"Garbage in, garbage out." — George Fuechsel</div>
 
             <div class="two-column">
                 <div class="column">
@@ -1738,7 +1714,7 @@ flowchart LR
         <!-- Slide 34: Best Practices -->
         <div class="slide" data-slide="34">
             <h1>Best Practices in Machine Learning</h1>
-            <div class="mermaid-container">
+            <div class="mermaid-container large">
                 <pre class="mermaid">
 flowchart TB
     Start([Define Problem]) --> Baseline[Establish Baseline<br/>Simple Model]
@@ -1766,7 +1742,6 @@ flowchart TB
     style Debug fill:#FF8A33
                 </pre>
             </div>
-            <div class="quote">"The best way to predict the future is to invent it." — Alan Kay</div>
 
             <div class="two-column">
                 <div class="column">
@@ -1806,7 +1781,7 @@ flowchart TB
         <!-- Slide 35: Ethics & Responsible AI -->
         <div class="slide" data-slide="35">
             <h1>Ethics & Responsible AI</h1>
-            <div class="mermaid-container">
+            <div class="mermaid-container large">
                 <pre class="mermaid">
 mindmap
   root((Responsible AI))
@@ -1863,7 +1838,6 @@ mindmap
         Risk Mitigation
                 </pre>
             </div>
-            <div class="quote">"With great power comes great responsibility." — Stan Lee (adapted from Voltaire)</div>
 
             <div class="two-column">
                 <div class="column">
