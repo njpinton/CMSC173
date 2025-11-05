@@ -169,7 +169,7 @@
 
         h3 {
             font-size: 1.5rem;
-            color: var(--teal-accent);
+            color: var(--primary-blue);
             margin: 1rem 0 0.5rem 0;
             font-weight: 600;
         }
@@ -260,18 +260,6 @@
         .alert-block h3 {
             color: var(--orange-accent);
             font-weight: 600;
-        }
-
-        /* Quote Style */
-        .quote {
-            font-style: italic;
-            text-align: center;
-            color: #666;
-            margin: 1.5rem 0;
-            padding: 1rem;
-            border-left: 4px solid var(--primary-maize);
-            background: rgba(255, 203, 5, 0.05);
-            font-size: 1rem;
         }
 
         /* Image Styles */
@@ -450,17 +438,37 @@
         }
 
         .toc-item {
-            background: linear-gradient(135deg, rgba(0, 39, 76, 0.05) 0%, rgba(0, 39, 76, 0.02) 100%);
+            background: rgba(0, 39, 76, 0.04);
             padding: 1rem 1.5rem;
-            border-radius: 8px;
+            border-radius: 4px;
             border-left: 4px solid var(--primary-maize);
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(.25,.8,.25,1);
             cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
         }
 
         .toc-item:hover {
-            transform: translateX(10px);
-            box-shadow: var(--shadow);
+            transform: translateX(8px);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.12);
+        }
+
+        /* Pipeline Grid Styles */
+        .pipeline-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Taxonomy slide utilities */
+        .centered-content {
+            text-align: center;
+            margin-top: 2.5rem;
+        }
+
+        .taxonomy-container {
+            max-width: 900px;
+            margin: 0 auto;
         }
 
         /* Responsive */
@@ -477,6 +485,14 @@
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
             }
+
+            .pipeline-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .mermaid-container.large {
+                min-height: 400px;
+            }
         }
 
         @media (max-width: 768px) {
@@ -491,6 +507,26 @@
             .nav-btn {
                 width: 50px;
                 height: 50px;
+            }
+
+            .pipeline-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .toc {
+                grid-template-columns: 1fr;
+            }
+
+            .standout-slide .standout-title {
+                font-size: 3rem;
+            }
+
+            .standout-slide .standout-text {
+                font-size: 1.5rem;
+            }
+
+            .standout-slide .standout-info {
+                font-size: 1.2rem;
             }
         }
 
@@ -508,7 +544,7 @@
         .algorithm {
             background: rgba(0, 128, 128, 0.05);
             border: 2px solid var(--teal-accent);
-            border-radius: 8px;
+            border-radius: 4px;
             padding: 1.5rem;
             margin: 1rem 0;
             font-family: 'Courier New', monospace;
@@ -525,14 +561,27 @@
             text-align: center;
             justify-content: center;
             align-items: center;
-            font-size: 3rem;
-            font-weight: 700;
+        }
+
+        .standout-slide .standout-title {
+            font-size: 5rem;
+            font-weight: 800;
+            margin-bottom: 2rem;
+        }
+
+        .standout-slide .standout-text {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .standout-slide .standout-info {
+            font-size: 1.5rem;
         }
     </style>
 </head>
 <body>
     <div class="progress-bar" id="progressBar"></div>
-    <div class="slide-counter" id="slideCounter">1 / 45</div>
+    <div class="slide-counter" id="slideCounter">1 / 39</div>
 
     <div class="presentation-container" id="presentation">
         <!-- Slide 1: Title -->
@@ -739,9 +788,9 @@ mindmap
         <!-- Slide 9: ML Taxonomy (simplified) -->
         <div class="slide" data-slide="9">
             <h1>Machine Learning Taxonomy</h1>
-            <div style="text-align: center; margin-top: 3rem;">
-                <div class="block" style="max-width: 900px; margin: 0 auto;">
-                    <h2 style="text-align: center; margin-bottom: 2rem;">Machine Learning</h2>
+            <div class="centered-content">
+                <div class="block taxonomy-container">
+                    <h2 style="text-align: center; margin-bottom: 1.5rem;">Machine Learning</h2>
 
                     <div class="two-column">
                         <div>
@@ -1273,28 +1322,28 @@ stateDiagram-v2
         <!-- Slide 23: ML Pipeline -->
         <div class="slide" data-slide="23">
             <h1>The ML Pipeline: From Data to Deployment</h1>
-            <div class="block" style="max-width: 1200px; margin: 2rem auto;">
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem;">
+            <div class="block" style="max-width: 1200px; margin: 1.5rem auto 0;">
+                <div class="pipeline-grid">
                     <div class="example-block">1. Data Collection</div>
                     <div class="example-block">2. Data Cleaning</div>
                     <div class="example-block">3. EDA</div>
                     <div class="example-block">4. Feature Engineering</div>
                 </div>
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem;">
+                <div class="pipeline-grid">
                     <div class="example-block">5. Train/Test Split</div>
                     <div class="example-block">6. Model Selection</div>
                     <div class="example-block">7. Training</div>
                     <div class="example-block">8. Hyperparameter Tuning</div>
                 </div>
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+                <div class="pipeline-grid" style="margin-bottom: 0;">
                     <div class="example-block">9. Evaluation</div>
                     <div class="example-block">10. Validation</div>
                     <div class="example-block">11. Deployment</div>
-                    <div class="alert-block">12. Monitoring → Retrain</div>
+                    <div class="example-block" style="background: rgba(255, 138, 51, 0.08); border-left-color: #FF8A33;">12. Monitoring → Retrain</div>
                 </div>
             </div>
 
-            <div class="alert-block">
+            <div class="alert-block" style="margin-top: 1.5rem;">
                 <h3>Key Insight</h3>
                 <p>ML is iterative! Model performance informs feature engineering, data collection, etc.</p>
             </div>
@@ -1947,10 +1996,10 @@ mindmap
         <!-- Slide 39: Final Slide -->
         <div class="slide standout-slide" data-slide="39">
             <div>
-                <h1 style="font-size: 5rem; margin-bottom: 2rem;">Questions?</h1>
-                <p style="font-size: 2rem; margin-bottom: 2rem;">Thank you for your attention!</p>
-                <p style="font-size: 1.5rem;"><strong>Next Lecture:</strong> Parameter Estimation</p>
-                <p style="font-size: 1.5rem;">See you next time!</p>
+                <h1 class="standout-title">Questions?</h1>
+                <p class="standout-text">Thank you for your attention!</p>
+                <p class="standout-info"><strong>Next Lecture:</strong> Parameter Estimation</p>
+                <p class="standout-info">See you next time!</p>
             </div>
         </div>
     </div>
