@@ -1,0 +1,1779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction to Machine Learning - CMSC 173</title>
+
+    <!-- MathJax for beautiful math rendering -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Color palette inspired by Michigan Wolverine theme */
+            --primary-blue: #00274C;
+            --primary-maize: #FFCB05;
+            --maize-light: #FFE6A3;
+            --maize-dark: #FFA500;
+            --teal-accent: #008080;
+            --orange-accent: #FF8A33;
+            --success: #06A77D;
+            --text-dark: #1a1a1a;
+            --text-light: #ffffff;
+            --bg-light: #f8f9fa;
+            --shadow: 0 10px 40px rgba(0, 39, 76, 0.1);
+            --shadow-hover: 0 15px 50px rgba(0, 39, 76, 0.15);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #003d7a 100%);
+            color: var(--text-dark);
+        }
+
+        .presentation-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 60px 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+            z-index: 10;
+        }
+
+        .slide.prev {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+
+        /* Title Slide */
+        .slide.title-slide {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #003d7a 100%);
+            color: var(--text-light);
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slide.title-slide h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: slideInDown 0.8s ease-out;
+        }
+
+        .slide.title-slide .subtitle {
+            font-size: 1.8rem;
+            color: var(--primary-maize);
+            margin-bottom: 2rem;
+            animation: slideInUp 0.8s ease-out 0.2s backwards;
+        }
+
+        .slide.title-slide .author {
+            font-size: 1.3rem;
+            margin-top: 2rem;
+            animation: fadeIn 1s ease-out 0.4s backwards;
+        }
+
+        .slide.title-slide .institution {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-top: 0.5rem;
+            animation: fadeIn 1s ease-out 0.6s backwards;
+        }
+
+        /* Section Slides */
+        .slide.section-slide {
+            background: linear-gradient(135deg, var(--teal-accent) 0%, #006666 100%);
+            color: var(--text-light);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slide.section-slide h1 {
+            font-size: 4.5rem;
+            font-weight: 800;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        /* Content */
+        h1 {
+            font-size: 2.8rem;
+            color: var(--primary-blue);
+            margin-bottom: 2rem;
+            font-weight: 700;
+            border-bottom: 4px solid var(--primary-maize);
+            padding-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: var(--primary-blue);
+            margin: 1.5rem 0 1rem 0;
+            font-weight: 600;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            color: var(--teal-accent);
+            margin: 1rem 0 0.5rem 0;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        ul, ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 0.5rem;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            height: 100%;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Block Styles */
+        .block {
+            background: linear-gradient(135deg, rgba(0, 39, 76, 0.05) 0%, rgba(0, 39, 76, 0.02) 100%);
+            border-left: 5px solid var(--primary-blue);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .block h3 {
+            margin-top: 0;
+            color: var(--primary-blue);
+        }
+
+        .example-block {
+            background: linear-gradient(135deg, rgba(255, 203, 5, 0.15) 0%, rgba(255, 203, 5, 0.05) 100%);
+            border-left: 5px solid var(--primary-maize);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .example-block h3 {
+            color: var(--maize-dark);
+        }
+
+        .alert-block {
+            background: linear-gradient(135deg, rgba(255, 138, 51, 0.15) 0%, rgba(255, 138, 51, 0.05) 100%);
+            border-left: 5px solid var(--orange-accent);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .alert-block h3 {
+            color: var(--orange-accent);
+        }
+
+        /* Quote Style */
+        .quote {
+            font-style: italic;
+            text-align: center;
+            color: #666;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            border-left: 4px solid var(--primary-maize);
+            background: rgba(255, 203, 5, 0.05);
+            font-size: 1rem;
+        }
+
+        /* Image Styles */
+        .slide-image {
+            max-width: 80%;
+            max-height: 400px;
+            margin: 1rem auto;
+            display: block;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        /* Math */
+        .mjx-chtml {
+            font-size: 1.2em !important;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-maize), var(--orange-accent));
+            z-index: 1000;
+            transition: width 0.3s ease;
+        }
+
+        /* Navigation Controls */
+        .nav-controls {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: rgba(0, 39, 76, 0.9);
+            color: var(--primary-maize);
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-btn:hover {
+            background: var(--primary-maize);
+            color: var(--primary-blue);
+            transform: scale(1.1);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .nav-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Slide Counter */
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(0, 39, 76, 0.9);
+            color: var(--primary-maize);
+            padding: 15px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+        }
+
+        /* Animations */
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        /* Code blocks */
+        code {
+            background: rgba(0, 39, 76, 0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        /* Table of Contents */
+        .toc {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .toc-item {
+            background: linear-gradient(135deg, rgba(0, 39, 76, 0.05) 0%, rgba(0, 39, 76, 0.02) 100%);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-maize);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .toc-item:hover {
+            transform: translateX(10px);
+            box-shadow: var(--shadow);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .slide {
+                padding: 40px 50px;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .two-column {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 30px 20px;
+            }
+
+            .slide.title-slide h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-btn {
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        /* Emphasis */
+        strong {
+            color: var(--primary-blue);
+            font-weight: 700;
+        }
+
+        em {
+            color: var(--teal-accent);
+        }
+
+        /* Algorithm box */
+        .algorithm {
+            background: rgba(0, 128, 128, 0.05);
+            border: 2px solid var(--teal-accent);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .algorithm-line {
+            margin: 0.3rem 0;
+        }
+
+        /* Standout slide */
+        .slide.standout-slide {
+            background: linear-gradient(135deg, var(--success) 0%, #05a076 100%);
+            color: var(--text-light);
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="slide-counter" id="slideCounter">1 / 45</div>
+
+    <div class="presentation-container" id="presentation">
+        <!-- Slide 1: Title -->
+        <div class="slide title-slide active" data-slide="1">
+            <h1>Introduction to Machine Learning</h1>
+            <div class="subtitle">CMSC 173 - Machine Learning</div>
+            <div class="author">Noel Jeffrey Pinton</div>
+            <div class="institution">Department of Computer Science<br>University of the Philippines - Cebu</div>
+        </div>
+
+        <!-- Slide 2: Table of Contents -->
+        <div class="slide" data-slide="2">
+            <h1>Course Overview</h1>
+            <div class="toc">
+                <div class="toc-item">
+                    <strong>1.</strong> What is Machine Learning?
+                </div>
+                <div class="toc-item">
+                    <strong>2.</strong> Types of Machine Learning
+                </div>
+                <div class="toc-item">
+                    <strong>3.</strong> Supervised Learning
+                </div>
+                <div class="toc-item">
+                    <strong>4.</strong> Unsupervised Learning
+                </div>
+                <div class="toc-item">
+                    <strong>5.</strong> Semi-Supervised Learning
+                </div>
+                <div class="toc-item">
+                    <strong>6.</strong> Reinforcement Learning
+                </div>
+                <div class="toc-item">
+                    <strong>7.</strong> The Machine Learning Pipeline
+                </div>
+                <div class="toc-item">
+                    <strong>8.</strong> Key Challenges in ML
+                </div>
+                <div class="toc-item">
+                    <strong>9.</strong> Course Structure
+                </div>
+                <div class="toc-item">
+                    <strong>10.</strong> Summary
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Section - What is ML? -->
+        <div class="slide section-slide" data-slide="3">
+            <h1>What is Machine Learning?</h1>
+        </div>
+
+        <!-- Slide 4: What is Machine Learning? -->
+        <div class="slide" data-slide="4">
+            <h1>What is Machine Learning?</h1>
+            <div class="two-column">
+                <div class="column">
+                    <div class="block">
+                        <h3>Formal Definition</h3>
+                        <p><strong>Machine Learning (ML)</strong> is the science of getting computers to learn and act like humans do, and improve their learning over time in autonomous fashion, by feeding them data and information.</p>
+                    </div>
+
+                    <div class="block">
+                        <h3>Key Characteristics</h3>
+                        <ul>
+                            <li><strong>Learning from data</strong> without explicit programming</li>
+                            <li><strong>Improving performance</strong> with experience</li>
+                            <li><strong>Discovering patterns</strong> in complex datasets</li>
+                            <li><strong>Making predictions</strong> or decisions</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="example-block">
+                        <h3>Traditional Programming vs ML</h3>
+                        <p><strong>Traditional:</strong><br>
+                        Rules + Data → Answers</p>
+                        <p><strong>Machine Learning:</strong><br>
+                        Data + Answers → Rules</p>
+                    </div>
+
+                    <div class="alert-block">
+                        <h3>Core Insight</h3>
+                        <p>ML finds the rules automatically from examples!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Historical Context -->
+        <div class="slide" data-slide="5">
+            <h1>Historical Context</h1>
+            <img src="../figures/aihistory.jpg" alt="AI History" class="slide-image">
+            <div class="quote">"A computer would deserve to be called intelligent if it could deceive a human into believing that it was human." — Alan Turing</div>
+
+            <div class="two-column">
+                <div class="column">
+                    <div class="block">
+                        <h3>Major Milestones</h3>
+                        <ul style="font-size: 0.95rem;">
+                            <li><strong>1950s:</strong> Alan Turing - "Can machines think?"</li>
+                            <li><strong>1957:</strong> Perceptron (Frank Rosenblatt)</li>
+                            <li><strong>1986:</strong> Backpropagation popularized</li>
+                            <li><strong>1990s:</strong> Support Vector Machines</li>
+                            <li><strong>2012:</strong> AlexNet wins ImageNet</li>
+                            <li><strong>2016:</strong> AlphaGo defeats Lee Sedol</li>
+                            <li><strong>2020s:</strong> Large Language Models</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="alert-block">
+                        <h3>Current Era</h3>
+                        <p>We're in the <strong>Deep Learning Revolution:</strong></p>
+                        <ul>
+                            <li>Big data availability</li>
+                            <li>GPU acceleration</li>
+                            <li>Novel architectures (Transformers)</li>
+                            <li>Widespread deployment</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Real-World Applications -->
+        <div class="slide" data-slide="6">
+            <h1>Real-World Applications</h1>
+            <img src="../figures/mlapps.jpg" alt="ML Applications" class="slide-image">
+            <div class="quote">"Machine learning is the last invention that humanity will ever need to make." — Nick Bostrom</div>
+
+            <div class="two-column">
+                <div class="column">
+                    <div class="block">
+                        <h3>Computer Vision</h3>
+                        <ul>
+                            <li>Medical image diagnosis</li>
+                            <li>Autonomous vehicles</li>
+                            <li>Facial recognition</li>
+                            <li>Image generation (DALL-E, Midjourney)</li>
+                        </ul>
+                    </div>
+
+                    <div class="block">
+                        <h3>Natural Language Processing</h3>
+                        <ul>
+                            <li>Machine translation</li>
+                            <li>Chatbots & virtual assistants</li>
+                            <li>Sentiment analysis</li>
+                            <li>Question answering</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="block">
+                        <h3>Other Domains</h3>
+                        <ul>
+                            <li><strong>Finance:</strong> Fraud detection, trading</li>
+                            <li><strong>Healthcare:</strong> Drug discovery</li>
+                            <li><strong>E-commerce:</strong> Recommendations</li>
+                            <li><strong>Gaming:</strong> AI opponents</li>
+                            <li><strong>Manufacturing:</strong> Quality control</li>
+                            <li><strong>Agriculture:</strong> Crop monitoring</li>
+                        </ul>
+                    </div>
+
+                    <div class="alert-block">
+                        <h3>Impact</h3>
+                        <p>ML is transforming every industry!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Learning Objectives -->
+        <div class="slide" data-slide="7">
+            <h1>Learning Objectives</h1>
+            <div class="block">
+                <h3>By the end of this course, you will be able to:</h3>
+                <ol>
+                    <li><strong>Understand</strong> the fundamental concepts and mathematical foundations of machine learning</li>
+                    <li><strong>Distinguish</strong> between different types of learning paradigms (supervised, unsupervised, etc.)</li>
+                    <li><strong>Implement</strong> core ML algorithms from scratch using Python</li>
+                    <li><strong>Apply</strong> appropriate ML techniques to real-world problems</li>
+                    <li><strong>Evaluate</strong> model performance using rigorous metrics</li>
+                    <li><strong>Analyze</strong> the theoretical properties of learning algorithms</li>
+                    <li><strong>Compare</strong> different approaches and select optimal methods</li>
+                    <li><strong>Understand</strong> state-of-the-art techniques in deep learning</li>
+                </ol>
+            </div>
+
+            <div class="alert-block">
+                <h3>Prerequisites</h3>
+                <p><strong>CMSC 170:</strong> Linear algebra, probability theory, calculus, Python programming</p>
+            </div>
+        </div>
+
+        <!-- Slide 8: Section - Types of ML -->
+        <div class="slide section-slide" data-slide="8">
+            <h1>Types of Machine Learning</h1>
+        </div>
+
+        <!-- Slide 9: ML Taxonomy (simplified) -->
+        <div class="slide" data-slide="9">
+            <h1>Machine Learning Taxonomy</h1>
+            <div style="text-align: center; margin-top: 3rem;">
+                <div class="block" style="max-width: 900px; margin: 0 auto;">
+                    <h2 style="text-align: center; margin-bottom: 2rem;">Machine Learning</h2>
+
+                    <div class="two-column">
+                        <div>
+                            <div class="example-block">
+                                <h3>Supervised Learning</h3>
+                                <ul>
+                                    <li>Regression</li>
+                                    <li>Classification</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="example-block">
+                                <h3>Unsupervised Learning</h3>
+                                <ul>
+                                    <li>Clustering</li>
+                                    <li>Dimensionality Reduction</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="two-column" style="margin-top: 1rem;">
+                        <div>
+                            <div class="example-block">
+                                <h3>Semi-supervised</h3>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="example-block">
+                                <h3>Reinforcement</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Section - Supervised Learning -->
+        <div class="slide section-slide" data-slide="10">
+            <h1>Supervised Learning</h1>
+        </div>
+
+        <!-- Slide 11: Supervised Learning Details -->
+        <div class="slide" data-slide="11">
+            <h1>Supervised Learning</h1>
+            <img src="../figures/supervised.jpg" alt="Supervised Learning" class="slide-image">
+            <div class="quote">"Learning is finding out what you already know. Doing is demonstrating that you know it." — Richard Bach</div>
+
+            <div class="two-column">
+                <div class="column">
+                    <div class="block">
+                        <h3>Definition</h3>
+                        <p>Learning from <strong>labeled data</strong> where each training example consists of:</p>
+                        <ul>
+                            <li><strong>Input:</strong> Feature vector \(\mathbf{x} \in \mathbb{R}^d\)</li>
+                            <li><strong>Output:</strong> Label/target \(y\)</li>
+                        </ul>
+                        <p><strong>Goal:</strong> Learn a function \(f: \mathcal{X} \rightarrow \mathcal{Y}\) such that \(f(\mathbf{x}) \approx y\)</p>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="example-block">
+                        <h3>Two Main Tasks</h3>
+                        <p><strong>1. Regression</strong> \((y \in \mathbb{R})\)<br>
+                        Predict continuous values</p>
+                        <p><strong>2. Classification</strong> \((y \in \{1,\ldots,K\})\)<br>
+                        Predict discrete categories</p>
+                    </div>
+
+                    <div class="alert-block">
+                        <h3>Challenge</h3>
+                        <p>Avoid overfitting to training data!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Regression -->
+        <div class="slide" data-slide="12">
+            <h1>Regression: Predicting Continuous Values</h1>
+            <img src="../figures/regression.jpg" alt="Regression" class="slide-image">
+            <div class="quote">"All models are wrong, but some are useful." — George Box</div>
+
+            <div class="two-column">
+                <div class="column">
+                    <div class="block">
+                        <h3>Problem Formulation</h3>
+                        <p><strong>Input:</strong> \(\mathbf{x} \in \mathbb{R}^d\) (features)<br>
+                        <strong>Output:</strong> \(y \in \mathbb{R}\) (continuous target)<br>
+                        <strong>Model:</strong> \(\hat{y} = f(\mathbf{x}; \theta)\)</p>
+                    </div>
+
+                    <div class="block">
+                        <h3>Common Loss Functions</h3>
+                        <p><strong>Mean Squared Error (MSE):</strong><br>
+                        $$\mathcal{L}(\theta) = \frac{1}{n}\sum_{i=1}^n (y_i - \hat{y}_i)^2$$</p>
+                        <p><strong>Mean Absolute Error (MAE):</strong><br>
+                        $$\mathcal{L}(\theta) = \frac{1}{n}\sum_{i=1}^n |y_i - \hat{y}_i|$$</p>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="example-block">
+                        <h3>Regression Algorithms</h3>
+                        <ul>
+                            <li>Linear Regression</li>
+                            <li>Ridge Regression (L2)</li>
+                            <li>Lasso Regression (L1)</li>
+                            <li>Polynomial Regression</li>
+                            <li>Support Vector Regression</li>
+                            <li>Neural Networks</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-block">
+                        <h3>Real-World Examples</h3>
+                        <ul>
+                            <li>House price prediction</li>
+                            <li>Stock market forecasting</li>
+                            <li>Temperature prediction</li>
+                            <li>Sales prediction</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Classification -->
+        <div class="slide" data-slide="13">
+            <h1>Classification: Predicting Categories</h1>
+            <img src="../figures/classification.jpg" alt="Classification" class="slide-image">
+            <div class="quote">"The goal is to turn data into information, and information into insight." — Carly Fiorina</div>
+
+            <div class="two-column">
+                <div class="column">
+                    <div class="block">
+                        <h3>Problem Formulation</h3>
+                        <p><strong>Input:</strong> \(\mathbf{x} \in \mathbb{R}^d\) (features)<br>
+                        <strong>Output:</strong> \(y \in \{1, 2, \ldots, K\}\) (class)<br>
+                        <strong>Model:</strong> \(\hat{y} = \arg\max_k P(y=k|\mathbf{x})\)</p>
+                    </div>
+
+                    <div class="block">
+                        <h3>Types of Classification</h3>
+                        <p><strong>Binary:</strong> Spam vs. not spam</p>
+                        <p><strong>Multi-class:</strong> Digit recognition (0-9)</p>
+                        <p><strong>Multi-label:</strong> Image tagging</p>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="example-block">
+                        <h3>Classification Algorithms</h3>
+                        <ul>
+                            <li>Logistic Regression</li>
+                            <li>Naïve Bayes</li>
+                            <li>K-Nearest Neighbors (KNN)</li>
+                            <li>Decision Trees</li>
+                            <li>Support Vector Machines</li>
+                            <li>Neural Networks</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-block">
+                        <h3>Common Loss</h3>
+                        <p><strong>Cross-Entropy:</strong><br>
+                        $$\mathcal{L} = -\frac{1}{n}\sum_{i=1}^n \sum_{k=1}^K y_{ik} \log \hat{y}_{ik}$$</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Section - Unsupervised Learning -->
+        <div class="slide section-slide" data-slide="14">
+            <h1>Unsupervised Learning</h1>
+        </div>
+
+        <!-- Slide 15: Unsupervised Learning Details -->
+        <div class="slide" data-slide="15">
+            <h1>Unsupervised Learning</h1>
+            <div class="two-column">
+                <div class="column">
+                    <div class="block">
+                        <h3>Definition</h3>
+                        <p>Learning from <strong>unlabeled data</strong> without explicit target outputs:</p>
+                        <ul>
+                            <li><strong>Input:</strong> Feature vectors \(\{\mathbf{x}_1, \ldots, \mathbf{x}_n\}\)</li>
+                            <li><strong>Output:</strong> None (discover structure)</li>
+                        </ul>
+                        <p><strong>Goal:</strong> Discover hidden patterns, structures, or relationships in data</p>
+                    </div>
+
+                    <div class="block">
+                        <h3>Main Tasks</h3>
+                        <p><strong>1. Clustering:</strong> Group similar data points</p>
+                        <p><strong>2. Dimensionality Reduction:</strong> Compress high-dimensional data</p>
+                        <p><strong>3. Density Estimation:</strong> Model the data distribution</p>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="example-block">
+                        <h3>Applications</h3>
+                        <ul>
+                            <li>Customer segmentation</li>
+                            <li>Anomaly detection</li>
+                            <li>Data visualization</li>
+                            <li>Feature extraction</li>
+                            <li>Compression</li>
+                            <li>Recommender systems</li>
+                        </ul>
+                    </div>
+
+                    <div class="alert-block">
+                        <h3>Challenge</h3>
+                        <p>How do we evaluate without labels?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Clustering -->
+        <div class="slide" data-slide="16">
+            <h1>Clustering: Grouping Similar Data</h1>
+            <img src="../figures/clustering.jpg" alt="Clustering" class="slide-image">
+            <div class="quote">"Without data, you're just another person with an opinion." — W. Edwards Deming</div>
+
+            <div class="two-column">
+                <div class="column">
+                    <div class="block">
+                        <h3>K-Means Algorithm</h3>
+                        <p><strong>Objective:</strong> Minimize within-cluster variance</p>
+                        <p>$$\min_{\{\mu_k\}, \{c_i\}} \sum_{i=1}^n \|\mathbf{x}_i - \mu_{c_i}\|^2$$</p>
+
+                        <div class="algorithm">
+                            <div class="algorithm-line">1. Initialize K centroids randomly</div>
+                            <div class="algorithm-line">2. REPEAT</div>
+                            <div class="algorithm-line">&nbsp;&nbsp;3. Assign each point to nearest centroid</div>
+                            <div class="algorithm-line">&nbsp;&nbsp;4. Update centroids as cluster means</div>
+                            <div class="algorithm-line">5. UNTIL convergence</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="example-block">
+                        <h3>Other Clustering Methods</h3>
+                        <p><strong>Hierarchical:</strong> Creates dendrogram</p>
+                        <p><strong>DBSCAN:</strong> Density-based, finds arbitrary shapes</p>
+                        <p><strong>Gaussian Mixture Models:</strong> Probabilistic clustering</p>
+                    </div>
+
+                    <div class="example-block">
+                        <h3>Evaluation Metrics</h3>
+                        <ul>
+                            <li>Silhouette coefficient</li>
+                            <li>Davies-Bouldin index</li>
+                            <li>Calinski-Harabasz index</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: Dimensionality Reduction -->
+        <div class="slide" data-slide="17">
+            <h1>Dimensionality Reduction</h1>
+            <img src="../figures/dimension.jpg" alt="Dimensionality Reduction" class="slide-image">
+            <div class="quote">"In God we trust, all others must bring data." — W. Edwards Deming</div>
+
+            <div class="two-column">
+                <div class="column">
+                    <div class="block">
+                        <h3>Motivation</h3>
+                        <p><strong>High-dimensional data</strong> causes:</p>
+                        <ul>
+                            <li>Curse of dimensionality</li>
+                            <li>Computational complexity</li>
+                            <li>Overfitting</li>
+                            <li>Visualization difficulty</li>
+                        </ul>
+                        <p><strong>Solution:</strong> Project to lower dimensions while preserving structure</p>
+                    </div>
+
+                    <div class="block">
+                        <h3>Principal Component Analysis</h3>
+                        <p><strong>Goal:</strong> Find directions of maximum variance</p>
+                        <ol style="font-size: 0.95rem;">
+                            <li>Center the data</li>
+                            <li>Compute covariance matrix</li>
+                            <li>Find eigenvectors</li>
+                            <li>Project onto top k eigenvectors</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="example-block">
+                        <h3>Other Techniques</h3>
+                        <p><strong>Linear:</strong> PCA, LDA, ICA</p>
+                        <p><strong>Non-linear:</strong> Kernel PCA, t-SNE, UMAP, Autoencoders</p>
+                    </div>
+
+                    <div class="example-block">
+                        <h3>Applications</h3>
+                        <ul>
+                            <li>Data visualization (2D/3D)</li>
+                            <li>Noise reduction</li>
+                            <li>Feature extraction</li>
+                            <li>Image compression</li>
+                            <li>Preprocessing for ML</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 18: Section - Semi-Supervised -->
+        <div class="slide section-slide" data-slide="18">
+            <h1>Semi-Supervised Learning</h1>
+        </div>
+
+        <!-- Slide 19: Semi-Supervised Details -->
+        <div class="slide" data-slide="19">
+            <h1>Semi-Supervised Learning</h1>
+            <div class="two-column">
+                <div class="column">
+                    <div class="block">
+                        <h3>Definition</h3>
+                        <p>Learning from <strong>both labeled and unlabeled data:</strong></p>
+                        <ul>
+                            <li><strong>Labeled:</strong> \(\{(\mathbf{x}_1, y_1), \ldots, (\mathbf{x}_l, y_l)\}\)</li>
+                            <li><strong>Unlabeled:</strong> \(\{\mathbf{x}_{l+1}, \ldots, \mathbf{x}_{l+u}\}\)</li>
+                            <li>Typically \(l \ll u\) (few labels, many unlabeled)</li>
+                        </ul>
+                        <p><strong>Goal:</strong> Leverage unlabeled data to improve performance</p>
+                    </div>
+
+                    <div class="block">
+                        <h3>Fundamental Assumptions</h3>
+                        <p><strong>1. Smoothness:</strong> Nearby points share same label</p>
+                        <p><strong>2. Cluster:</strong> Data forms discrete clusters</p>
+                        <p><strong>3. Manifold:</strong> High-dim data lies on low-dim manifold</p>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="example-block">
+                        <h3>Common Approaches</h3>
+                        <p><strong>Self-Training:</strong> Iteratively add confident predictions</p>
+                        <p><strong>Co-Training:</strong> Multiple views, exchange predictions</p>
+                        <p><strong>Graph-Based:</strong> Construct similarity graph, propagate labels</p>
+                    </div>
+
+                    <div class="alert-block">
+                        <h3>Why Semi-Supervised?</h3>
+                        <p>Labels are expensive! (Human annotation, expert knowledge, time)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 20: Section - Reinforcement Learning -->
+        <div class="slide section-slide" data-slide="20">
+            <h1>Reinforcement Learning</h1>
+        </div>
+
+        <!-- Slide 21: RL Details -->
+        <div class="slide" data-slide="21">
+            <h1>Reinforcement Learning</h1>
+            <img src="../figures/robot.jpg" alt="Reinforcement Learning" class="slide-image">
+            <div class="quote">"You can use a spoon to eat soup, but it's better to use a ladle. Learning is choosing the right tool." — Yann LeCun</div>
+
+            <div class="two-column">
+                <div class="column">
+                    <div class="block">
+                        <h3>Definition</h3>
+                        <p>Learning through <strong>interaction with an environment:</strong></p>
+                        <ul>
+                            <li>Agent takes actions</li>
+                            <li>Environment provides states & rewards</li>
+                            <li>Goal: Maximize cumulative reward</li>
+                        </ul>
+                    </div>
+
+                    <div class="block">
+                        <h3>Markov Decision Process</h3>
+                        <p>Framework: \((\mathcal{S}, \mathcal{A}, P, R, \gamma)\)</p>
+                        <p><strong>Value Function:</strong><br>
+                        $$V^\pi(s) = \mathbb{E}\left[\sum_{t=0}^\infty \gamma^t R_t \mid s_0=s, \pi\right]$$</p>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="example-block">
+                        <h3>RL vs Other Paradigms</h3>
+                        <ul>
+                            <li>No direct supervision</li>
+                            <li>Delayed rewards</li>
+                            <li>Exploration vs exploitation</li>
+                            <li>Sequential decision making</li>
+                            <li>Trial and error learning</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-block">
+                        <h3>Classic Algorithms</h3>
+                        <ul>
+                            <li>Q-Learning</li>
+                            <li>Policy Gradient</li>
+                            <li>Deep Q-Networks (DQN)</li>
+                            <li>PPO, A3C</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 22: Section - ML Pipeline -->
+        <div class="slide section-slide" data-slide="22">
+            <h1>The Machine Learning Pipeline</h1>
+        </div>
+
+        <!-- Slide 23: ML Pipeline -->
+        <div class="slide" data-slide="23">
+            <h1>The ML Pipeline: From Data to Deployment</h1>
+            <div class="block" style="max-width: 1200px; margin: 2rem auto;">
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem;">
+                    <div class="example-block">1. Data Collection</div>
+                    <div class="example-block">2. Data Cleaning</div>
+                    <div class="example-block">3. EDA</div>
+                    <div class="example-block">4. Feature Engineering</div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem;">
+                    <div class="example-block">5. Train/Test Split</div>
+                    <div class="example-block">6. Model Selection</div>
+                    <div class="example-block">7. Training</div>
+                    <div class="example-block">8. Hyperparameter Tuning</div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+                    <div class="example-block">9. Evaluation</div>
+                    <div class="example-block">10. Validation</div>
+                    <div class="example-block">11. Deployment</div>
+                    <div class="alert-block">12. Monitoring → Retrain</div>
+                </div>
+            </div>
+
+            <div class="alert-block">
+                <h3>Key Insight</h3>
+                <p>ML is iterative! Model performance informs feature engineering, data collection, etc.</p>
+            </div>
+        </div>
+
+        <!-- Slide 24: Data Preprocessing -->
+        <div class="slide" data-slide="24">
+            <h1>Data Preprocessing</h1>
+            <img src="../figures/dataprep.jpg" alt="Data Preprocessing" class="slide-image">
+            <div class="quote">"Garbage in, garbage out." — George Fuechsel</div>
+
+            <div class="two-column">
+                <div class="column">
+                    <div class="block">
+                        <h3>Data Cleaning</h3>
+                        <ul>
+                            <li>Missing values: Imputation, deletion</li>
+                            <li>Outliers: Detect and handle</li>
+                            <li>Duplicates: Remove</li>
+                            <li>Inconsistencies: Standardize</li>
+                        </ul>
+                    </div>
+
+                    <div class="block">
+                        <h3>Feature Scaling</h3>
+                        <p><strong>Standardization:</strong> \(z = \frac{x - \mu}{\sigma}\)</p>
+                        <p><strong>Min-Max:</strong> \(x' = \frac{x - \min}{\max - \min}\)</p>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="block">
+                        <h3>Feature Engineering</h3>
+                        <ul>
+                            <li>Polynomial features</li>
+                            <li>Domain-specific transformations</li>
+                            <li>Binning continuous variables</li>
+                            <li>One-hot encoding categorical</li>
+                            <li>Text vectorization (TF-IDF)</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-block">
+                        <h3>Train/Test Split</h3>
+                        <p><strong>Why?</strong> Evaluate generalization</p>
+                        <p><strong>Rule:</strong> Never train on test data!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 25: Model Selection & Training -->
+        <div class="slide" data-slide="25">
+            <h1>Model Selection & Training</h1>
+            <div class="two-column">
+                <div class="column">
+                    <div class="block">
+                        <h3>Choosing a Model</h3>
+                        <p><strong>Consider:</strong></p>
+                        <ul>
+                            <li>Problem type: Regression, classification</li>
+                            <li>Data size: Deep learning needs more</li>
+                            <li>Interpretability: Linear vs black boxes</li>
+                            <li>Training time & prediction speed</li>
+                        </ul>
+                    </div>
+
+                    <div class="block">
+                        <h3>No Free Lunch Theorem</h3>
+                        <p>No single algorithm works best for all problems. Must try multiple approaches!</p>
+                    </div>
+
+                    <div class="example-block">
+                        <h3>Start Simple!</h3>
+                        <ol>
+                            <li>Simple baseline</li>
+                            <li>Linear model</li>
+                            <li>More complex models</li>
+                            <li>Ensemble methods</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="block">
+                        <h3>Training Process</h3>
+                        <p><strong>Optimization:</strong><br>
+                        $$\theta^* = \arg\min_\theta \mathcal{L}(\theta; \mathcal{D})$$</p>
+                        <p><strong>Optimizers:</strong> Gradient Descent, SGD, Adam, RMSprop</p>
+                    </div>
+
+                    <div class="block">
+                        <h3>Hyperparameter Tuning</h3>
+                        <p><strong>Hyperparameters:</strong> Set before training</p>
+                        <ul>
+                            <li>Learning rate, regularization</li>
+                            <li>Number of layers, hidden units</li>
+                            <li>Tree depth, number of trees</li>
+                        </ul>
+                        <p><strong>Search Methods:</strong> Grid search, Random search, Bayesian optimization</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 26: Evaluation Metrics -->
+        <div class="slide" data-slide="26">
+            <h1>Model Evaluation Metrics</h1>
+            <div class="two-column">
+                <div class="column">
+                    <div class="block">
+                        <h3>Regression Metrics</h3>
+                        <p><strong>Mean Squared Error:</strong><br>
+                        $$\text{MSE} = \frac{1}{n}\sum_{i=1}^n (y_i - \hat{y}_i)^2$$</p>
+
+                        <p><strong>Mean Absolute Error:</strong><br>
+                        $$\text{MAE} = \frac{1}{n}\sum_{i=1}^n |y_i - \hat{y}_i|$$</p>
+
+                        <p><strong>R-squared:</strong><br>
+                        $$R^2 = 1 - \frac{\sum_i (y_i - \hat{y}_i)^2}{\sum_i (y_i - \bar{y})^2}$$</p>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="block">
+                        <h3>Classification Metrics</h3>
+                        <p><strong>Accuracy:</strong> Correct predictions / Total</p>
+
+                        <p><strong>Precision:</strong><br>
+                        $$\text{Prec} = \frac{TP}{TP + FP}$$</p>
+
+                        <p><strong>Recall:</strong><br>
+                        $$\text{Rec} = \frac{TP}{TP + FN}$$</p>
+
+                        <p><strong>F1-Score:</strong><br>
+                        $$F_1 = 2 \cdot \frac{\text{Prec} \cdot \text{Rec}}{\text{Prec} + \text{Rec}}$$</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert-block">
+                <h3>Important</h3>
+                <p>Choose metrics appropriate to your problem! Accuracy misleading for imbalanced data.</p>
+            </div>
+        </div>
+
+        <!-- Slide 27: Section - Key Challenges -->
+        <div class="slide section-slide" data-slide="27">
+            <h1>Key Challenges in ML</h1>
+        </div>
+
+        <!-- Slide 28: Bias-Variance Tradeoff -->
+        <div class="slide" data-slide="28">
+            <h1>Bias-Variance Tradeoff</h1>
+            <div class="two-column">
+                <div class="column">
+                    <div class="block">
+                        <h3>Decomposition of Expected Error</h3>
+                        <p>For regression, expected test error:</p>
+                        <p>$$\mathbb{E}[(y - \hat{f}(x))^2] = \text{Bias}^2 + \text{Variance} + \text{Noise}$$</p>
+
+                        <p><strong>Bias:</strong> Error from wrong assumptions<br>
+                        $$\text{Bias}[\hat{f}(x)] = \mathbb{E}[\hat{f}(x)] - f(x)$$</p>
+
+                        <p><strong>Variance:</strong> Error from sensitivity to training set<br>
+                        $$\text{Var}[\hat{f}(x)] = \mathbb{E}[(\hat{f}(x) - \mathbb{E}[\hat{f}(x)])^2]$$</p>
+                    </div>
+
+                    <div class="example-block">
+                        <h3>The Tradeoff</h3>
+                        <ul>
+                            <li>Simple models: High bias, low variance</li>
+                            <li>Complex models: Low bias, high variance</li>
+                            <li><strong>Goal:</strong> Find sweet spot!</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="block">
+                        <h3>Underfitting</h3>
+                        <p><strong>Symptoms:</strong> High training & test error</p>
+                        <p><strong>Solutions:</strong> More features, more complex model, less regularization</p>
+                    </div>
+
+                    <div class="block">
+                        <h3>Overfitting</h3>
+                        <p><strong>Symptoms:</strong> Low training error, high test error</p>
+                        <p><strong>Solutions:</strong></p>
+                        <ul>
+                            <li>More training data</li>
+                            <li>Regularization (L1/L2)</li>
+                            <li>Simpler model</li>
+                            <li>Early stopping</li>
+                            <li>Dropout (neural networks)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 29: Regularization -->
+        <div class="slide" data-slide="29">
+            <h1>Regularization Techniques</h1>
+            <div class="two-column">
+                <div class="column">
+                    <div class="block">
+                        <h3>L2 Regularization (Ridge)</h3>
+                        <p><strong>Modified objective:</strong><br>
+                        $$\min_\theta \mathcal{L}(\theta) + \lambda \|\theta\|_2^2$$</p>
+
+                        <p><strong>Effect:</strong></p>
+                        <ul>
+                            <li>Penalizes large weights</li>
+                            <li>Shrinks coefficients toward zero</li>
+                            <li>Improves generalization</li>
+                            <li>Handles multicollinearity</li>
+                        </ul>
+
+                        <p><strong>Closed-form solution:</strong><br>
+                        $$\hat{\theta} = (\mathbf{X}^T\mathbf{X} + \lambda \mathbf{I})^{-1}\mathbf{X}^T\mathbf{y}$$</p>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="block">
+                        <h3>L1 Regularization (Lasso)</h3>
+                        <p><strong>Modified objective:</strong><br>
+                        $$\min_\theta \mathcal{L}(\theta) + \lambda \|\theta\|_1$$</p>
+
+                        <p><strong>Effect:</strong></p>
+                        <ul>
+                            <li>Sparse solutions (some \(\theta_i = 0\))</li>
+                            <li>Automatic feature selection</li>
+                            <li>More aggressive than L2</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-block">
+                        <h3>Elastic Net</h3>
+                        <p>Combines L1 and L2:</p>
+                        <p>$$\min_\theta \mathcal{L}(\theta) + \lambda_1 \|\theta\|_1 + \lambda_2 \|\theta\|_2^2$$</p>
+                        <p>Best of both worlds!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 30: Curse of Dimensionality -->
+        <div class="slide" data-slide="30">
+            <h1>The Curse of Dimensionality</h1>
+            <div class="two-column">
+                <div class="column">
+                    <div class="block">
+                        <h3>Problem Statement</h3>
+                        <p>As dimensionality \(d\) increases:</p>
+                        <ul>
+                            <li>Volume grows exponentially: \(V \propto r^d\)</li>
+                            <li>Data becomes sparse: Points far apart</li>
+                            <li>Distance metrics break down</li>
+                            <li>Overfitting risk increases</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-block">
+                        <h3>Data Requirements</h3>
+                        <p>To maintain density, need \(n \propto c^d\) samples where \(c > 1\)</p>
+                    </div>
+
+                    <div class="alert-block">
+                        <h3>Rule of Thumb</h3>
+                        <p>\(n \geq 10 \cdot d\) for reliable models</p>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="block">
+                        <h3>Solutions</h3>
+                        <p><strong>1. Dimensionality Reduction</strong></p>
+                        <ul>
+                            <li>PCA, t-SNE, UMAP</li>
+                            <li>Feature selection</li>
+                        </ul>
+
+                        <p><strong>2. Feature Selection</strong></p>
+                        <ul>
+                            <li>Filter methods (correlation)</li>
+                            <li>Wrapper methods (RFE)</li>
+                            <li>Embedded (Lasso, trees)</li>
+                        </ul>
+
+                        <p><strong>3. Regularization</strong></p>
+                        <ul>
+                            <li>L1/L2 penalties</li>
+                            <li>Early stopping</li>
+                        </ul>
+
+                        <p><strong>4. Collect More Data</strong></p>
+                        <ul>
+                            <li>Exponentially more needed</li>
+                            <li>Often impractical</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 31: Section - Course Structure -->
+        <div class="slide section-slide" data-slide="31">
+            <h1>Course Structure</h1>
+        </div>
+
+        <!-- Slide 32: Course Topics -->
+        <div class="slide" data-slide="32">
+            <h1>CMSC 173 Course Topics</h1>
+            <div class="two-column">
+                <div class="column">
+                    <div class="block">
+                        <h3>Core Foundations</h3>
+                        <p><strong>I. Overview</strong> (Today!)</p>
+                        <p><strong>II. Parameter Estimation</strong><br>
+                        MLE, Method of Moments</p>
+                        <p><strong>III. Regression</strong><br>
+                        Linear, Lasso, Ridge, Splines</p>
+                        <p><strong>IV. Model Selection</strong><br>
+                        Bias-Variance, Cross-Validation</p>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="block">
+                        <h3>Advanced Methods</h3>
+                        <p><strong>V. Classification</strong><br>
+                        Logistic, Naïve Bayes, KNN, Trees</p>
+                        <p><strong>VI. Kernel Methods</strong><br>
+                        Support Vector Machines</p>
+                        <p><strong>VII. PCA</strong><br>
+                        Dimensionality Reduction</p>
+                        <p><strong>VIII. Neural Networks</strong><br>
+                        CNNs, Transformers, Generative</p>
+                        <p><strong>IX. Clustering</strong><br>
+                        K-Means, Hierarchical, GMM</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 33: Learning Resources -->
+        <div class="slide" data-slide="33">
+            <h1>Learning Resources</h1>
+            <div class="two-column">
+                <div class="column">
+                    <div class="block">
+                        <h3>Recommended Textbooks</h3>
+                        <p><strong>Primary:</strong></p>
+                        <ul>
+                            <li>Murphy, K. P. (2022). <em>Probabilistic Machine Learning</em>. MIT Press.</li>
+                            <li>Bishop, C. M. (2006). <em>Pattern Recognition and Machine Learning</em>. Springer.</li>
+                        </ul>
+
+                        <p><strong>Supplementary:</strong></p>
+                        <ul>
+                            <li>Hastie et al. (2009). <em>Elements of Statistical Learning</em>.</li>
+                            <li>Goodfellow et al. (2016). <em>Deep Learning</em>.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="block">
+                        <h3>Online Resources</h3>
+                        <ul>
+                            <li>Scikit-learn documentation</li>
+                            <li>PyTorch/TensorFlow tutorials</li>
+                            <li>Coursera ML courses (Andrew Ng)</li>
+                            <li>Stanford CS229 lecture notes</li>
+                            <li>ArXiv.org for research papers</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-block">
+                        <h3>Tools We'll Use</h3>
+                        <ul>
+                            <li>Python 3.8+</li>
+                            <li>NumPy, Pandas, Matplotlib</li>
+                            <li>Scikit-learn</li>
+                            <li>Jupyter Notebooks</li>
+                            <li>PyTorch (for deep learning)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert-block">
+                <h3>Installation</h3>
+                <p>Ensure you have Python and required packages installed before next session!</p>
+            </div>
+        </div>
+
+        <!-- Slide 34: Best Practices -->
+        <div class="slide" data-slide="34">
+            <h1>Best Practices in Machine Learning</h1>
+            <img src="../figures/workflow.jpg" alt="ML Workflow" class="slide-image">
+            <div class="quote">"The best way to predict the future is to invent it." — Alan Kay</div>
+
+            <div class="two-column">
+                <div class="column">
+                    <div class="block">
+                        <h3>Development Workflow</h3>
+                        <p><strong>1. Start with baseline</strong></p>
+                        <p><strong>2. Iterate systematically</strong><br>
+                        Change one thing at a time, track experiments</p>
+                        <p><strong>3. Validate rigorously</strong><br>
+                        Cross-validation, hold-out test set</p>
+                        <p><strong>4. Document everything</strong><br>
+                        Assumptions, hyperparameters, results</p>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="block">
+                        <h3>Common Pitfalls to Avoid</h3>
+                        <ul>
+                            <li>Data leakage: Test data in training</li>
+                            <li>Ignoring class imbalance</li>
+                            <li>Not checking for overfitting</li>
+                            <li>Using wrong metrics</li>
+                            <li>Not scaling features</li>
+                            <li>Forgetting randomness: Set seeds!</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-block">
+                        <h3>Reproducibility</h3>
+                        <p>Set random seeds, document dependencies, share code & data</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 35: Ethics & Responsible AI -->
+        <div class="slide" data-slide="35">
+            <h1>Ethics & Responsible AI</h1>
+            <img src="../figures/ethics.jpg" alt="AI Ethics" class="slide-image">
+            <div class="quote">"With great power comes great responsibility." — Stan Lee (adapted from Voltaire)</div>
+
+            <div class="two-column">
+                <div class="column">
+                    <div class="block">
+                        <h3>Ethical Considerations</h3>
+                        <p><strong>Bias & Fairness:</strong> Training data may contain biases. Ensure fairness across groups.</p>
+                        <p><strong>Privacy:</strong> Protect sensitive information. Comply with regulations (GDPR).</p>
+                        <p><strong>Transparency:</strong> Explainable AI (XAI), interpretable models.</p>
+                        <p><strong>Safety & Security:</strong> Adversarial robustness, prevent misuse.</p>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="block">
+                        <h3>Societal Impact</h3>
+                        <p><strong>Positive:</strong> Healthcare improvements, scientific discoveries, accessibility</p>
+                        <p><strong>Concerns:</strong> Job displacement, deepfakes, surveillance, autonomous weapons</p>
+                    </div>
+
+                    <div class="alert-block">
+                        <h3>Our Responsibility</h3>
+                        <p>As ML practitioners, we must consider ethical implications, design inclusive systems, and prioritize societal benefit.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 36: Section - Summary -->
+        <div class="slide section-slide" data-slide="36">
+            <h1>Summary</h1>
+        </div>
+
+        <!-- Slide 37: Key Takeaways -->
+        <div class="slide" data-slide="37">
+            <h1>Key Takeaways</h1>
+            <div class="block">
+                <h3>What We Covered Today</h3>
+                <ol>
+                    <li><strong>Definition of Machine Learning:</strong> Learning from data to improve performance</li>
+                    <li><strong>Supervised Learning:</strong> Regression & classification with labeled data</li>
+                    <li><strong>Unsupervised Learning:</strong> Clustering & dimensionality reduction</li>
+                    <li><strong>Semi-Supervised Learning:</strong> Leveraging both labeled & unlabeled data</li>
+                    <li><strong>Reinforcement Learning:</strong> Learning through interaction & rewards</li>
+                    <li><strong>ML Pipeline:</strong> From data collection to deployment</li>
+                    <li><strong>Key Challenges:</strong> Bias-variance tradeoff, overfitting, curse of dimensionality</li>
+                    <li><strong>Best Practices:</strong> Systematic development, validation, ethics</li>
+                </ol>
+            </div>
+
+            <div class="alert-block">
+                <h3>Next Lecture</h3>
+                <p><strong>Parameter Estimation:</strong> Method of Moments & Maximum Likelihood Estimation</p>
+            </div>
+        </div>
+
+        <!-- Slide 38: Prepare for Next Session -->
+        <div class="slide" data-slide="38">
+            <h1>Prepare for Next Session</h1>
+            <div class="two-column">
+                <div class="column">
+                    <div class="block">
+                        <h3>Required Reading</h3>
+                        <p><strong>Murphy (2022):</strong></p>
+                        <ul>
+                            <li>Chapter 4: Statistics (4.1-4.3)</li>
+                            <li>Chapter 5: Decision Theory (5.1-5.2)</li>
+                        </ul>
+
+                        <p><strong>Bishop (2006):</strong></p>
+                        <ul>
+                            <li>Chapter 1: Introduction (1.1-1.5)</li>
+                            <li>Chapter 2: Probability (2.1-2.3)</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-block">
+                        <h3>Practice Problems</h3>
+                        <ol>
+                            <li>Review probability theory</li>
+                            <li>Linear algebra refresher</li>
+                            <li>Set up Python environment</li>
+                            <li>Install required packages</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="block">
+                        <h3>Questions to Ponder</h3>
+                        <ol>
+                            <li>When would you choose supervised vs unsupervised learning?</li>
+                            <li>How do you decide on train/test split ratio?</li>
+                            <li>What metrics are appropriate for imbalanced datasets?</li>
+                            <li>How can we detect overfitting early?</li>
+                            <li>What are ethical concerns in your domain of interest?</li>
+                        </ol>
+                    </div>
+
+                    <div class="alert-block">
+                        <h3>Office Hours</h3>
+                        <p>Available for questions and discussion after class or by appointment</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 39: Final Slide -->
+        <div class="slide standout-slide" data-slide="39">
+            <div>
+                <h1 style="font-size: 5rem; margin-bottom: 2rem;">Questions?</h1>
+                <p style="font-size: 2rem; margin-bottom: 2rem;">Thank you for your attention!</p>
+                <p style="font-size: 1.5rem;"><strong>Next Lecture:</strong> Parameter Estimation</p>
+                <p style="font-size: 1.5rem;">See you next time!</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-controls">
+        <button class="nav-btn" id="prevBtn" onclick="previousSlide()">←</button>
+        <button class="nav-btn" id="nextBtn" onclick="nextSlide()">→</button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = document.querySelectorAll('.slide').length;
+
+        function updateSlide() {
+            // Hide all slides
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.classList.remove('active', 'prev');
+            });
+
+            // Show current slide
+            const current = document.querySelector(`[data-slide="${currentSlide}"]`);
+            if (current) {
+                current.classList.add('active');
+            }
+
+            // Update counter
+            document.getElementById('slideCounter').textContent = `${currentSlide} / ${totalSlides}`;
+
+            // Update progress bar
+            const progress = (currentSlide / totalSlides) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+
+            // Update URL hash
+            window.location.hash = currentSlide;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                const current = document.querySelector(`[data-slide="${currentSlide}"]`);
+                current.classList.add('prev');
+                currentSlide++;
+                updateSlide();
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 1) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                e.preventDefault();
+                previousSlide();
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                currentSlide = 1;
+                updateSlide();
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                currentSlide = totalSlides;
+                updateSlide();
+            }
+        });
+
+        // Touch/swipe support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) {
+                nextSlide();
+            }
+            if (touchEndX > touchStartX + 50) {
+                previousSlide();
+            }
+        }
+
+        // Initialize from URL hash
+        window.addEventListener('load', () => {
+            const hash = window.location.hash.substring(1);
+            if (hash && !isNaN(hash)) {
+                currentSlide = parseInt(hash);
+                if (currentSlide < 1) currentSlide = 1;
+                if (currentSlide > totalSlides) currentSlide = totalSlides;
+            }
+            updateSlide();
+        });
+
+        // Prevent context menu on long press (better mobile experience)
+        window.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+    </script>
+</body>
+</html>
