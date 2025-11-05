@@ -16,19 +16,23 @@
             startOnLoad: true,
             theme: 'base',
             themeVariables: {
-                primaryColor: '#FFCB05',
-                primaryTextColor: '#00274C',
-                primaryBorderColor: '#00274C',
-                lineColor: '#00274C',
-                secondaryColor: '#FFE6A3',
-                tertiaryColor: '#008080',
+                primaryColor: '#EECE45',
+                primaryTextColor: '#043263',
+                primaryBorderColor: '#043263',
+                lineColor: '#748CAC',
+                secondaryColor: '#7B94AC',
+                tertiaryColor: '#2A9D8F',
                 background: '#ffffff',
-                mainBkg: '#FFCB05',
-                secondBkg: '#FFE6A3',
-                tertiaryBkg: '#008080',
-                textColor: '#00274C',
-                fontSize: '16px',
-                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+                mainBkg: '#EECE45',
+                secondBkg: '#7B94AC',
+                tertiaryBkg: '#2A9D8F',
+                textColor: '#043263',
+                fontSize: '15px',
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                nodeBorder: '#043263',
+                clusterBkg: 'rgba(238, 206, 69, 0.1)',
+                clusterBorder: '#748CAC',
+                edgeLabelBackground: '#ffffff'
             }
         });
     </script>
@@ -41,25 +45,27 @@
         }
 
         :root {
-            /* Color palette inspired by Michigan Wolverine theme */
-            --primary-blue: #00274C;
-            --primary-maize: #FFCB05;
-            --maize-light: #FFE6A3;
-            --maize-dark: #FFA500;
-            --teal-accent: #008080;
-            --orange-accent: #FF8A33;
-            --success: #06A77D;
+            /* Professional color palette - CEO presentation quality */
+            --primary-navy: #043263;
+            --primary-yellow: #EECE45;
+            --light-blue-gray: #7B94AC;
+            --medium-blue-gray: #748CAC;
+            --success-teal: #2A9D8F;
+            --warning-orange: #E76F51;
             --text-dark: #1a1a1a;
             --text-light: #ffffff;
-            --bg-light: #f8f9fa;
-            --shadow: 0 10px 40px rgba(0, 39, 76, 0.1);
-            --shadow-hover: 0 15px 50px rgba(0, 39, 76, 0.15);
+            --bg-light: #F8F9FA;
+            --bg-ultra-light: #FAFBFC;
+            --shadow-sm: 0 2px 4px rgba(4, 50, 99, 0.08);
+            --shadow-md: 0 4px 12px rgba(4, 50, 99, 0.12);
+            --shadow-lg: 0 8px 24px rgba(4, 50, 99, 0.16);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
             overflow: hidden;
-            background: linear-gradient(135deg, var(--primary-blue) 0%, #003d7a 100%);
+            background: linear-gradient(135deg, var(--primary-navy) 0%, #062d4f 100%);
             color: var(--text-dark);
         }
 
@@ -76,14 +82,34 @@
             left: 0;
             width: 100%;
             height: 100%;
-            padding: 60px 80px;
+            padding: 50px 70px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             opacity: 0;
             transform: translateX(100%);
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: var(--transition-smooth);
             background: white;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* Smooth scrollbar for slides */
+        .slide::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .slide::-webkit-scrollbar-track {
+            background: var(--bg-light);
+        }
+
+        .slide::-webkit-scrollbar-thumb {
+            background: var(--medium-blue-gray);
+            border-radius: 4px;
+        }
+
+        .slide::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-navy);
         }
 
         .slide.active {
@@ -99,7 +125,7 @@
 
         /* Title Slide */
         .slide.title-slide {
-            background: linear-gradient(135deg, var(--primary-blue) 0%, #003d7a 100%);
+            background: linear-gradient(135deg, var(--primary-navy) 0%, #062d4f 100%);
             color: var(--text-light);
             text-align: center;
             justify-content: center;
@@ -116,7 +142,7 @@
 
         .slide.title-slide .subtitle {
             font-size: 1.8rem;
-            color: var(--primary-maize);
+            color: var(--primary-yellow);
             margin-bottom: 2rem;
             animation: slideInUp 0.8s ease-out 0.2s backwards;
         }
@@ -136,7 +162,7 @@
 
         /* Section Slides */
         .slide.section-slide {
-            background: linear-gradient(135deg, var(--teal-accent) 0%, #006666 100%);
+            background: linear-gradient(135deg, var(--medium-blue-gray) 0%, var(--light-blue-gray) 100%);
             color: var(--text-light);
             justify-content: center;
             align-items: center;
@@ -152,24 +178,24 @@
         /* Content */
         h1 {
             font-size: 2.8rem;
-            color: var(--primary-blue);
+            color: var(--primary-navy);
             margin-bottom: 1.5rem;
             font-weight: 700;
-            border-bottom: 4px solid var(--primary-maize);
+            border-bottom: 4px solid var(--primary-yellow);
             padding-bottom: 0.75rem;
             letter-spacing: -0.5px;
         }
 
         h2 {
             font-size: 2rem;
-            color: var(--primary-blue);
+            color: var(--primary-navy);
             margin: 1.5rem 0 1rem 0;
             font-weight: 600;
         }
 
         h3 {
             font-size: 1.5rem;
-            color: var(--primary-blue);
+            color: var(--primary-navy);
             margin: 1rem 0 0.5rem 0;
             font-weight: 600;
         }
@@ -207,58 +233,61 @@
         /* Block Styles - Material Design Elevation */
         .block {
             background: #ffffff;
-            border-left: 4px solid var(--primary-blue);
+            border-left: 4px solid var(--primary-navy);
             padding: 1.5rem 1.75rem;
             margin-bottom: 1.25rem;
             border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-            transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-smooth);
         }
 
         .block:hover {
-            box-shadow: 0 3px 6px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.12);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
         }
 
         .block h3 {
             margin-top: 0;
-            color: var(--primary-blue);
+            color: var(--primary-navy);
         }
 
         .example-block {
-            background: rgba(255, 203, 5, 0.08);
-            border-left: 4px solid var(--primary-maize);
+            background: rgba(238, 206, 69, 0.1);
+            border-left: 4px solid var(--primary-yellow);
             padding: 1.5rem 1.75rem;
             margin-bottom: 1.25rem;
             border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-            transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-smooth);
         }
 
         .example-block:hover {
-            box-shadow: 0 3px 6px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.12);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
         }
 
         .example-block h3 {
-            color: var(--primary-blue);
+            color: var(--primary-navy);
             font-weight: 600;
         }
 
         .alert-block {
-            background: rgba(255, 138, 51, 0.08);
-            border-left: 4px solid var(--orange-accent);
+            background: rgba(231, 111, 81, 0.1);
+            border-left: 4px solid var(--warning-orange);
             padding: 1.5rem 1.75rem;
             margin-bottom: 1.25rem;
             border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-            transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-smooth);
         }
 
         .alert-block:hover {
-            box-shadow: 0 3px 6px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.12);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
         }
 
         .alert-block h3 {
-            color: var(--orange-accent);
+            color: var(--warning-orange);
             font-weight: 600;
         }
 
@@ -277,18 +306,22 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 2rem auto;
+            margin: 1.5rem auto;
             width: 100%;
-            min-height: 400px;
+            min-height: 300px;
+            max-height: 450px;
             padding: 1rem;
+            overflow: visible;
         }
 
         .mermaid-container.large {
-            min-height: 500px;
+            min-height: 350px;
+            max-height: 500px;
         }
 
         .mermaid-container.compact {
-            min-height: 350px;
+            min-height: 250px;
+            max-height: 350px;
         }
 
         .mermaid {
@@ -327,9 +360,10 @@
             left: 0;
             width: 0%;
             height: 5px;
-            background: linear-gradient(90deg, var(--primary-maize), var(--orange-accent));
+            background: linear-gradient(90deg, var(--primary-yellow), var(--success-teal));
             z-index: 1000;
             transition: width 0.3s ease;
+            box-shadow: 0 2px 4px rgba(238, 206, 69, 0.4);
         }
 
         /* Navigation Controls */
@@ -343,26 +377,26 @@
         }
 
         .nav-btn {
-            background: rgba(0, 39, 76, 0.9);
-            color: var(--primary-maize);
+            background: rgba(4, 50, 99, 0.95);
+            color: var(--primary-yellow);
             border: none;
             width: 60px;
             height: 60px;
             border-radius: 50%;
             font-size: 1.5rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow);
+            transition: var(--transition-smooth);
+            box-shadow: var(--shadow-md);
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .nav-btn:hover {
-            background: var(--primary-maize);
-            color: var(--primary-blue);
+            background: var(--primary-yellow);
+            color: var(--primary-navy);
             transform: scale(1.1);
-            box-shadow: var(--shadow-hover);
+            box-shadow: var(--shadow-lg);
         }
 
         .nav-btn:active {
@@ -374,14 +408,14 @@
             position: fixed;
             bottom: 30px;
             left: 30px;
-            background: rgba(0, 39, 76, 0.9);
-            color: var(--primary-maize);
+            background: rgba(4, 50, 99, 0.95);
+            color: var(--primary-yellow);
             padding: 15px 25px;
             border-radius: 30px;
             font-weight: 600;
             font-size: 1.1rem;
             z-index: 1000;
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-md);
         }
 
         /* Animations */
@@ -422,11 +456,12 @@
 
         /* Code blocks */
         code {
-            background: rgba(0, 39, 76, 0.05);
+            background: rgba(4, 50, 99, 0.06);
             padding: 2px 6px;
             border-radius: 4px;
             font-family: 'Courier New', monospace;
             font-size: 0.9em;
+            color: var(--primary-navy);
         }
 
         /* Table of Contents */
@@ -438,18 +473,19 @@
         }
 
         .toc-item {
-            background: rgba(0, 39, 76, 0.04);
+            background: rgba(4, 50, 99, 0.04);
             padding: 1rem 1.5rem;
             border-radius: 4px;
-            border-left: 4px solid var(--primary-maize);
-            transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+            border-left: 4px solid var(--primary-yellow);
+            transition: var(--transition-smooth);
             cursor: pointer;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            box-shadow: var(--shadow-sm);
         }
 
         .toc-item:hover {
             transform: translateX(8px);
-            box-shadow: 0 3px 6px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.12);
+            box-shadow: var(--shadow-md);
+            background: rgba(238, 206, 69, 0.08);
         }
 
         /* Pipeline Grid Styles */
@@ -471,14 +507,22 @@
             margin: 0 auto;
         }
 
-        /* Responsive */
+        /* Responsive Design - CEO Quality */
         @media (max-width: 1024px) {
             .slide {
-                padding: 40px 50px;
+                padding: 40px 45px;
             }
 
             h1 {
-                font-size: 2.2rem;
+                font-size: 2.3rem;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            h3 {
+                font-size: 1.3rem;
             }
 
             .two-column {
@@ -488,10 +532,23 @@
 
             .pipeline-grid {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 0.8rem;
+            }
+
+            .mermaid-container {
+                min-height: 250px;
+                max-height: 400px;
+                margin: 1rem auto;
             }
 
             .mermaid-container.large {
-                min-height: 400px;
+                min-height: 300px;
+                max-height: 450px;
+            }
+
+            .mermaid-container.compact {
+                min-height: 200px;
+                max-height: 300px;
             }
         }
 
@@ -504,17 +561,62 @@
                 font-size: 2.5rem;
             }
 
+            h1 {
+                font-size: 2rem;
+                border-bottom-width: 3px;
+            }
+
+            h2 {
+                font-size: 1.6rem;
+            }
+
+            h3 {
+                font-size: 1.2rem;
+            }
+
+            p, li {
+                font-size: 1rem;
+            }
+
             .nav-btn {
                 width: 50px;
                 height: 50px;
+                font-size: 1.3rem;
+            }
+
+            .slide-counter {
+                padding: 12px 20px;
+                font-size: 1rem;
             }
 
             .pipeline-grid {
                 grid-template-columns: 1fr;
+                gap: 0.6rem;
             }
 
             .toc {
                 grid-template-columns: 1fr;
+            }
+
+            .block, .example-block, .alert-block {
+                padding: 1.2rem 1.4rem;
+                margin-bottom: 1rem;
+            }
+
+            .mermaid-container {
+                min-height: 200px;
+                max-height: 350px;
+                margin: 1rem auto;
+            }
+
+            .mermaid-container.large {
+                min-height: 250px;
+                max-height: 400px;
+            }
+
+            .mermaid-container.compact {
+                min-height: 180px;
+                max-height: 280px;
             }
 
             .standout-slide .standout-title {
@@ -532,22 +634,24 @@
 
         /* Emphasis */
         strong {
-            color: var(--primary-blue);
+            color: var(--primary-navy);
             font-weight: 700;
         }
 
         em {
-            color: var(--teal-accent);
+            color: var(--success-teal);
+            font-style: italic;
         }
 
         /* Algorithm box */
         .algorithm {
-            background: rgba(0, 128, 128, 0.05);
-            border: 2px solid var(--teal-accent);
+            background: rgba(42, 157, 143, 0.06);
+            border: 2px solid var(--success-teal);
             border-radius: 4px;
             padding: 1.5rem;
             margin: 1rem 0;
             font-family: 'Courier New', monospace;
+            box-shadow: var(--shadow-sm);
         }
 
         .algorithm-line {
@@ -556,7 +660,7 @@
 
         /* Standout slide */
         .slide.standout-slide {
-            background: linear-gradient(135deg, var(--success) 0%, #05a076 100%);
+            background: linear-gradient(135deg, var(--success-teal) 0%, #238176 100%);
             color: var(--text-light);
             text-align: center;
             justify-content: center;
@@ -702,9 +806,9 @@ timeline
                 </pre>
             </div>
 
-            <div class="alert-block" style="max-width: 800px; margin: 2rem auto;">
+            <div class="alert-block" style="max-width: 850px; margin: 1.5rem auto 0;">
                 <h3>Current Era: Deep Learning Revolution</h3>
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1rem;">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.8rem; margin-top: 0.8rem;">
                     <div>✓ Big data availability</div>
                     <div>✓ GPU acceleration</div>
                     <div>✓ Novel architectures (Transformers)</div>
@@ -751,9 +855,9 @@ mindmap
                 </pre>
             </div>
 
-            <div class="alert-block" style="max-width: 600px; margin: 0 auto; text-align: center;">
+            <div class="alert-block" style="max-width: 650px; margin: 1rem auto 0; text-align: center;">
                 <h3>Impact</h3>
-                <p style="font-size: 1.2rem;">ML is transforming every industry!</p>
+                <p style="font-size: 1.15rem; margin: 0;">ML is transforming every industry!</p>
             </div>
         </div>
 
@@ -850,9 +954,9 @@ flowchart LR
     H[Validation] -.->|Feedback| B
     E -.->|Evaluate| H
 
-    style A fill:#FFCB05
-    style E fill:#06A77D
-    style G fill:#008080
+    style A fill:#EECE45
+    style E fill:#2A9D8F
+    style G fill:#7B94AC
                 </pre>
             </div>
 
@@ -901,10 +1005,10 @@ flowchart TB
     F --> G[Error Signal] --> H[Optimization<br/>Update θ]
     H -.->|Backprop| B
 
-    style A fill:#FFE6A3
-    style C fill:#FFCB05
-    style D fill:#06A77D
-    style F fill:#FF8A33
+    style A fill:#FAFBFC
+    style C fill:#EECE45
+    style D fill:#2A9D8F
+    style F fill:#E76F51
                 </pre>
             </div>
 
@@ -971,10 +1075,10 @@ flowchart TB
     I --> J[Update Model]
     J -.-> B
 
-    style A fill:#FFE6A3
-    style B fill:#FFCB05
-    style G fill:#06A77D
-    style I fill:#FF8A33
+    style A fill:#FAFBFC
+    style B fill:#EECE45
+    style G fill:#2A9D8F
+    style I fill:#E76F51
                 </pre>
             </div>
 
@@ -1079,10 +1183,10 @@ flowchart TB
     Check -->|No| Assign
     Check -->|Yes| Final([Clusters Found<br/>C1, C2, ..., CK])
 
-    style Start fill:#FFE6A3
-    style Assign fill:#FFCB05
-    style Update fill:#008080
-    style Final fill:#06A77D
+    style Start fill:#FAFBFC
+    style Assign fill:#EECE45
+    style Update fill:#7B94AC
+    style Final fill:#2A9D8F
                 </pre>
             </div>
 
@@ -1137,10 +1241,10 @@ flowchart LR
     F --> G[Top k Eigenvectors<br/>Maximum Variance]
     G --> C
 
-    style A fill:#FF8A33
-    style D fill:#06A77D
-    style B fill:#FFCB05
-    style C fill:#008080
+    style A fill:#E76F51
+    style D fill:#2A9D8F
+    style B fill:#EECE45
+    style C fill:#7B94AC
                 </pre>
             </div>
 
@@ -1322,30 +1426,30 @@ stateDiagram-v2
         <!-- Slide 23: ML Pipeline -->
         <div class="slide" data-slide="23">
             <h1>The ML Pipeline: From Data to Deployment</h1>
-            <div class="block" style="max-width: 1200px; margin: 1.5rem auto 0;">
-                <div class="pipeline-grid">
-                    <div class="example-block">1. Data Collection</div>
-                    <div class="example-block">2. Data Cleaning</div>
-                    <div class="example-block">3. EDA</div>
-                    <div class="example-block">4. Feature Engineering</div>
+            <div class="block" style="max-width: 1150px; margin: 1.2rem auto 0; padding: 1.3rem 1.5rem;">
+                <div class="pipeline-grid" style="margin-bottom: 0.8rem;">
+                    <div class="example-block" style="margin-bottom: 0; padding: 0.9rem 1.2rem;">1. Data Collection</div>
+                    <div class="example-block" style="margin-bottom: 0; padding: 0.9rem 1.2rem;">2. Data Cleaning</div>
+                    <div class="example-block" style="margin-bottom: 0; padding: 0.9rem 1.2rem;">3. EDA</div>
+                    <div class="example-block" style="margin-bottom: 0; padding: 0.9rem 1.2rem;">4. Feature Engineering</div>
                 </div>
-                <div class="pipeline-grid">
-                    <div class="example-block">5. Train/Test Split</div>
-                    <div class="example-block">6. Model Selection</div>
-                    <div class="example-block">7. Training</div>
-                    <div class="example-block">8. Hyperparameter Tuning</div>
+                <div class="pipeline-grid" style="margin-bottom: 0.8rem;">
+                    <div class="example-block" style="margin-bottom: 0; padding: 0.9rem 1.2rem;">5. Train/Test Split</div>
+                    <div class="example-block" style="margin-bottom: 0; padding: 0.9rem 1.2rem;">6. Model Selection</div>
+                    <div class="example-block" style="margin-bottom: 0; padding: 0.9rem 1.2rem;">7. Training</div>
+                    <div class="example-block" style="margin-bottom: 0; padding: 0.9rem 1.2rem;">8. Hyperparameter Tuning</div>
                 </div>
                 <div class="pipeline-grid" style="margin-bottom: 0;">
-                    <div class="example-block">9. Evaluation</div>
-                    <div class="example-block">10. Validation</div>
-                    <div class="example-block">11. Deployment</div>
-                    <div class="example-block" style="background: rgba(255, 138, 51, 0.08); border-left-color: #FF8A33;">12. Monitoring → Retrain</div>
+                    <div class="example-block" style="margin-bottom: 0; padding: 0.9rem 1.2rem;">9. Evaluation</div>
+                    <div class="example-block" style="margin-bottom: 0; padding: 0.9rem 1.2rem;">10. Validation</div>
+                    <div class="example-block" style="margin-bottom: 0; padding: 0.9rem 1.2rem;">11. Deployment</div>
+                    <div class="example-block" style="margin-bottom: 0; padding: 0.9rem 1.2rem; background: rgba(231, 111, 81, 0.1); border-left-color: #E76F51;">12. Monitoring → Retrain</div>
                 </div>
             </div>
 
-            <div class="alert-block" style="margin-top: 1.5rem;">
+            <div class="alert-block" style="margin-top: 1.2rem; margin-bottom: 0;">
                 <h3>Key Insight</h3>
-                <p>ML is iterative! Model performance informs feature engineering, data collection, etc.</p>
+                <p style="margin: 0;">ML is iterative! Model performance informs feature engineering, data collection, etc.</p>
             </div>
         </div>
 
@@ -1362,13 +1466,13 @@ flowchart LR
     E --> F[Train/Test Split<br/>Stratified Sampling<br/>Time-based Split]
     F --> G[Ready for ML<br/>Clean & Scaled Data]
 
-    style A fill:#FF8A33
-    style B fill:#FFE6A3
-    style C fill:#FFCB05
-    style D fill:#008080
-    style E fill:#00274C,color:#fff
-    style F fill:#06A77D
-    style G fill:#06A77D
+    style A fill:#E76F51
+    style B fill:#FAFBFC
+    style C fill:#EECE45
+    style D fill:#7B94AC
+    style E fill:#043263,color:#fff
+    style F fill:#748CAC
+    style G fill:#2A9D8F
                 </pre>
             </div>
 
@@ -1785,10 +1889,10 @@ flowchart TB
     Prod --> Monitor[Monitor & Maintain]
     Monitor -.->|Drift Detected| Data
 
-    style Start fill:#FFCB05
-    style Prod fill:#06A77D
-    style Eval fill:#FF8A33
-    style Debug fill:#FF8A33
+    style Start fill:#EECE45
+    style Prod fill:#2A9D8F
+    style Eval fill:#E76F51
+    style Debug fill:#E76F51
                 </pre>
             </div>
 
