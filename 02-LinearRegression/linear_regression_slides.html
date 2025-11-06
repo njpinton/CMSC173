@@ -9,51 +9,77 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
+            line-height: 1.8;
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #f5f5f5;
+            padding-bottom: 100px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            scroll-behavior: smooth;
         }
         .slide {
             background: white;
-            margin: 20px 0;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 40px 0;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            scroll-margin-top: 20px;
+        }
+        .slide:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
         }
         .slide-header {
             background: linear-gradient(135deg, #3949AB 0%, #283593 100%);
             color: white;
-            padding: 20px 30px;
-            margin: -30px -30px 30px -30px;
-            border-radius: 8px 8px 0 0;
+            padding: 30px 40px;
+            margin: -40px -40px 40px -40px;
+            border-radius: 12px 12px 0 0;
         }
         h1 {
             margin: 0;
-            font-size: 2em;
+            font-size: 2.5em;
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
         h2 {
             color: #3949AB;
-            border-bottom: 2px solid #3949AB;
-            padding-bottom: 10px;
+            border-bottom: 3px solid #3949AB;
+            padding-bottom: 15px;
             margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            font-weight: 600;
         }
         h3 {
             color: #283593;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            font-weight: 600;
         }
         .slide-number {
             text-align: right;
-            color: #666;
-            font-size: 0.9em;
-            margin-top: 20px;
+            color: #999;
+            font-size: 1em;
+            margin-top: 30px;
+            font-weight: 500;
         }
         ul {
             list-style-type: disc;
             padding-left: 30px;
+            margin: 20px 0;
+        }
+        ul li {
+            margin: 12px 0;
+            line-height: 1.8;
         }
         .numbered-list {
             list-style-type: decimal;
+        }
+        .numbered-list li {
+            margin: 15px 0;
         }
         table {
             border-collapse: collapse;
@@ -77,15 +103,19 @@
         }
         .box {
             border: 2px solid #3949AB;
-            padding: 15px;
-            margin: 15px 0;
+            padding: 20px;
+            margin: 25px 0;
             background-color: #E8EAF6;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(57, 73, 171, 0.1);
         }
         .definition {
             background-color: #E3F2FD;
-            padding: 15px;
-            margin: 15px 0;
-            border-left: 4px solid #2196F3;
+            padding: 20px;
+            margin: 25px 0;
+            border-left: 5px solid #2196F3;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(33, 150, 243, 0.1);
         }
         code {
             background-color: #f4f4f4;
@@ -96,16 +126,107 @@
         .algorithm {
             background-color: #f9f9f9;
             border: 1px solid #ddd;
-            padding: 15px;
-            margin: 15px 0;
+            padding: 20px;
+            margin: 25px 0;
             font-family: 'Courier New', monospace;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* Navigation Styles */
+        .nav-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+            padding: 15px 20px;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-button {
+            background: linear-gradient(135deg, #3949AB 0%, #283593 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(57, 73, 171, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(57, 73, 171, 0.4);
+            background: linear-gradient(135deg, #283593 0%, #1a237e 100%);
+        }
+
+        .nav-button:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .nav-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .progress-container {
+            flex: 1;
+            text-align: center;
+        }
+
+        .progress-text {
+            font-size: 16px;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3949AB 0%, #283593 100%);
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        p {
+            margin: 15px 0;
+        }
+
+        strong {
+            color: #283593;
         }
     </style>
 </head>
 <body>
 
 <!-- Slide 1 -->
-<div class="slide">
+<div class="slide" id="slide-1">
     <div class="slide-header">
         <h1>Linear Regression and Gradient Descent</h1>
         <p>CMSC 173<br>September 7, 2025</p>
@@ -114,7 +235,7 @@
 </div>
 
 <!-- Slide 2 -->
-<div class="slide">
+<div class="slide" id="slide-2">
     <h2>Outline</h2>
     <ol class="numbered-list">
         <li>What is Linear Regression?</li>
@@ -126,7 +247,7 @@
 </div>
 
 <!-- Slide 3 -->
-<div class="slide">
+<div class="slide" id="slide-3">
     <h2>What is Linear Regression?</h2>
 
     <div class="definition">
@@ -156,7 +277,7 @@
 </div>
 
 <!-- Slide 4 -->
-<div class="slide">
+<div class="slide" id="slide-4">
     <h2>Linear Regression: Vectorized Form</h2>
 
     <h3>Vectorized Formulation:</h3>
@@ -192,7 +313,7 @@
 </div>
 
 <!-- Slide 5 -->
-<div class="slide">
+<div class="slide" id="slide-5">
     <h2>Example Dataset: House Prices</h2>
 
     <h3>Scenario:</h3>
@@ -257,7 +378,7 @@
 </div>
 
 <!-- Slide 6 -->
-<div class="slide">
+<div class="slide" id="slide-6">
     <h2>Solving Linear Regression with Least Squares</h2>
 
     <h3>Cost Function:</h3>
@@ -271,7 +392,7 @@
 </div>
 
 <!-- Slide 7 -->
-<div class="slide">
+<div class="slide" id="slide-7">
     <h2>Least Squares: Step-by-step Guide</h2>
 
     <div class="box">
@@ -306,7 +427,7 @@
 </div>
 
 <!-- Slide 8 -->
-<div class="slide">
+<div class="slide" id="slide-8">
     <h2>Least Squares: Derivation of Normal Equations</h2>
 
     <h3>Cost function (least squares):</h3>
@@ -337,7 +458,7 @@
 </div>
 
 <!-- Slide 9 -->
-<div class="slide">
+<div class="slide" id="slide-9">
     <h2>Least Squares: Model</h2>
 
     <h3>Linear regression model (scalar form):</h3>
@@ -355,7 +476,7 @@
 </div>
 
 <!-- Slide 10 -->
-<div class="slide">
+<div class="slide" id="slide-10">
     <h2>Least Squares: Cost Function</h2>
 
     <h3>Least squares objective:</h3>
@@ -369,7 +490,7 @@
 </div>
 
 <!-- Slide 11 -->
-<div class="slide">
+<div class="slide" id="slide-11">
     <h2>Derivative with respect to \(\theta_0\)</h2>
 
     <p>$$\frac{\partial J}{\partial \theta_0} = -\frac{1}{m} \sum_{i=1}^{m} \left(y^{(i)} - \theta_0 - \sum_{j=1}^{n} \theta_j x_j^{(i)}\right).$$</p>
@@ -386,7 +507,7 @@
 </div>
 
 <!-- Slide 12 -->
-<div class="slide">
+<div class="slide" id="slide-12">
     <h2>Derivative with respect to \(\theta_k\)</h2>
 
     <p>For \(k = 1, \ldots, n\):</p>
@@ -401,7 +522,7 @@
 </div>
 
 <!-- Slide 13 -->
-<div class="slide">
+<div class="slide" id="slide-13">
     <h2>Special Case: Simple Linear Regression (\(n = 1\))</h2>
 
     <h3>Model:</h3>
@@ -417,7 +538,7 @@
 </div>
 
 <!-- Slide 14 -->
-<div class="slide">
+<div class="slide" id="slide-14">
     <h2>Worked Example: House Prices vs Floor Area</h2>
 
     <h3>Dataset (\(m = 5\), \(n = 1\)):</h3>
@@ -469,7 +590,7 @@
 </div>
 
 <!-- Slide 15 -->
-<div class="slide">
+<div class="slide" id="slide-15">
     <h2>Worked Example: Step-by-Step Solution</h2>
 
     <h3>Step 1: Means</h3>
@@ -491,7 +612,7 @@
 </div>
 
 <!-- Slide 16 -->
-<div class="slide">
+<div class="slide" id="slide-16">
     <h2>Worked Example: Scatterplot with Residuals</h2>
 
     <h3>Fitted Line:</h3>
@@ -505,7 +626,7 @@
 </div>
 
 <!-- Slide 17 -->
-<div class="slide">
+<div class="slide" id="slide-17">
     <h2>Gradient Descent (Scalar Form): Model</h2>
 
     <h3>Linear model (scalar form):</h3>
@@ -523,7 +644,7 @@
 </div>
 
 <!-- Slide 18 -->
-<div class="slide">
+<div class="slide" id="slide-18">
     <h2>Cost Function (Least Squares) – Scalar</h2>
 
     <h3>Least-squares objective (scalar summation form):</h3>
@@ -539,7 +660,7 @@
 </div>
 
 <!-- Slide 19 -->
-<div class="slide">
+<div class="slide" id="slide-19">
     <h2>Gradient: derivative w.r.t. \(\theta_0\) (detailed)</h2>
 
     <p>Compute partial derivative of \(J\) with respect to \(\theta_0\) using the chain rule:</p>
@@ -562,7 +683,7 @@
 </div>
 
 <!-- Slide 20 -->
-<div class="slide">
+<div class="slide" id="slide-20">
     <h2>Gradient: derivative w.r.t. \(\theta_k\) (general \(k\))</h2>
 
     <p>For \(k \in \{1, \ldots, n\}\) apply the chain rule:</p>
@@ -582,7 +703,7 @@
 </div>
 
 <!-- Slide 21 -->
-<div class="slide">
+<div class="slide" id="slide-21">
     <h2>Gradient Descent: Coordinate-wise Update</h2>
 
     <h3>Batch gradient descent update (scalar coordinate form):</h3>
@@ -604,7 +725,7 @@
 </div>
 
 <!-- Slide 22 -->
-<div class="slide">
+<div class="slide" id="slide-22">
     <h2>Algorithm: Batch Gradient Descent (Scalar Pseudocode)</h2>
 
     <div class="algorithm">
@@ -631,7 +752,7 @@
 </div>
 
 <!-- Slide 23 -->
-<div class="slide">
+<div class="slide" id="slide-23">
     <h2>Variants: SGD and Mini-batch (Scalar)</h2>
 
     <h3>Stochastic Gradient Descent (SGD) — per-sample update:</h3>
@@ -651,7 +772,7 @@
 </div>
 
 <!-- Slide 24 -->
-<div class="slide">
+<div class="slide" id="slide-24">
     <h2>Practical Considerations (scalar viewpoint)</h2>
 
     <ul>
@@ -671,7 +792,7 @@
 </div>
 
 <!-- Slide 25 -->
-<div class="slide">
+<div class="slide" id="slide-25">
     <h2>Computational Cost (scalar) & Summary</h2>
 
     <h3>Per-iteration cost (batch GD):</h3>
@@ -690,6 +811,111 @@
     </ul>
     <div class="slide-number">25 / 25</div>
 </div>
+
+<!-- Navigation Bar -->
+<div class="nav-container">
+    <div class="nav-content">
+        <button class="nav-button" id="prevBtn" onclick="navigateSlide(-1)">
+            <span>◄</span> Previous
+        </button>
+
+        <div class="progress-container">
+            <div class="progress-text" id="progressText">Slide 1 of 25</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <button class="nav-button" id="nextBtn" onclick="navigateSlide(1)">
+            Next <span>►</span>
+        </button>
+    </div>
+</div>
+
+<script>
+    let currentSlide = 1;
+    const totalSlides = 25;
+
+    function updateNavigation() {
+        // Update button states
+        document.getElementById('prevBtn').disabled = currentSlide === 1;
+        document.getElementById('nextBtn').disabled = currentSlide === totalSlides;
+
+        // Update progress text
+        document.getElementById('progressText').textContent = `Slide ${currentSlide} of ${totalSlides}`;
+
+        // Update progress bar
+        const progress = ((currentSlide - 1) / (totalSlides - 1)) * 100;
+        document.getElementById('progressFill').style.width = progress + '%';
+    }
+
+    function navigateSlide(direction) {
+        const newSlide = currentSlide + direction;
+
+        if (newSlide >= 1 && newSlide <= totalSlides) {
+            currentSlide = newSlide;
+
+            // Scroll to the slide
+            const slideElement = document.getElementById(`slide-${currentSlide}`);
+            if (slideElement) {
+                slideElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            updateNavigation();
+        }
+    }
+
+    function goToSlide(slideNumber) {
+        if (slideNumber >= 1 && slideNumber <= totalSlides) {
+            currentSlide = slideNumber;
+
+            const slideElement = document.getElementById(`slide-${currentSlide}`);
+            if (slideElement) {
+                slideElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            updateNavigation();
+        }
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+            navigateSlide(-1);
+        } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+            e.preventDefault(); // Prevent space from scrolling
+            navigateSlide(1);
+        } else if (e.key === 'Home') {
+            goToSlide(1);
+        } else if (e.key === 'End') {
+            goToSlide(totalSlides);
+        }
+    });
+
+    // Detect which slide is in view on scroll
+    let isScrolling;
+    window.addEventListener('scroll', function() {
+        clearTimeout(isScrolling);
+
+        isScrolling = setTimeout(function() {
+            const slides = document.querySelectorAll('.slide');
+            const windowHeight = window.innerHeight;
+
+            slides.forEach((slide, index) => {
+                const rect = slide.getBoundingClientRect();
+                const slideMiddle = rect.top + rect.height / 2;
+
+                if (slideMiddle >= 0 && slideMiddle <= windowHeight) {
+                    currentSlide = index + 1;
+                    updateNavigation();
+                }
+            });
+        }, 100);
+    });
+
+    // Initialize
+    updateNavigation();
+</script>
 
 </body>
 </html>
