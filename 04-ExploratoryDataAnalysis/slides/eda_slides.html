@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eda_slides</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .page {
+            background-color: white;
+            margin: 20px 0;
+            padding: 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            min-height: 400px;
+        }
+        .page-number {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        .page-content {
+            line-height: 1.8;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 12pt;
+        }
+        .note {
+            color: #666;
+            font-style: italic;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-left: 3px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+<div class="note">
+    This is a text-only version of the slides. For the full visual experience with images and formatting, please refer to the PDF version.
+</div>
+
+<div class="page">
+<div class="page-number">Page 1 of 55</div>
+<div class="page-content">
+Exploratory Data Analysis (EDA)
+CMSC 173 - Machine Learning
+Course Lecture
+1
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 2 of 55</div>
+<div class="page-content">
+Outline
+2
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 3 of 55</div>
+<div class="page-content">
+Introduction to EDA
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 4 of 55</div>
+<div class="page-content">
+What is Exploratory Data Analysis?
+Definition
+EDA is the process of investigating datasets to
+summarize their main characteristics, often using
+statistical graphics and other data visualization
+methods.
+Primary Goals:
+• Understand data structure and quality
+• Discover patterns and relationships
+• Identify anomalies and outliers
+• Guide feature engineering decisions
+• Inform modeling strategy
+Key Questions EDA Answers:
+• What does my data look like?
+• Is my data clean and complete?
+• What patterns exist?
+• Which features are important?
+EDA Process Overview:
+Raw Data
+Data Exploration
+Data Cleaning
+Model Ready Data
+Key Insight
+EDA is iterative! Insights from one analysis often
+lead to new questions and deeper investigations.
+3
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 5 of 55</div>
+<div class="page-content">
+The EDA Workflow
+Data Loading
+Initial Inspection
+Data Cleaning
+Visualization
+Statistical Analysis
+Insights &amp; Patterns
+Data Loading
+• Import datasets
+• Check file formats
+• Handle encoding issues
+Statistical Analysis
+• Descriptive statistics
+• Correlation analysis
+• Distribution testing
+Key Outcome
+• Clean, understood data
+• Feature insights
+• Modeling strategy
+4
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 6 of 55</div>
+<div class="page-content">
+Why EDA is Critical for Machine Learning
+Without EDA
+Common Pitfalls:
+• Garbage In, Garbage Out
+• Poor model performance
+• Biased predictions
+• Overfitting to noise
+• Missing important patterns
+• Wasted computational resources
+Statistical Foundation:
+For dataset D = {(xi, yi)}n
+i=1:
+Data Quality = f (Completeness, Accuracy, Consistency)
+(1)
+Model Performance ∝Data Quality
+(2)
+With Proper EDA
+Benefits Achieved:
+• High-quality, clean data
+• Optimal feature selection
+• Appropriate model choice
+• Better generalization
+• Actionable insights
+• Efficient resource usage
+Impact Quantification:
+Studies show that proper EDA can improve model
+performance by 15-30% and reduce development time
+by 40-60%.
+No EDA
+With EDA
+60% Accuracy
+85% Accuracy
+5
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 7 of 55</div>
+<div class="page-content">
+Data Understanding &amp; Types
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 8 of 55</div>
+<div class="page-content">
+Understanding Your Dataset
+First Steps
+6
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 9 of 55</div>
+<div class="page-content">
+Data Types Classification
+Numerical Data
+Continuous Variables:
+• Can take any value in a range
+• Examples: age, salary, temperature
+• Mathematical operations meaningful
+Discrete Variables:
+• Countable, distinct values
+• Examples: number of children, cars owned
+• Often integers
+Mathematical Representation
+For numerical variable X:
+X ∈R (continuous) or X ∈Z (discrete)
+Categorical Data
+Nominal Variables:
+• No natural ordering
+• Examples: color, gender, city
+• Cannot perform arithmetic
+Ordinal Variables:
+• Natural ordering exists
+• Examples: education level, rating
+• Ranking meaningful, differences may not be
+Mathematical Representation
+For categorical variable C:
+C ∈{category1, category2, . . . , categoryk}
+Practical Tip
+Encoding Strategy: Numerical →Keep as-is; Nominal →One-hot encoding; Ordinal →Label encoding
+7
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 10 of 55</div>
+<div class="page-content">
+Sample Dataset: Titanic Survival Analysis
+Dataset Overview
+Contains information on 891 passengers aboard the Titanic. Goal: Predict passenger survival based on their
+attributes.
+PassengerId
+Survived
+Pclass
+Sex
+Age
+SibSp
+Parch
+Fare
+Embarked
+1
+0
+3
+male
+22.0
+1
+0
+7.25
+S
+2
+1
+1
+female
+38.0
+1
+0
+71.28
+C
+3
+1
+3
+female
+26.0
+0
+0
+7.92
+S
+4
+1
+1
+female
+35.0
+1
+0
+53.10
+S
+5
+0
+3
+male
+35.0
+0
+0
+8.05
+S
+Numerical Features
+• Age: Continuous (0-80)
+• Fare: Continuous (0-512)
+• SibSp: Discrete count
+• Parch: Discrete count
+Categorical Features
+• Sex: Nominal (M/F)
+• Embarked: Nominal (C/Q/S)
+• Pclass: Ordinal (1st, 2nd, 3rd)
+Target Variable
+• Survived: Binary (0/1)
+• Classification Problem
+• 38.4% survival rate
+8
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 11 of 55</div>
+<div class="page-content">
+Univariate Analysis
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 12 of 55</div>
+<div class="page-content">
+Univariate Analysis - Numerical Variables
+Key Observations
+9
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 13 of 55</div>
+<div class="page-content">
+Statistical Measures for Numerical Data
+Central Tendency
+For variable X = {x1, x2, . . . , xn}:
+Mean (Arithmetic):
+¯x = 1
+n
+n
+X
+i=1
+xi
+Median: Middle value when sorted
+Median =
+(
+x(n+1)/2
+if n odd
+xn/2+xn/2+1
+2
+if n even
+Mode: Most frequent value
+Dispersion Measures
+Variance:
+σ2 =
+1
+n −1
+n
+X
+i=1
+(xi −¯x)2
+Standard Deviation:
+σ =
+√
+σ2
+Interquartile Range:
+IQR = Q3 −Q1
+Range:
+Range = xmax −xmin
+Practical Guidelines
+Skewed data: Use median &amp; IQR; Normal data: Use mean &amp; standard deviation
+10
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 14 of 55</div>
+<div class="page-content">
+Univariate Analysis - Categorical Variables
+Key Insights
+11
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 15 of 55</div>
+<div class="page-content">
+Statistical Measures for Categorical Data
+Frequency Analysis
+For categorical variable C with categories
+{c1, c2, . . . , ck}:
+Frequency:
+fi = count(C = ci)
+Relative Frequency:
+pi = fi
+n where
+k
+X
+i=1
+pi = 1
+Mode: Category with highest frequency
+Mode = arg max
+ci
+fi
+Entropy Measure
+Information content:
+H(C) = −
+k
+X
+i=1
+pi log2(pi)
+Higher entropy
+more uniform distribution
+Visualization Guidelines
+Bar Charts:
+• Best for comparing categories
+• Order by frequency for impact
+• Use consistent colors
+Pie Charts:
+• Good for showing proportions
+• Limit to ≤5 categories
+• Start largest slice at 12 o’clock
+Chi-Square Test
+Test for uniform distribution:
+χ2 =
+k
+X
+i=1
+(Oi −Ei)2
+Ei
+where Oi = observed, Ei = expected
+12
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 16 of 55</div>
+<div class="page-content">
+Distribution Analysis &amp; Normality Testing
+Common Distributions
+Normal Distribution:
+f (x) =
+1
+σ
+√
+2π
+e−(x−µ)2
+2σ2
+Log-Normal Distribution:
+f (x) =
+1
+xσ
+√
+2π
+e−(ln x−µ)2
+2σ2
+Skewness:
+Skew = E[(X −µ)3]
+σ3
+Normality Tests
+Shapiro-Wilk Test:
+W =
+(Pn
+i=1 aix(i))2
+Pn
+i=1(xi −¯x)2
+Kolmogorov-Smirnov Test:
+D = sup
+x
+|Fn(x) −F(x)|
+Anderson-Darling Test: More sensitive to tail
+deviations
+Decision Rule
+If p &lt; 0.05: Reject normality assumption; Consider transformations (log, square root, Box-Cox)
+13
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 17 of 55</div>
+<div class="page-content">
+Bivariate Analysis
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 18 of 55</div>
+<div class="page-content">
+Correlation Analysis
+Correlation Insights
+Strong correlations: Fare-Survival (0.26), Age-Survival (-0.07); Weak correlations: SibSp-Parch (0.41)
+14
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 19 of 55</div>
+<div class="page-content">
+Correlation Coefficients &amp; Interpretation
+Pearson Correlation
+For linear relationships:
+r =
+Pn
+i=1(xi −¯x)(yi −¯y)
+pPn
+i=1(xi −¯x)2 Pn
+i=1(yi −¯y)2
+Range: r ∈[−1, 1]
+• r = 1: Perfect positive correlation
+• r = 0: No linear correlation
+• r = −1: Perfect negative correlation
+Significance Test
+t = r
+s
+n −2
+1 −r2 ∼tn−2
+Non-Linear Correlations
+Spearman Rank Correlation:
+ρ = 1 −
+6 P d2
+i
+n(n2 −1)
+where di = rank difference
+Kendall’s Tau:
+τ =
+nc −nd
+1
+2 n(n −1)
+where nc = concordant pairs, nd = discordant pairs
+Interpretation Guide
+• |r| &lt; 0.3: Weak relationship
+• 0.3 ≤|r| &lt; 0.7: Moderate relationship
+• |r| ≥0.7: Strong relationship
+Remember
+Correlation ̸= Causation! Always investigate the underlying mechanisms.
+15
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 20 of 55</div>
+<div class="page-content">
+Bivariate Analysis - Feature Relationships
+16
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 21 of 55</div>
+<div class="page-content">
+Cross-Tabulation &amp; Contingency Tables
+Contingency Table
+For categorical variables A and B:
+B1
+B2
+Total
+A1
+n11
+n12
+n1.
+A2
+n21
+n22
+n2.
+Total
+n.1
+n.2
+n
+Joint Probability:
+P(Ai, Bj) = nij
+n
+Marginal Probability:
+P(Ai) = ni.
+n ,
+P(Bj) = n.j
+n
+Independence Test
+Chi-Square Test:
+χ2 =
+X
+i,j
+(Oij −Eij)2
+Eij
+where Eij =
+ni.×n.j
+n
+Degrees of freedom:
+df = (r −1)(c −1)
+Cram´er’s V (Effect Size):
+V =
+s
+χ2
+n × min(r −1, c −1)
+Interpretation
+V ∈[0, 1]: 0 = no association, 1 = perfect
+association
+17
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 22 of 55</div>
+<div class="page-content">
+Missing Data Handling
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 23 of 55</div>
+<div class="page-content">
+Missing Data Analysis
+18
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 24 of 55</div>
+<div class="page-content">
+Types of Missing Data
+MCAR: Missing Completely at Random
+Definition: Missing data is independent of both
+observed and unobserved data.
+Mathematical condition:
+P(Missing|X, Y ) = P(Missing)
+Example: Survey responses lost due to mail delivery
+issues.
+Implication: Can use any imputation method
+without bias.
+Test for MCAR
+Little’s MCAR Test: Tests null hypothesis that
+data is MCAR using EM algorithm.
+MAR: Missing at Random
+Definition: Missing data depends on observed data,
+but not on unobserved data.
+Mathematical condition:
+P(Missing|X, Y ) = P(Missing|X)
+Example: Older passengers more likely to have
+missing age data.
+MNAR: Missing Not at Random Missing data
+depends on unobserved data.
+Example: High-income individuals not reporting
+income.
+Handling Strategy
+MAR: Multiple imputation; MNAR: Domain
+expertise required
+19
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 25 of 55</div>
+<div class="page-content">
+Imputation Strategies
+Simple Imputation
+Mean/Mode Imputation:
+xmissing = ¯x or Mode(x)
+Median Imputation:
+xmissing = Median(x)
+Forward/Backward Fill: For time series data
+Constant Value: Domain-specific constant (e.g., 0,
+-1)
+Limitations
+Simple methods reduce variance and can introduce
+bias
+Advanced Imputation
+KNN Imputation:
+xmissing = 1
+k
+X
+i∈k-nearest
+xi
+Multiple Imputation: Creates multiple complete
+datasets, analyzes each, pools results.
+Model-based: - Linear regression - Random Forest -
+Deep learning approaches
+Best Practice
+Always analyze missing data pattern before
+choosing imputation method
+20
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 26 of 55</div>
+<div class="page-content">
+Outlier Detection
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 27 of 55</div>
+<div class="page-content">
+Outlier Detection Methods
+21
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 28 of 55</div>
+<div class="page-content">
+Statistical Outlier Detection Methods
+IQR Method
+Interquartile Range:
+IQR = Q3 −Q1
+Outlier bounds:
+Lower bound = Q1 −1.5 × IQR
+Upper bound = Q3 + 1.5 × IQR
+Outlier condition:
+x &lt; Lower bound or x &gt; Upper bound
+Modified Z-Score
+Mi = 0.6745(xi −median)
+MAD
+where MAD = median absolute deviation
+Z-Score Method
+Standard Z-score:
+zi = xi −¯x
+σ
+Outlier threshold:
+|zi| &gt; 2.5 or |zi| &gt; 3
+Limitation: Sensitive to outliers in mean and std
+calculation
+Isolation Forest
+Anomaly Score:
+s(x, n) = 2−E(h(x))
+c(n)
+where E(h(x)) = average path length, c(n) =
+average path length of BST
+Decision Framework
+Normal distribution: Z-score; Skewed distribution: IQR; Multivariate: Isolation Forest
+22
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 29 of 55</div>
+<div class="page-content">
+Multivariate Outlier Detection
+Mahalanobis Distance
+For multivariate data x ∈Rp:
+DM(x) =
+q
+(x −µ)T Σ−1(x −µ)
+where: - µ = sample mean vector - Σ = sample
+covariance matrix
+Outlier threshold:
+DM(x) &gt;
+q
+χ2p,α
+Cook’s Distance
+Measures influence of each observation on
+regression:
+Di =
+Pn
+j=1(ˆyj −ˆyj(i))2
+p × MSE
+Local Outlier Factor (LOF)
+Local Reachability Density:
+lrdk(A) =
+1
+P
+B∈Nk (A) reach-distk (A,B)
+|Nk (A)|
+LOF Score:
+LOFk(A) =
+P
+B∈Nk (A)
+lrdk (B)
+lrdk (A)
+|Nk(A)|
+Interpretation: - LOF ≈1: Normal point - LOF
+≫1: Outlier
+Key Insight
+Multivariate outliers may not be outliers in any
+single dimension
+23
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 30 of 55</div>
+<div class="page-content">
+Feature Engineering
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 31 of 55</div>
+<div class="page-content">
+Feature Engineering Examples
+24
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 32 of 55</div>
+<div class="page-content">
+Feature Creation Techniques
+Binning &amp; Discretization
+Equal-width binning:
+bin width = xmax −xmin
+k
+Equal-frequency binning: Each bin contains n
+k
+observations
+Quantile-based binning: Based on percentiles
+(quartiles, deciles)
+Domain-specific binning: Using expert knowledge
+(e.g., age groups)
+Optimal Binning
+Use information gain or chi-square test to determine
+optimal bin boundaries
+Feature Combinations
+Arithmetic Operations: - Addition: x1 + x2 (total
+family size) - Multiplication: x1 × x2 (interaction
+terms) - Division: x1/x2 (ratios, rates)
+Boolean Operations: - Logical AND: x1 ∧x2 -
+Logical OR: x1 ∨x2 - Conditional: if x1 &gt; threshold
+then 1 else 0
+String Operations: - Length: len(string) - Contains:
+pattern matching - Extract: regular expressions
+Feature Engineering Guidelines
+Domain Knowledge: Most important factor; Iterative Process: Create, test, refine; Validation: Always
+validate on holdout set
+25
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 33 of 55</div>
+<div class="page-content">
+Mathematical Transformations
+Power Transformations
+Log Transformation:
+y = log(x + c)
+Reduces right skewness, stabilizes variance
+Square Root:
+y = √x
+Moderate variance stabilization
+Box-Cox Transformation:
+y =
+( xλ−1
+λ
+if λ ̸= 0
+ln(x)
+if λ = 0
+Optimal λ found via maximum likelihood
+Trigonometric Features
+For cyclical data (time, angles):
+Sine/Cosine encoding:
+sin
+ 2π × value
+max value
+
+cos
+ 2π × value
+max value
+
+Example for hour of day:
+hour sin = sin
+ 2π × hour
+24
+
+hour cos = cos
+ 2π × hour
+24
+
+When to Transform
+Transform when: skewed data, non-linear
+relationships, or specific model requirements
+26
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 34 of 55</div>
+<div class="page-content">
+Feature Selection
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 35 of 55</div>
+<div class="page-content">
+Feature Selection Methods
+Selection Results
+Statistical: Gender and fare most important; Tree-based: Consistent with domain knowledge about survival
+factors
+27
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 36 of 55</div>
+<div class="page-content">
+Statistical Feature Selection
+Filter Methods
+Correlation-based: Select features with high
+correlation to target, low correlation to each other
+F-test (ANOVA):
+F = MSB
+MSW =
+Pk
+i=1 ni(¯xi −¯x)2/(k −1)
+Pk
+i=1
+Pni
+j=1(xij −¯xi)2/(n −k)
+Chi-square test:
+χ2 =
+X
+i,j
+(Oij −Eij)2
+Eij
+Mutual Information:
+I(X; Y ) =
+X
+x,y
+p(x, y) log
+p(x, y)
+p(x)p(y)
+Wrapper Methods
+Forward Selection: Start with empty set, add best
+features iteratively
+Backward Elimination: Start with all features,
+remove worst iteratively
+Recursive Feature Elimination:
+ranki = f (coefi, importancei)
+Genetic Algorithm: Evolutionary approach to
+feature subset selection
+Embedded Methods
+L1 Regularization (Lasso):
+min
+β
+1
+2n ||y −Xβ||2
+2 + λ||β||1
+28
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 37 of 55</div>
+<div class="page-content">
+Tree-based Feature Importance
+Random Forest Importance
+Mean Decrease Impurity:
+Importance(xj) = 1
+T
+T
+X
+t=1
+X
+v∈splits
+p(v) × ∆I(v)
+where: - T = number of trees - p(v) = proportion
+of samples reaching node v - ∆I(v) = impurity
+decrease at node v
+Mean Decrease Accuracy: Permutation-based
+importance measuring prediction accuracy drop
+when feature is shuffled
+Gradient Boosting Importance
+Gain-based Importance:
+Importance(xj) =
+T
+X
+t=1
+X
+v∈splitsj
+gain(v)
+SHAP Values: Shapley Additive exPlanations
+provide unified measure:
+ϕj =
+X
+S⊆N\{j}
+|S|!(|N| −|S| −1)!
+|N|!
+[f (S ∪{j}) −f (S)]
+Caution
+Tree-based importance can be biased toward
+high-cardinality categorical features
+29
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 38 of 55</div>
+<div class="page-content">
+Data Normalization
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 39 of 55</div>
+<div class="page-content">
+Normalization Comparison
+30
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 40 of 55</div>
+<div class="page-content">
+Scaling Methods Mathematical Formulations
+Standard Scaling (Z-score)
+xscaled = x −µ
+σ
+where µ = 1
+n
+Pn
+i=1 xi and σ =
+q
+1
+n−1
+Pn
+i=1(xi −µ)2
+Properties: - Mean = 0, Std = 1 - Preserves
+distribution shape - Sensitive to outliers
+Min-Max Scaling
+xscaled =
+x −xmin
+xmax −xmin
+Properties: - Range: [0, 1] - Preserves relationships
+- Very sensitive to outliers
+Robust Scaling
+xscaled = x −Median(x)
+IQR(x)
+where IQR = Q3 −Q1
+Properties: - Median-centered - Uses interquartile
+range - Robust to outliers
+Unit Vector Scaling
+xscaled =
+x
+||x||2
+where ||x||2 =
+qPn
+i=1 x2
+i
+Use case: When magnitude matters more than
+individual values
+Selection Guide
+Normal data + no outliers: StandardScaler; Bounded range needed: MinMaxScaler; Outliers present:
+RobustScaler
+31
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 41 of 55</div>
+<div class="page-content">
+When &amp; Why to Normalize
+Algorithms Requiring Normalization
+Distance-based: - k-NN, k-means clustering - SVM
+with RBF kernel - Neural networks
+Gradient-based: - Logistic regression - Linear
+regression with regularization - Deep learning
+Mathematical justification: Features with larger
+scales dominate distance calculations:
+d =
+v
+u
+u
+t
+p
+X
+i=1
+(xi −yi)2
+Algorithms Not Requiring Normalization
+Tree-based methods: - Decision trees - Random
+Forest - Gradient boosting
+Reason: Trees use split points, not absolute values
+Rule-based: - Naive Bayes - Association rules
+Statistical: Feature scales don’t affect splitting
+decisions or probability calculations
+Critical Rule
+Always fit scaler on training data only! Apply same transformation to validation/test sets to avoid data
+leakage.
+32
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 42 of 55</div>
+<div class="page-content">
+Advanced EDA Topics
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 43 of 55</div>
+<div class="page-content">
+Target Variable Analysis
+33
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 44 of 55</div>
+<div class="page-content">
+Business Insights from EDA
+34
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 45 of 55</div>
+<div class="page-content">
+Advanced Visualization Techniques
+Dimensionality Reduction
+Principal Component Analysis:
+Y = XW
+where W contains eigenvectors of covariance matrix
+t-SNE:
+pj|i =
+exp(−||xi −xj||2/2σ2
+i )
+P
+k̸=i exp(−||xi −xk||2/2σ2
+i )
+UMAP: Uniform Manifold Approximation -
+Preserves local and global structure - Faster than
+t-SNE - Better for clustering visualization
+Interactive Visualizations
+Plotly Benefits: - Zoom, pan, hover information -
+3D scatter plots - Animated visualizations -
+Dashboard creation
+Parallel Coordinates: Visualize high-dimensional
+data relationships
+Sankey Diagrams: Show flow between categorical
+variables
+Radar Charts: Compare multiple features
+simultaneously
+Best Practice
+Progressive Disclosure: Start with simple plots, add complexity as needed for deeper insights
+35
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 46 of 55</div>
+<div class="page-content">
+Time Series EDA Considerations
+Time Series Components
+Decomposition:
+y(t) = Trend(t) + Seasonal(t) + Noise(t)
+Stationarity Testing: Augmented Dickey-Fuller test:
+∆yt = α + βt + γyt−1 + δ1∆yt−1 + · · · + ϵt
+Autocorrelation:
+ρk = Cov(yt, yt−k)
+Var(yt)
+Seasonal Analysis
+Seasonal Decomposition: - STL (Seasonal and
+Trend decomposition using Loess) - X-12-ARIMA -
+Classical decomposition
+Periodogram:
+I(ω) = 1
+n
+
+n
+X
+t=1
+yte−iωt
+
+2
+Box-Cox for stabilization: Handle changing
+variance over time
+Time Series EDA Goals
+Identify trends, seasonality, outliers, structural breaks, and appropriate transformation needs
+36
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 47 of 55</div>
+<div class="page-content">
+EDA to ML Pipeline Integration
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 48 of 55</div>
+<div class="page-content">
+EDA to ML Pipeline Integration
+37
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 49 of 55</div>
+<div class="page-content">
+From EDA to Model Development
+EDA-Informed Decisions
+Feature Engineering: - Age binning based on
+distribution analysis - Family size creation from
+SibSp + Parch - Title extraction from name
+patterns
+Preprocessing Choices: - Median imputation for
+age (right-skewed) - StandardScaler for fare (wide
+range) - One-hot encoding for categorical variables
+Model Selection: - Random Forest chosen for
+mixed data types - Handles non-linear relationships
+- Robust to outliers (detected in EDA)
+Validation Strategy
+Cross-Validation Design: Based on data size (891
+samples) →5-fold CV
+Stratification: Maintain class balance (38.4%
+survival rate)
+Performance Metrics: - Accuracy: Overall
+performance - Precision/Recall: Handle class
+imbalance - F1-Score: Balanced measure -
+AUC-ROC: Threshold-independent
+Feature Importance Validation: EDA findings
+confirmed by model: 1. Sex (gender) - highest
+importance 2. Fare - economic status indicator 3.
+Age - demographic factor
+38
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 50 of 55</div>
+<div class="page-content">
+EDA Best Practices &amp; Common Pitfalls
+Common Pitfalls
+Data Leakage: - Using future information - Target
+leakage in features - Scaling on entire dataset
+Confirmation Bias: - Looking only for expected
+patterns - Ignoring contradictory evidence -
+Over-interpreting correlations
+Statistical Errors: - Multiple testing without
+correction - Assuming causation from correlation -
+Ignoring sample size effects
+Best Practices
+Systematic Approach: - Follow structured EDA
+workflow - Document all findings and decisions -
+Version control EDA notebooks
+Statistical Rigor: - Apply multiple testing
+corrections - Use appropriate statistical tests -
+Report confidence intervals
+Reproducibility: - Set random seeds - Save
+preprocessing parameters - Create reusable functions
+Communication: - Clear visualizations - Executive
+summaries - Actionable recommendations
+39
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 51 of 55</div>
+<div class="page-content">
+EDA Checklist &amp; Quality Assurance
+Data Quality Checklist
+✓Completeness: Missing value analysis
+✓Accuracy: Outlier detection &amp; validation
+✓Consistency: Data type verification
+✓Uniqueness: Duplicate detection
+✓Validity: Range &amp; format checking
+✓Timeliness: Temporal analysis
+Statistical Validation
+✓Distribution testing
+✓Correlation significance tests
+✓Independence assumptions
+✓Sample size adequacy
+Visualization Checklist
+✓Clarity: Clear labels &amp; legends
+✓Completeness: All data represented
+✓Accuracy: Correct scales &amp; axes
+✓Aesthetics: Professional appearance
+✓Accessibility: Color-blind friendly
+✓Context: Meaningful titles &amp; captions
+Documentation Standards
+✓Data source &amp; collection methods
+✓Preprocessing steps &amp; rationale
+✓Key findings &amp; insights
+✓Limitations &amp; assumptions
+✓Next steps &amp; recommendations
+40
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 52 of 55</div>
+<div class="page-content">
+Summary &amp; Next Steps
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 53 of 55</div>
+<div class="page-content">
+Summary: Key Takeaways
+Core EDA Principles
+1. Systematic Approach - Start with data overview
+- Progress from simple to complex - Document
+everything
+2. Statistical Rigor - Use appropriate tests - Check
+assumptions - Report confidence intervals
+3. Visual Communication - Clear, interpretable
+plots - Multiple visualization types - Story-driven
+presentation
+Practical Impact
+Model Performance - 15-30% improvement typical
+- Better feature selection - Reduced overfitting
+Business Value - Actionable insights - Risk
+identification - Decision support
+Efficiency Gains - 40-60% time savings - Focused
+modeling efforts - Reduced iterations
+Quality EDA
+Better Models
+Business Value
+41
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 54 of 55</div>
+<div class="page-content">
+Next Steps: Advanced EDA Topics
+Advanced Techniques
+Automated EDA: - pandas-profiling - sweetviz -
+autoviz
+Big Data EDA: - Sampling strategies - Distributed
+computing - Stream processing
+Domain-Specific EDA: - Text data analysis - Image
+data exploration - Time series deep-dive
+Integration Topics
+MLOps Integration: - Automated data quality
+checks - Feature store management - Drift detection
+Causal Inference: - Confounding variable
+identification - Causal graph construction -
+Treatment effect analysis
+Ethics &amp; Fairness: - Bias detection in data -
+Fairness metrics - Responsible AI practices
+Learning Path
+Practice: Apply EDA to diverse datasets; Study: Read domain literature; Share: Present findings to
+stakeholders
+42
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 55 of 55</div>
+<div class="page-content">
+Resources &amp; Further Reading
+Essential Books
+”Exploratory Data Analysis” - John Tukey
+The foundational text for EDA principles
+”Python for Data Analysis” - Wes McKinney
+Practical pandas-based EDA
+”The Elements of Statistical Learning” - Hastie,
+Tibshirani, Friedman
+Statistical foundations
+”Fundamentals of Data Visualization” - Claus
+Wilke
+Visualization best practices
+Online Resources
+Python Libraries: - pandas, seaborn, matplotlib -
+plotly, bokeh (interactive) - scipy, statsmodels
+(statistics)
+R Libraries: - ggplot2, dplyr - corrplot, VIM -
+DataExplorer, dlookr
+Courses: - Coursera: EDA with Python - edX: Data
+Science MicroMasters - Kaggle Learn: Data
+Visualization
+Questions &amp; Discussion
+”The greatest value of a picture is when it forces us to notice what we never expected to see.” - John Tukey
+43
+
+</div>
+</div>
+
+</body>
+</html>

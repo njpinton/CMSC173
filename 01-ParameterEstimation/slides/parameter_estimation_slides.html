@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>parameter_estimation_slides</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .page {
+            background-color: white;
+            margin: 20px 0;
+            padding: 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            min-height: 400px;
+        }
+        .page-number {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        .page-content {
+            line-height: 1.8;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 12pt;
+        }
+        .note {
+            color: #666;
+            font-style: italic;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-left: 3px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+<div class="note">
+    This is a text-only version of the slides. For the full visual experience with images and formatting, please refer to the PDF version.
+</div>
+
+<div class="page">
+<div class="page-number">Page 1 of 43</div>
+<div class="page-content">
+Parameter Estimation
+Method of Moments &amp; Maximum Likelihood Estimation
+CMSC 173: Machine Learning
+October 1, 2025
+1
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 2 of 43</div>
+<div class="page-content">
+Course Outline
+• Introduction - What is parameter estimation?
+• Statistical Foundations - Key concepts and notation
+• Method of Moments - Classical parameter estimation
+• Maximum Likelihood Estimation - Optimal parameter estimation
+• Comparison - When to use which method
+• Applications - Real-world examples
+• Advanced Topics - Extensions and modern approaches
+• Best Practices - Common pitfalls and guidelines
+2
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 3 of 43</div>
+<div class="page-content">
+Introduction
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 4 of 43</div>
+<div class="page-content">
+What is Parameter Estimation?
+Definition
+Parameter estimation is the process of inferring the values of unknown parameters that characterize a
+probability distribution from observed data.
+The Problem:
+• We have data samples: {x1, x2, . . . , xn}
+• We assume a distribution family: f (x|θ)
+• We need to find: ˆθ
+Examples:
+• Normal distribution: µ, σ2
+• Poisson distribution: λ
+• Linear regression: β0, β1
+3
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 5 of 43</div>
+<div class="page-content">
+Why Parameter Estimation Matters
+Machine Learning Applications:
+• Supervised Learning: Estimating model weights
+• Unsupervised Learning: Finding cluster parameters
+• Probabilistic Models: Bayesian inference
+• Time Series: ARIMA parameters
+• Deep Learning: Neural network weights
+Example
+Linear Regression: Given data (xi, yi),
+estimate:
+y = β0 + β1x + ϵ
+Find ˆβ0, ˆβ1 that best fit the data.
+4
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 6 of 43</div>
+<div class="page-content">
+Estimation Quality Criteria
+Desirable Properties of Estimators
+• Unbiased: E[ˆθ] = θ
+• Consistent: ˆθ
+p−→θ as n →∞
+• Efficient: Minimum variance among unbiased estimators
+• Sufficient: Uses all information in the data
+Bias-Variance Tradeoff:
+MSE = Bias2 + Variance + Noise
+Cram´er-Rao Lower Bound:
+Var(ˆθ) ≥
+1
+I(θ)
+5
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 7 of 43</div>
+<div class="page-content">
+Statistical Foundations
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 8 of 43</div>
+<div class="page-content">
+Key Concepts and Notation
+Random Variables:
+• X: Random variable
+• x: Observed value
+• θ: True parameter
+• ˆθ: Estimated parameter
+Distributions:
+• f (x|θ): PDF/PMF
+• F(x|θ): CDF
+• L(θ|x): Likelihood
+Sample vs Population
+• Population: µ = E[X], σ2 = Var(X)
+• Sample: ¯x = 1
+n
+Pn
+i=1 xi, s2 =
+1
+n−1
+Pn
+i=1(xi −¯x)2
+Example
+For normal distribution N(µ, σ2):
+f (x|µ, σ2) =
+1
+√
+2πσ2 exp
+
+−(x −µ)2
+2σ2
+
+6
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 9 of 43</div>
+<div class="page-content">
+Moments and Central Moments
+Definition of Moments
+The k-th moment of a random variable X:
+mk = E[X k] =
+Z ∞
+−∞
+xkf (x)dx
+Raw Moments:
+• m1 = E[X] = µ (mean)
+• m2 = E[X 2]
+• m3 = E[X 3]
+• m4 = E[X 4]
+Central Moments:
+• µ1 = 0
+• µ2 = E[(X −µ)2] = σ2 (variance)
+• µ3 = E[(X −µ)3] (skewness)
+• µ4 = E[(X −µ)4] (kurtosis)
+Example
+For normal distribution N(µ, σ2): m1 = µ, m2 = µ2 + σ2, µ2 = σ2
+7
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 10 of 43</div>
+<div class="page-content">
+Method of Moments
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 11 of 43</div>
+<div class="page-content">
+Method of Moments: Basic Idea
+Core Principle
+Match sample moments to theoretical moments to estimate parameters.
+Algorithm:
+1. Express theoretical moments in terms of parameters: mk(θ)
+2. Calculate sample moments: ˆmk = 1
+n
+Pn
+i=1 xk
+i
+3. Set theoretical = sample: mk(θ) = ˆmk
+4. Solve system of equations for ˆθ
+For p parameters: Use first p moments
+m1(θ) = ˆm1
+m2(θ) = ˆm2
+...
+mp(θ) = ˆmp
+Key Insight
+If we can express moments as functions of parameters,
+we can invert to find parameters from moments.
+8
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 12 of 43</div>
+<div class="page-content">
+MoM Example: Normal Distribution
+Problem: Estimate µ and σ2 for N(µ, σ2)
+Step 1: Theoretical moments
+m1 = E[X] = µ
+(1)
+m2 = E[X 2] = µ2 + σ2
+(2)
+Step 2: Sample moments
+ˆm1 = 1
+n
+n
+X
+i=1
+xi = ¯x
+(3)
+ˆm2 = 1
+n
+n
+X
+i=1
+x2
+i
+(4)
+Step 3: Set equal and solve
+µ = ¯x
+(5)
+µ2 + σ2 = 1
+n
+n
+X
+i=1
+x2
+i
+(6)
+Step 4: Solution
+ˆµMoM = ¯x
+(7)
+ˆσ2
+MoM = 1
+n
+n
+X
+i=1
+x2
+i −¯x2 = 1
+n
+n
+X
+i=1
+(xi −¯x)2
+(8)
+9
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 13 of 43</div>
+<div class="page-content">
+MoM Example: Poisson Distribution
+Problem: Estimate λ for Poisson(λ)
+Theoretical moment: For Poisson distribution:
+E[X] = λ
+Sample moment:
+ˆm1 = ¯x = 1
+n
+n
+X
+i=1
+xi
+MoM Estimate:
+ˆλMoM = ¯x
+Example
+Data: [2, 1, 3, 0, 2, 1, 4, 1]
+Sample mean:
+¯x = 14
+8 = 1.75
+MoM estimate:
+ˆλ = 1.75
+10
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 14 of 43</div>
+<div class="page-content">
+MoM Example: Gamma Distribution
+Problem: Estimate α and β for Gamma(α, β)
+Theoretical moments:
+E[X] = αβ
+(9)
+Var(X) = αβ2
+(10)
+Also: E[X 2] = Var(X) + (E[X])2 = αβ2 + α2β2
+Sample moments:
+ˆm1 = ¯x
+(11)
+ˆm2 = 1
+n
+n
+X
+i=1
+x2
+i
+(12)
+Sample variance:
+ˆσ2 = ˆm2 −ˆm2
+1
+Setting moments equal:
+αβ = ¯x
+(13)
+αβ2 = ˆσ2
+(14)
+MoM Estimates:
+ˆβMoM = ˆσ2
+¯x ,
+ˆαMoM = ¯x2
+ˆσ2
+11
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 15 of 43</div>
+<div class="page-content">
+Properties of Method of Moments
+Advantages
+• Simple: Easy to compute
+• Consistent: ˆθ →θ as n →∞
+• General: Works for any distribution
+• Intuitive: Matches sample to theory
+Disadvantages
+• Not optimal: Higher variance than MLE
+• Existence: Solutions may not exist
+• Uniqueness: Multiple solutions possible
+• Boundary: May give invalid estimates
+Asymptotic Distribution
+Under regularity conditions:
+√n(ˆθMoM −θ) d−→N(0, Σ)
+where Σ depends on the moments and their derivatives.
+12
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 16 of 43</div>
+<div class="page-content">
+Maximum Likelihood Estimation
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 17 of 43</div>
+<div class="page-content">
+Maximum Likelihood: Basic Idea
+Core Principle
+Find parameter values that make the observed data most likely.
+Likelihood Function: For independent observations x1, x2, . . . , xn:
+L(θ) = L(θ|x1, . . . , xn) =
+n
+Y
+i=1
+f (xi|θ)
+Log-Likelihood:
+ℓ(θ) = log L(θ) =
+n
+X
+i=1
+log f (xi|θ)
+Maximum Likelihood Estimator (MLE)
+ˆθMLE = arg max
+θ
+L(θ) = arg max
+θ
+ℓ(θ)
+13
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 18 of 43</div>
+<div class="page-content">
+Finding the MLE: Calculus Approach
+Method 1: Differentiation
+For continuous parameter space, solve:
+dℓ(θ)
+dθ
+= 0
+Score Function:
+S(θ) = dℓ(θ)
+dθ
+=
+n
+X
+i=1
+d log f (xi|θ)
+dθ
+For vector parameters θ:
+∇θℓ(θ) = 0
+This gives a system of equations to solve.
+Second-order condition:
+d2ℓ(θ)
+dθ2
+&lt; 0
+Ensures we have a maximum, not minimum.
+Example
+For normal distribution with known σ2:
+dℓ(µ)
+dµ
+= 1
+σ2
+n
+X
+i=1
+(xi −µ) = 0
+⇒ˆµMLE = ¯x
+14
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 19 of 43</div>
+<div class="page-content">
+MLE Example: Normal Distribution
+Problem: Estimate µ and σ2 for N(µ, σ2)
+Log-likelihood:
+ℓ(µ, σ2) =
+n
+X
+i=1
+log f (xi|µ, σ2)
+(15)
+=
+n
+X
+i=1
+
+−1
+2 log(2π) −1
+2 log(σ2) −(xi −µ)2
+2σ2
+
+(16)
+= −n
+2 log(2π) −n
+2 log(σ2) −
+1
+2σ2
+n
+X
+i=1
+(xi −µ)2
+(17)
+Taking derivatives:
+∂ℓ
+∂µ = 1
+σ2
+n
+X
+i=1
+(xi −µ) = 0
+(18)
+∂ℓ
+∂σ2 = −n
+2σ2 +
+1
+2(σ2)2
+n
+X
+i=1
+(xi −µ)2 = 0
+(19)
+MLE Solutions:
+ˆµMLE = ¯x,
+ˆσ2
+MLE = 1
+n
+n
+X
+i=1
+(xi −¯x)2
+15
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 20 of 43</div>
+<div class="page-content">
+MLE Example: Poisson Distribution
+Problem: Estimate λ for Poisson(λ)
+PMF: P(X = k) = λk e−λ
+k!
+Log-likelihood:
+ℓ(λ) =
+n
+X
+i=1
+log P(Xi = xi|λ)
+(20)
+=
+n
+X
+i=1
+[xi log λ −λ −log(xi!)]
+(21)
+= log λ
+n
+X
+i=1
+xi −nλ −
+n
+X
+i=1
+log(xi!)
+(22)
+Score function:
+dℓ(λ)
+dλ
+= 1
+λ
+n
+X
+i=1
+xi −n = 0
+MLE Solution:
+ˆλMLE = 1
+n
+n
+X
+i=1
+xi = ¯x
+Note
+For Poisson distribution, MLE and MoM give the same result!
+16
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 21 of 43</div>
+<div class="page-content">
+MLE Example: Exponential Distribution
+Problem: Estimate λ for Exponential(λ)
+PDF: f (x|λ) = λe−λx for x ≥0
+Log-likelihood:
+ℓ(λ) =
+n
+X
+i=1
+log(λe−λxi )
+(23)
+=
+n
+X
+i=1
+[log λ −λxi]
+(24)
+= n log λ −λ
+n
+X
+i=1
+xi
+(25)
+Score function:
+dℓ(λ)
+dλ
+= n
+λ −
+n
+X
+i=1
+xi = 0
+MLE Solution:
+ˆλMLE =
+n
+Pn
+i=1 xi
+= 1
+¯x
+17
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 22 of 43</div>
+<div class="page-content">
+Properties of Maximum Likelihood Estimators
+Asymptotic Properties (Large Sample)
+Under regularity conditions:
+• Consistency: ˆθMLE
+p−→θ
+• Asymptotic Normality: √n(ˆθMLE −θ) d−→N(0, I(θ)−1)
+• Efficiency: Achieves Cram´er-Rao lower bound
+• Invariance: If ˆθ is MLE of θ, then g(ˆθ) is MLE of g(θ)
+Fisher Information:
+I(θ) = −E
+d2ℓ(θ)
+dθ2
+
+Higher information ⇒lower variance
+Observed Information:
+J(ˆθ) = −d2ℓ(θ)
+dθ2
+
+θ=ˆθ
+Used for confidence intervals
+18
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 23 of 43</div>
+<div class="page-content">
+Numerical Methods for MLE
+When Closed-Form Solution Doesn’t Exist
+Many distributions require numerical optimization to find MLE.
+Newton-Raphson Method:
+θ(t+1) = θ(t) −S(θ(t))
+J(θ(t))
+where S(θ) is score and J(θ) is observed information.
+Other Methods:
+• Gradient ascent
+• BFGS optimization
+• EM algorithm (for latent variables)
+• Grid search (for low dimensions)
+Example
+For mixture of Gaussians:
+f (x|θ) =
+K
+X
+k=1
+πkN(x|µk, σ2
+k)
+No closed-form MLE ⇒Use EM algorithm
+19
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 24 of 43</div>
+<div class="page-content">
+Comparison of Methods
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 25 of 43</div>
+<div class="page-content">
+Method of Moments vs Maximum Likelihood
+Method of Moments
+Pros:
+• Simple computation
+• Always exists (if moments exist)
+• Distribution-free approach
+• Good starting values for MLE
+Cons:
+• Not optimal (higher variance)
+• May give invalid estimates
+• Doesn’t use full data information
+Maximum Likelihood
+Pros:
+• Optimal (minimum variance)
+• Uses full data information
+• Good theoretical properties
+• Invariance property
+Cons:
+• May require numerical methods
+• Can be computationally intensive
+• Requires specification of full distribution
+20
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 26 of 43</div>
+<div class="page-content">
+Efficiency Comparison
+Relative Efficiency
+ARE = Var(ˆθMLE )
+Var(ˆθMoM)
+MLE is asymptotically more efficient when ARE &lt; 1.
+Normal Distribution:
+• For µ: ARE = 1 (same efficiency)
+• For σ2: ARE = 0.5 (MLE better)
+Exponential Distribution:
+• For λ: ARE = 1 (same efficiency)
+Gamma Distribution:
+• MLE significantly more efficient
+• MoM can be quite inefficient
+General Rule:
+• MLE ≥MoM in efficiency
+• Difference larger for complex distributions
+21
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 27 of 43</div>
+<div class="page-content">
+When to Use Which Method?
+Use Method of Moments When:
+• Quick estimates needed
+• Computational resources limited
+• Distribution family uncertain
+• Starting values for optimization
+• Robust estimates desired
+• Teaching/illustration purposes
+Use Maximum Likelihood When:
+• Optimal estimates needed
+• Distribution well-specified
+• Large sample sizes
+• Inference required (confidence intervals)
+• Model comparison needed
+• Production/research applications
+Practical Strategy
+1. Start with Method of Moments for initial estimates
+2. Use MoM estimates as starting values for MLE optimization
+3. Compare results and choose based on application needs
+4. Consider computational cost vs. statistical efficiency trade-off
+22
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 28 of 43</div>
+<div class="page-content">
+Applications
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 29 of 43</div>
+<div class="page-content">
+Linear Regression Parameter Estimation
+Model: yi = β0 + β1xi + ϵi, where ϵi ∼N(0, σ2)
+Method of Moments:
+E[Y ] = β0 + β1E[X]
+(26)
+E[XY ] = β0E[X] + β1E[X 2]
+(27)
+Solving:
+ˆβ1 = xy −¯x ¯y
+x2 −¯x2
+(28)
+ˆβ0 = ¯y −ˆβ1¯x
+(29)
+Maximum Likelihood:
+ℓ(β, σ2) = −n
+2 log(2πσ2) −
+1
+2σ2
+n
+X
+i=1
+(yi −β0 −β1xi)2
+(30)
+MLE gives same result:
+ˆβ1 =
+P(xi −¯x)(yi −¯y)
+P(xi −¯x)2
+(31)
+ˆβ0 = ¯y −ˆβ1¯x
+(32)
+23
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 30 of 43</div>
+<div class="page-content">
+Logistic Regression Parameter Estimation
+Model: P(Y = 1|X) =
+1
+1+e−(β0+β1X)
+No Closed-Form Solution
+Logistic regression requires numerical optimization for MLE.
+Log-likelihood:
+ℓ(β) =
+n
+X
+i=1
+h
+yi(β0 + β1xi) −log(1 + eβ0+β1xi )
+i
+Score equations:
+∂ℓ
+∂β0
+=
+n
+X
+i=1
+(yi −pi) = 0
+(33)
+∂ℓ
+∂β1
+=
+n
+X
+i=1
+xi(yi −pi) = 0
+(34)
+where pi =
+1
+1+e−(β0+β1xi )
+24
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 31 of 43</div>
+<div class="page-content">
+Clustering: Gaussian Mixture Models
+Model: f (x|θ) = PK
+k=1 πkN(x|µk, σ2
+k)
+Parameters to estimate:
+• Mixing weights: π1, . . . , πK
+• Means: µ1, . . . , µK
+• Variances: σ2
+1, . . . , σ2
+K
+Challenges:
+• Latent variables (cluster assignments)
+• Complex likelihood surface
+• Local optima
+• Model selection (choosing K)
+EM Algorithm
+E-step: Compute posterior probabilities of cluster assignments
+M-step: Update parameters using weighted MLE
+25
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 32 of 43</div>
+<div class="page-content">
+Time Series: ARIMA Parameters
+ARIMA(p,d,q) Model:
+(1 −ϕ1B −· · · −ϕpBp)(1 −B)dXt = (1 + θ1B + · · · + θqBq)ϵt
+Method of Moments:
+• Use sample autocorrelations
+• Yule-Walker equations for AR parts
+• Moment conditions for MA parts
+• Simple but not optimal
+Maximum Likelihood:
+• Kalman filter for likelihood
+• Numerical optimization required
+• More efficient estimates
+• Standard errors available
+Example
+AR(1): Xt = ϕXt−1 + ϵt
+• MoM: ˆϕ = ˆρ1 (sample autocorrelation)
+• MLE: Optimize ℓ(ϕ, σ2) numerically
+26
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 33 of 43</div>
+<div class="page-content">
+Advanced Topics
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 34 of 43</div>
+<div class="page-content">
+Bayesian Parameter Estimation
+Bayesian Approach
+Treat parameters as random variables with prior distributions.
+Bayes’ Theorem:
+p(θ|x) = p(x|θ)p(θ)
+p(x)
+∝p(x|θ)p(θ)
+Components:
+• p(θ): Prior distribution
+• p(x|θ): Likelihood
+• p(θ|x): Posterior distribution
+• p(x): Marginal likelihood
+Estimation:
+• MAP: ˆθMAP = arg max p(θ|x)
+• Posterior mean: ˆθPM = E[θ|x]
+• Credible intervals available
+Example
+Normal with normal prior: Prior: µ ∼N(µ0, τ 2), Likelihood: X|µ ∼N(µ, σ2) Posterior:
+µ|x ∼N
+ τ2¯x+σ2µ0/n
+τ2+σ2/n
+,
+τ2σ2/n
+τ2+σ2/n
+
+27
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 35 of 43</div>
+<div class="page-content">
+Robust Parameter Estimation
+Problem with MLE
+MLE can be sensitive to outliers and model misspecification.
+Robust Alternatives:
+• M-estimators: Generalize MLE
+• Huber estimator: Robust to outliers
+• Trimmed means: Remove extreme values
+• Median-based: Use median instead of mean
+Example - Huber Loss:
+ρ(x) =
+( 1
+2 x2
+|x| ≤k
+k|x| −1
+2 k2
+|x| &gt; k
+Quadratic for small errors, linear for large errors.
+Trade-offs
+Robust methods sacrifice some efficiency for stability against outliers.
+28
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 36 of 43</div>
+<div class="page-content">
+Bootstrap and Resampling
+Bootstrap Principle
+Estimate sampling distribution by resampling from the observed data.
+Algorithm:
+1. Draw B bootstrap samples: {x∗
+1 , . . . , x∗
+n } from original data
+2. Compute estimate for each sample: ˆθ∗
+b
+3. Use distribution of {ˆθ∗
+1 , . . . , ˆθ∗
+B} for inference
+Applications:
+• Confidence intervals
+• Bias correction
+• Variance estimation
+• Hypothesis testing
+Bootstrap Confidence Interval: For 95
+Bias Correction:
+ˆθcorrected = 2ˆθ −¯θ∗
+29
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 37 of 43</div>
+<div class="page-content">
+Model Selection and Information Criteria
+Model Selection Problem
+How do we choose between different models or number of parameters?
+Information Criteria:
+AIC = −2ℓ(ˆθ) + 2k
+(35)
+BIC = −2ℓ(ˆθ) + k log n
+(36)
+AICc = AIC + 2k(k + 1)
+n −k −1
+(37)
+where k = number of parameters, n = sample size.
+Interpretation:
+• Lower values = better models
+• Trade-off: fit vs complexity
+• AIC: prediction focus
+• BIC: true model focus
+Cross-Validation:
+• Split data into train/validation
+• Estimate on training set
+• Evaluate on validation set
+• Choose model with best CV score
+30
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 38 of 43</div>
+<div class="page-content">
+Best Practices
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 39 of 43</div>
+<div class="page-content">
+Common Pitfalls and How to Avoid Them
+Pitfall 1: Wrong Distribution
+Assuming incorrect distributional family leads to
+biased estimates.
+Solution:
+• Exploratory data analysis
+• Goodness-of-fit tests
+• Residual analysis
+• Model comparison
+Pitfall 2: Insufficient Data
+Small samples lead to unreliable estimates.
+Solution:
+• Check sample size requirements
+• Use bootstrap for uncertainty
+• Consider Bayesian methods
+• Regularization techniques
+Pitfall 3: Outliers
+Extreme values can severely affect estimates.
+Solution:
+• Data visualization
+• Robust estimation methods
+• Outlier detection and treatment
+• Sensitivity analysis
+Pitfall 4: Overfitting
+Too many parameters relative to data.
+Solution:
+• Information criteria (AIC, BIC)
+• Cross-validation
+• Regularization (Ridge, Lasso)
+• Domain knowledge constraints
+31
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 40 of 43</div>
+<div class="page-content">
+Diagnostic Tools and Validation
+Model Validation Checklist
+Always validate your parameter estimates and model assumptions.
+Residual Analysis:
+• Plot residuals vs fitted values
+• Check for patterns or heteroscedasticity
+• Normal probability plots
+• Autocorrelation in residuals
+Goodness-of-Fit Tests:
+• Kolmogorov-Smirnov test
+• Anderson-Darling test
+• Chi-square test
+• Likelihood ratio tests
+Confidence Intervals:
+• Asymptotic (Fisher Information)
+• Profile likelihood
+• Bootstrap intervals
+• Bayesian credible intervals
+Sensitivity Analysis:
+• Remove potential outliers
+• Subsample analysis
+• Perturbation studies
+• Cross-validation
+32
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 41 of 43</div>
+<div class="page-content">
+Computational Considerations
+Optimization Tips
+• Starting values: Use MoM for MLE initialization
+• Scaling: Normalize variables for numerical stability
+• Constraints: Handle parameter bounds properly
+• Convergence: Check multiple starting points
+Implementation
+• Vectorization: Use efficient matrix operations
+• Automatic differentiation: For complex models
+• Parallel computing: Bootstrap and cross-validation
+• Memory management: For large datasets
+Software Tools
+• Python: scipy.optimize, statsmodels, scikit-learn
+• R: optim(), nlm(), maxLik package
+• Specialized: Stan, PyMC for Bayesian methods
+• Deep Learning: TensorFlow, PyTorch for gradient-based optimization
+33
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 42 of 43</div>
+<div class="page-content">
+Summary and Key Takeaways
+Method of Moments
+When to use:
+• Quick estimates needed
+• Simple distributions
+• Starting values for MLE
+• Computational constraints
+Key insight: Match theoretical and sample moments
+Maximum Likelihood
+When to use:
+• Optimal estimates desired
+• Large sample sizes
+• Inference required
+• Model comparison
+Key insight: Find parameters that maximize data
+likelihood
+General Principles
+• Start simple: Use MoM, then refine with MLE if needed
+• Validate assumptions: Check distributional assumptions
+• Assess uncertainty: Always provide confidence intervals
+• Consider alternatives: Robust methods for outliers
+• Use diagnostics: Residual analysis and goodness-of-fit
+Parameter estimation is fundamental to statistical modeling and machine learning!
+34
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 43 of 43</div>
+<div class="page-content">
+Next Steps and Further Reading
+Advanced Topics to Explore:
+• Generalized Method of Moments (GMM)
+• Quasi-Maximum Likelihood
+• Empirical likelihood methods
+• Regularized estimation (Ridge, Lasso)
+• Bayesian computation (MCMC)
+Applications in ML:
+• Neural network training
+• Variational autoencoders
+• Gaussian processes
+• Hidden Markov models
+• Reinforcement learning
+Recommended Resources
+• Books: Casella &amp; Berger ”Statistical Inference”, Lehmann &amp; Casella ”Theory of Point Estimation”
+• Software: Practice with scipy.optimize, statsmodels, Stan
+• Datasets: UCI ML Repository, Kaggle competitions
+Thank you! Questions?
+35
+
+</div>
+</div>
+
+</body>
+</html>

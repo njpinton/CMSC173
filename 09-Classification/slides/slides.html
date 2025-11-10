@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>slides</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .page {
+            background-color: white;
+            margin: 20px 0;
+            padding: 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            min-height: 400px;
+        }
+        .page-number {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        .page-content {
+            line-height: 1.8;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 12pt;
+        }
+        .note {
+            color: #666;
+            font-style: italic;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-left: 3px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+<div class="note">
+    This is a text-only version of the slides. For the full visual experience with images and formatting, please refer to the PDF version.
+</div>
+
+<div class="page">
+<div class="page-number">Page 1 of 57</div>
+<div class="page-content">
+Classification Methods
+CMSC 173 - Machine Learning
+Noel Jeffrey Pinton
+October 13, 2025
+Department of Computer Science
+University of the Philippines - Cebu
+1
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 2 of 57</div>
+<div class="page-content">
+Outline
+Introduction &amp; Motivation
+Naive Bayes Classification
+K-Nearest Neighbors (KNN)
+Decision Trees
+Method Comparison &amp; Selection
+Best Practices &amp; Guidelines
+Summary &amp; Conclusion
+2
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 3 of 57</div>
+<div class="page-content">
+Introduction &amp; Motivation
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 4 of 57</div>
+<div class="page-content">
+What is Classification?
+Definition
+Classification is a supervised learning task where we
+predict a discrete class label for new observations
+based on training examples.
+Key Characteristics
+• Supervised learning
+• Discrete output (classes/categories)
+• Learn from labeled training data
+• Make predictions on new data
+Formulation
+Given training data:
+D = {(x1, y1), . . . , (xn, yn)}
+where:
+• xi ∈Rd = feature vector
+• yi ∈{1, 2, . . . , C} = class label
+Goal: Learn function f : Rd →{1, . . . , C}
+Types
+Binary: 2 classes (spam/not spam)
+Multi-class: C &gt; 2 classes (digits 0-9)
+3
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 5 of 57</div>
+<div class="page-content">
+Classification vs Regression
+Classification
+• Output: Discrete categories
+• Examples:
+• Email: spam/not spam
+• Medical: disease diagnosis
+• Image: object recognition
+• Finance: loan approval
+• Metrics: Accuracy, precision, recall
+• Goal: Predict class membership
+Regression
+• Output: Continuous values
+• Examples:
+• House price prediction
+• Temperature forecasting
+• Stock price estimation
+• Age prediction
+• Metrics: MSE, MAE, R2
+• Goal: Predict numerical value
+Key Difference
+Classification predicts categories, regression predicts quantities.
+4
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 6 of 57</div>
+<div class="page-content">
+Real-World Applications
+Medical &amp; Healthcare
+• Disease diagnosis: Cancer detection, diabetes
+screening
+• Medical imaging: X-ray, MRI classification
+• Drug discovery: Molecular classification
+Finance &amp; Business
+• Credit scoring: Loan default prediction
+• Fraud detection: Transaction classification
+• Customer churn: Retention analysis
+Technology &amp; Media
+• Image recognition: Object detection, face
+recognition
+• Text classification: Sentiment analysis, spam
+filtering
+• Recommendation: Content categorization
+Science &amp; Engineering
+• Biology: Species identification, gene
+classification
+• Quality control: Defect detection
+• Remote sensing: Land cover classification
+Common Theme
+All involve learning patterns from labeled examples to classify new instances!
+5
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 7 of 57</div>
+<div class="page-content">
+Classification Methods Overview
+This lecture covers three fundamental classification methods:
+Naive Bayes
+Probabilistic
+• Based on Bayes theorem
+• Assumes feature independence
+• Fast, simple
+• Works with small data
+Best for: Text classification,
+real-time prediction
+K-Nearest Neighbors
+Instance-based
+• Distance-based
+• Non-parametric
+• No training phase
+• Intuitive
+Best for: Pattern recognition,
+recommendation systems
+Decision Trees
+Rule-based
+• Hierarchical decisions
+• Interpretable
+• Handles mixed types
+• Foundation for ensembles
+Best for: Medical diagnosis,
+credit scoring
+Learning Objectives
+Understand theory, implementation, and practical application of each method.
+6
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 8 of 57</div>
+<div class="page-content">
+Naive Bayes Classification
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 9 of 57</div>
+<div class="page-content">
+Bayes’ Theorem: Foundation
+Bayes’ Theorem
+P(Ck|x) = P(x|Ck) · P(Ck)
+P(x)
+where:
+• P(Ck|x) = Posterior: Probability of class Ck given features x
+• P(x|Ck) = Likelihood: Probability of features given class
+• P(Ck) = Prior: Probability of class (before seeing data)
+• P(x) = Evidence: Probability of features (normalization constant)
+Classification Rule
+7
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 10 of 57</div>
+<div class="page-content">
+The ”Naive” Assumption
+Feature Independence
+Assumption: Features are conditionally independent
+given the class:
+P(x|Ck) = P(x1, x2, . . . , xd|Ck)
+= P(x1|Ck) · P(x2|Ck) · · · P(xd|Ck)
+=
+d
+Y
+i=1
+P(xi|Ck)
+Why ”Naive”?
+This assumption is often violated in practice, but:
+• Makes computation tractable
+• Reduces parameters exponentially
+• Works surprisingly well empirically
+Practical Impact
+Enables classification with minimal training data
+and fast prediction!
+8
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 11 of 57</div>
+<div class="page-content">
+Naive Bayes: Classification Formula
+Combining Bayes theorem with independence assumption:
+Full Formula
+P(Ck|x) ∝P(Ck)
+d
+Y
+i=1
+P(xi|Ck)
+Classification decision:
+ˆy = arg max
+k
+"
+P(Ck)
+d
+Y
+i=1
+P(xi|Ck)
+#
+In Practice (Log Probabilities)
+To avoid numerical underflow, use log probabilities:
+ˆy = arg max
+k
+"
+log P(Ck) +
+d
+X
+i=1
+log P(xi|Ck)
+#
+Key Insight
+We only need to estimate P(Ck) and P(xi|Ck) from training data!
+9
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 12 of 57</div>
+<div class="page-content">
+Types of Naive Bayes Classifiers
+1. Gaussian Naive Bayes
+For continuous features: Assume features follow Gaussian distribution
+P(xi|Ck) =
+1
+q
+2πσ2
+k,i
+exp
+ 
+−(xi −µk,i)2
+2σ2
+k,i
+!
+Parameters: Mean µk,i and variance σ2
+k,i for each feature i and class k
+Use cases: Iris classification, continuous sensor data
+2. Multinomial Naive Bayes
+For discrete counts (e.g., word frequencies): Assume multinomial distribution
+P(xi|Ck) =
+Nk,i + α
+P
+j Nk,j + αd
+where Nk,i = count of feature i in class k, α = smoothing parameter
+Use cases: Text classification, document categorization
+3. Bernoulli Naive Bayes
+For binary features: Assume Bernoulli distribution
+P(xi|Ck) = P(i|Ck)xi · (1 −P(i|Ck))(1−xi )
+10
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 13 of 57</div>
+<div class="page-content">
+Gaussian Naive Bayes: Details
+Training (Parameter Estimation)
+For each class Ck and feature i:
+1. Prior probability:
+P(Ck) = nk
+n
+where nk = number of samples in class k
+2. Mean:
+µk,i = 1
+nk
+X
+xj ∈Ck
+xj,i
+3. Variance:
+σ2
+k,i = 1
+nk
+X
+xj ∈Ck
+(xj,i −µk,i)2
+Prediction
+For new sample x:
+1. Compute log-likelihood for each class:
+log P(Ck|x) = log P(Ck)
++
+d
+X
+i=1
+log P(xi|Ck)
+2. Choose class with highest value:
+ˆy = arg max
+k
+log P(Ck|x)
+11
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 14 of 57</div>
+<div class="page-content">
+Naive Bayes Example: Binary Classification
+Dataset: Weather conditions for playing tennis
+Training Data
+Outlook
+Temp
+Humidity
+Play
+Sunny
+Hot
+High
+No
+Sunny
+Hot
+High
+No
+Overcast
+Hot
+High
+Yes
+Rainy
+Mild
+High
+Yes
+Rainy
+Cool
+Normal
+Yes
+Rainy
+Cool
+Normal
+No
+Overcast
+Cool
+Normal
+Yes
+Sunny
+Mild
+High
+No
+Sunny
+Cool
+Normal
+Yes
+Question
+Predict: Outlook=Sunny, Temp=Cool,
+Humidity=High
+Step 1: Compute Priors
+P(Yes) = 5
+9 ≈0.56
+P(No) = 4
+9 ≈0.44
+Step 2: Compute Likelihoods
+For Class = Yes:
+• P(Sunny|Yes) = 2
+5 = 0.40
+• P(Cool|Yes) = 3
+5 = 0.60
+• P(High|Yes) = 1
+5 = 0.20
+For Class = No:
+• P(Sunny|No) = 2
+4 = 0.50
+• P(Cool|No) = 1
+4 = 0.25
+• P(High|No) = 3
+4 = 0.75
+Step 3: Calculate Posteriors
+P(Yes|x) ∝0.56 × 0.40 × 0.60 × 0.20 = 0.027
+P(No|x) ∝0.44 × 0.50 × 0.25 × 0.75 = 0.041
+Prediction: No (higher posterior)
+12
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 15 of 57</div>
+<div class="page-content">
+Naive Bayes: Iris Dataset Example
+Gaussian NB Performance
+• Training Accuracy: 96.0%
+• Test Accuracy: 93.3%
+• Training Time: &lt;1ms
+• Prediction Time: &lt;1ms
+Key Observations
+• Linear decision boundaries
+• Fast training and prediction
+• Some overlap between classes
+• Good generalization despite naive assumption
+13
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 16 of 57</div>
+<div class="page-content">
+Laplace Smoothing
+Problem: Zero Probabilities
+If a feature value never appears with a class in training: P(xi|Ck) = 0
+This makes the entire product zero: P(Ck|x) = 0
+Solution: Laplace (Additive) Smoothing
+Add pseudo-count α (typically α = 1):
+For discrete features:
+P(xi = v|Ck) =
+Nk,v + α
+Nk + α · V
+where:
+• Nk,v = count of value v in class k
+• Nk = total count in class k
+• V = number of unique values for feature i
+Effect
+• Prevents zero probabilities
+• Provides small probability to unseen events
+• α = 1 called ”Laplace smoothing”, α &lt; 1 called ”Lidstone smoothing”
+14
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 17 of 57</div>
+<div class="page-content">
+Naive Bayes Algorithm (Pseudocode)
+Algorithm 1 Gaussian Naive Bayes
+Require: Training data D = {(x1, y1), . . . , (xn, yn)}
+Ensure: Class prediction for new sample x
+1: Training Phase:
+2: for each class k = 1, . . . , C do
+3:
+Compute prior: P(Ck) = nk
+n
+4:
+for each feature i = 1, . . . , d do
+5:
+Compute mean: µk,i =
+1
+nk
+P
+xj ∈Ck xj,i
+6:
+Compute variance: σ2
+k,i =
+1
+nk
+P
+xj ∈Ck (xj,i −µk,i)2
+7:
+end for
+8: end for
+9:
+10: Prediction Phase:
+11: for each class k = 1, . . . , C do
+12:
+scorek = log P(Ck)
+13:
+for each feature i = 1, . . . , d do
+14:
+scorek += log P(xi|Ck)
+(using Gaussian PDF)
+15:
+end for
+16: end for
+17: return arg maxk scorek
+Complexity
+T
+i i
+O( d)
+P
+di ti
+O(Cd)
+h
+C
+b
+f
+l
+15
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 18 of 57</div>
+<div class="page-content">
+Naive Bayes: Advantages &amp; Disadvantages
+Advantages
+• Fast: Training and prediction are very efficient
+• Simple: Easy to understand and implement
+• Small data: Works well with limited training
+samples
+• Multi-class: Naturally handles multiple classes
+• Scalable: Scales linearly with features and
+samples
+• Probabilistic: Provides probability estimates
+• Online learning: Can update incrementally
+Disadvantages
+• Independence assumption: Rarely true in
+practice
+• Zero frequency: Needs smoothing for unseen
+values
+• Poor estimates: Probability estimates not
+always accurate
+• Feature correlations: Cannot capture
+dependencies
+• Continuous data: Distribution assumption may
+not hold
+• Imbalanced data: Prior bias with skewed classes
+When to Use Naive Bayes
+Good for: Text classification, spam filtering, real-time prediction, high-dimensional data
+Avoid when: Feature independence badly violated, need probability calibration
+16
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 19 of 57</div>
+<div class="page-content">
+K-Nearest Neighbors (KNN)
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 20 of 57</div>
+<div class="page-content">
+K-Nearest Neighbors: The Idea
+Core Concept
+”You are the average of your k closest neighbors”
+Classification rule:
+1. Find k nearest training samples
+2. Vote based on their labels
+3. Assign most common class
+Key Characteristics
+• Non-parametric: No model to train
+• Instance-based: Stores all training data
+• Lazy learning: Computation at prediction time
+• Intuitive: Easy to understand and visualize
+Intuition
+Similar inputs should have similar outputs!
+17
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 21 of 57</div>
+<div class="page-content">
+KNN: Distance Metrics
+Common Distance Metrics
+For feature vectors x = (x1, . . . , xd) and y = (y1, . . . , yd):
+1. Euclidean Distance (L2)
+d(x, y) =
+v
+u
+u
+t
+d
+X
+i=1
+(xi −yi)2
+Most common choice, assumes all features equally
+important
+2. Manhattan Distance (L1)
+d(x, y) =
+d
+X
+i=1
+|xi −yi|
+Less sensitive to outliers, good for high dimensions
+3. Minkowski Distance (general)
+d(x, y) =
+ d
+X
+i=1
+|xi −yi|p
+!1/p
+Generalization: p = 1 (Manhattan), p = 2
+(Euclidean)
+4. Chebyshev Distance (L∞)
+d(x, y) = max
+i
+|xi −yi|
+Maximum difference across any dimension
+18
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 22 of 57</div>
+<div class="page-content">
+KNN Algorithm
+Algorithm 2 K-Nearest Neighbors Classification
+Require: Training data D = {(x1, y1), . . . , (xn, yn)}, parameter k, test sample xtest
+Ensure: Predicted class ˆy
+1: Training Phase:
+2: Store all training samples D
+(no explicit training!)
+3:
+4: Prediction Phase:
+5: Initialize distance array D = []
+6: for each training sample (xi, yi) in D do
+7:
+Compute distance: di = d(xtest, xi)
+8:
+Append (di, yi) to D
+9: end for
+10: Sort D by distance (ascending)
+11: Select k nearest neighbors: Nk = {(d1, y1), . . . , (dk, yk)}
+12: Classification (Majority Vote):
+13: Count occurrences of each class in Nk
+14: return class with highest count
+Complexity
+Training: O(1)
+Prediction: O(nd) per query
+19
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 23 of 57</div>
+<div class="page-content">
+KNN Example: Manual Calculation
+Binary classification with k = 3, Euclidean distance
+Training Data
+ID
+x1
+x2
+Class
+A
+1
+2
+Red
+B
+2
+3
+Red
+C
+3
+1
+Red
+D
+5
+4
+Blue
+E
+5
+6
+Blue
+F
+6
+5
+Blue
+Test Point
+xtest = (4, 3)
+Predict class with k = 3
+Step 1: Compute Distances
+d(A) =
+q
+(4 −1)2 + (3 −2)2 =
+√
+10 ≈3.16
+d(B) =
+q
+(4 −2)2 + (3 −3)2 =
+√
+4 = 2.00
+d(C) =
+q
+(4 −3)2 + (3 −1)2 =
+√
+5 ≈2.24
+d(D) =
+q
+(4 −5)2 + (3 −4)2 =
+√
+2 ≈1.41
+d(E) =
+q
+(4 −5)2 + (3 −6)2 =
+√
+10 ≈3.16
+d(F) =
+q
+(4 −6)2 + (3 −5)2 =
+√
+8 ≈2.83
+Step 2: Find 3-Nearest Neighbors
+Sorted: D(1.41), B(2.00), C(2.24), . . .
+3 nearest: D (Blue), B (Red), C (Red)
+Step 3: Majority Vote
+Blue: 1 vote
+Red: 2 votes
+Prediction: Red (majority class)
+20
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 24 of 57</div>
+<div class="page-content">
+KNN: Choosing K
+Effect of K
+Small K (e.g., k = 1):
+• Flexible decision boundary
+• Low bias, high variance
+• Sensitive to noise
+• Prone to overfitting
+Large K (e.g., k = n):
+• Smooth decision boundary
+• High bias, low variance
+• More robust to noise
+• Prone to underfitting
+Rule of Thumb
+k = √n or use cross-validation
+Best Practice
+• Use odd k for binary classification (avoid ties)
+• Try multiple values: k ∈{1, 3, 5, 7, 9, . . .}
+• Use cross-validation to select optimal k
+• Consider k ≤20 for most problems
+21
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 25 of 57</div>
+<div class="page-content">
+KNN: Decision Boundaries
+k = 1
+• Highly irregular
+• Captures all details
+• Overfits training data
+k = 5
+• Balanced complexity
+• Smooth but flexible
+• Good generalization
+k = 15
+• Very smooth
+• Less flexible
+• May underfit
+Key Insight
+KNN creates non-linear decision boundaries that adapt to local structure!
+22
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 26 of 57</div>
+<div class="page-content">
+KNN: Iris Dataset Example
+23
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 27 of 57</div>
+<div class="page-content">
+Curse of Dimensionality
+Problem: Distance Concentration
+In high dimensions, distances between points become similar!
+All points appear equidistant ⇒”nearest” neighbors not actually close
+Why This Happens
+• Volume of hypersphere grows exponentially with
+d
+• Most data lies near surface of hypersphere
+• Ratio of nearest to farthest distance →1
+• Need exponentially more data as d increases
+Mitigation Strategies
+• Feature selection: Remove irrelevant features
+1
+2
+3
+4
+5
+101
+103
+105
+Number of Dimensions (d)
+Samples Needed
+Training samples
+Rule of Thumb
+KNN works best with d &lt; 20 features
+24
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 28 of 57</div>
+<div class="page-content">
+KNN: Advantages &amp; Disadvantages
+Advantages
+• Simple: Easy to understand and implement
+• No training: No explicit model fitting
+• Non-parametric: No assumptions about data
+distribution
+• Flexible: Non-linear decision boundaries
+• Multi-class: Naturally handles multiple classes
+• Adaptive: Decision boundary adapts locally
+• Incremental: Easy to add new training data
+Disadvantages
+• Slow prediction: O(nd) per query
+• Memory intensive: Stores all training data
+• Curse of dimensionality: Poor in high
+dimensions
+• Scaling sensitive: Must normalize features
+• Imbalanced data: Majority class dominates
+• Choosing k: Requires cross-validation
+• No interpretability: Cannot explain decisions
+When to Use KNN
+Good for: Small to medium datasets (n &lt; 10, 000), low dimensions (d &lt; 20), non-linear patterns
+Avoid when: Large datasets, high dimensions, real-time requirements, need interpretability
+25
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 29 of 57</div>
+<div class="page-content">
+Decision Trees
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 30 of 57</div>
+<div class="page-content">
+Decision Trees: The Idea
+Core Concept
+Learn a tree of if-then-else rules to classify data
+Structure:
+• Root node: Start of tree (top)
+• Internal nodes: Decision/test on feature
+• Branches: Outcome of test
+• Leaf nodes: Class predictions (bottom)
+Classification Process
+1. Start at root
+2. Test feature at current node
+3. Follow branch based on result
+4. Repeat until leaf
+5. Return class at leaf
+Key Advantage
+Highly interpretable - can explain every decision!
+26
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 31 of 57</div>
+<div class="page-content">
+Decision Tree: Example
+Classification: Will a person buy a computer?
+Age?
+Student?
+Yes
+Buy
+Yes
+No
+Don’t Buy
+No
+≤30
+Yes
+Buy
+31-40
+Credit?
+Yes
+Buy
+Good
+No
+Don’t Buy
+Poor
+&gt; 40
+Example Classification
+Query: Age=35, Student=No, Credit=Good
+Path: Age &gt; 40? No →Age 31-40? Yes →Buy
+27
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 32 of 57</div>
+<div class="page-content">
+Building Decision Trees: CART Algorithm
+CART = Classification And Regression Trees
+Greedy recursive algorithm:
+1. Start with all data at root
+2. Find best split that maximizes information gain
+3. Partition data into two subsets
+4. Recursively build left and right subtrees
+5. Stop when stopping criterion met (pure node, max depth, min samples)
+Key Question
+How do we determine the ”best split”?
+⇒Use splitting criteria: Gini impurity or entropy
+Splitting Decision
+For each feature j and threshold t:
+• Split data: Dleft = {x|xj ≤t}, Dright = {x|xj &gt; t}
+• Compute impurity of split
+• Choose (j, t) with lowest impurity
+28
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 33 of 57</div>
+<div class="page-content">
+Splitting Criteria
+1. Gini Impurity (CART default)
+Measures probability of incorrect classification:
+Gini(D) = 1 −
+C
+X
+k=1
+p2
+k
+where pk = proportion of class k in dataset D
+Range: [0, 1], where 0 = pure (all same class), higher = more mixed
+Interpretation: Probability of misclassifying if label randomly assigned
+2. Entropy (ID3, C4.5 algorithms)
+Measures disorder/uncertainty:
+Entropy(D) = −
+C
+X
+k=1
+pk log2(pk)
+Range: [0, log2 C], where 0 = pure, higher = more uncertain
+Interpretation: Average number of bits needed to encode class
+29
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 34 of 57</div>
+<div class="page-content">
+Information Gain
+Definition
+Information Gain = Reduction in impurity after split
+IG(D, j, t) = Impurity(D) −
+ |DL|
+|D| Impurity(DL) + |DR|
+|D| Impurity(DR)
+
+where:
+• D = parent dataset
+• DL = left child (samples with xj ≤t)
+• DR = right child (samples with xj &gt; t)
+• |D| = number of samples
+Splitting Algorithm
+For each feature j and each possible threshold t:
+1. Compute information gain IG(D, j, t)
+2. Keep track of best (j∗, t∗) with highest gain
+Split on (j∗, t∗) to maximize information gain
+Goal
+Maximize purity of child nodes (minimize impurity)
+30
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 35 of 57</div>
+<div class="page-content">
+Decision Tree Example: Manual Construction
+Dataset: Play tennis? (same as Naive Bayes example)
+Training Data (9 samples)
+Outlook
+Temp
+Humidity
+Play
+Sunny
+Hot
+High
+No
+Sunny
+Hot
+High
+No
+Overcast
+Hot
+High
+Yes
+Rainy
+Mild
+High
+Yes
+Rainy
+Cool
+Normal
+Yes
+Rainy
+Cool
+Normal
+No
+Overcast
+Cool
+Normal
+Yes
+Sunny
+Mild
+High
+No
+Sunny
+Cool
+Normal
+Yes
+Class Distribution
+Yes: 5, No: 4
+Step 1: Compute Root Entropy
+Entropy(root) = −5
+9 log2
+5
+9 −4
+9 log2
+4
+9
+≈0.994 bits
+Step 2: Try Splitting on Outlook
+Sunny (3 samples): No=2, Yes=1
+Entropy = −2
+3 log2
+2
+3 −1
+3 log2
+1
+3 ≈0.918
+Overcast (2 samples): Yes=2
+Entropy = 0 (pure!)
+Rainy (4 samples): Yes=2, No=1, Yes=1
+Entropy = −2
+4 log2
+2
+4 −2
+4 log2
+2
+4 = 1.0
+Step 3: Information Gain
+IG(Outlook) = 0.994 −
+ 3
+9 (0.918) + 2
+9 (0) + 4
+9 (1.0)
+
+= 0.994 −0.750 = 0.244
+Result: Outlook has good information gain!
+31
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 36 of 57</div>
+<div class="page-content">
+Decision Tree: Iris Dataset Example
+32
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 37 of 57</div>
+<div class="page-content">
+Decision Boundaries: Different Depths
+Depth = 2
+• Simple boundaries
+• High bias
+• Underfits
+Depth = 5
+• Balanced
+• Good generalization
+• Optimal complexity
+Depth = 20
+• Complex boundaries
+• High variance
+• Overfits
+Key Insight
+Decision trees create axis-aligned rectangular decision regions!
+33
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 38 of 57</div>
+<div class="page-content">
+Decision Tree Algorithm (Pseudocode)
+Algorithm 3 CART Decision Tree (Recursive)
+Require: Dataset D, features F, max depth, min samples
+Ensure: Decision tree T
+1: function BuildTree(D, depth)
+2: if stopping criterion met then
+3:
+return LeafNode(majority class in D)
+4: end if
+5: best gain ←0
+6: (j∗, t∗) ←None
+7: for each feature j ∈F do
+8:
+for each threshold t (midpoints of sorted values) do
+9:
+Split: DL ←{x ∈D : xj ≤t}, DR ←{x ∈D : xj &gt; t}
+10:
+gain ←InformationGain(D, DL, DR)
+11:
+if gain &gt; best gain then
+12:
+best gain ←gain
+13:
+(j∗, t∗) ←(j, t)
+14:
+end if
+15:
+end for
+16: end for
+17: DL, DR ←Split D on feature j∗at threshold t∗
+18: TL ←BuildTree(DL, depth + 1)
+19: TR ←BuildTree(DR, depth + 1)
+20: return DecisionNode(j∗, t∗, TL, TR)
+34
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 39 of 57</div>
+<div class="page-content">
+Overfitting and Pruning
+35
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 40 of 57</div>
+<div class="page-content">
+Feature Importance
+Computing Importance
+For each feature j:
+Importance(j) =
+X
+nodes using j
+nnode
+ntotal
+· ∆Impurity
+where:
+• Sum over all nodes that split on feature j
+• Weight by fraction of samples at node
+• ∆Impurity = reduction in impurity
+Interpretation
+• Higher importance = more useful for prediction
+• Normalized to sum to 1.0
+• Features not used have 0 importance
+• Can identify redundant features
+Use Cases
+Feature selection, domain insights, model interpretation, debugging
+36
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 41 of 57</div>
+<div class="page-content">
+Ensemble Methods Preview
+Limitation: Single Tree Instability
+• Small changes in data →very different tree
+• High variance
+• Sensitive to training set
+Solution: Ensemble Methods
+Combine multiple trees for better performance:
+1. Random Forest
+• Train many trees on bootstrap samples
+• Random feature subset at each split
+• Average predictions (voting for classification)
+2. Gradient Boosting (XGBoost, LightGBM)
+• Train trees sequentially
+• Each tree corrects errors of previous
+• Weighted combination of predictions
+3. AdaBoost
+• Weighted training samples
+• Focus on hard-to-classify examples
+37
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 42 of 57</div>
+<div class="page-content">
+Decision Trees: Advantages &amp; Disadvantages
+Advantages
+• Interpretable: Easy to visualize and explain
+• No scaling: Works with raw features
+• Mixed types: Handles numerical and categorical
+• Non-linear: Captures complex patterns
+• Feature selection: Automatic importance
+ranking
+• Missing values: Can handle with surrogates
+• Fast prediction: O(log n) time
+Disadvantages
+• Overfitting: Prone to high variance
+• Instability: Small data changes = big tree
+changes
+• Axis-aligned: Cannot capture diagonal
+boundaries well
+• Biased: Favors features with many values
+• Imbalanced: Struggles with skewed classes
+• Local optima: Greedy algorithm
+• Extrapolation: Poor outside training range
+When to Use Decision Trees
+Good for: Interpretability needed, mixed feature types, feature interactions, baseline model
+Avoid when: Need best accuracy (use ensembles), many irrelevant features
+38
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 43 of 57</div>
+<div class="page-content">
+Method Comparison &amp; Selection
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 44 of 57</div>
+<div class="page-content">
+Comparison: Decision Boundaries
+Visual comparison on synthetic 2D dataset:
+Naive Bayes
+Properties
+• Linear/quadratic
+• Smooth probabilistic
+• Assumes Gaussian
+K-Nearest Neighbors
+Properties
+• Non-linear
+• Locally adaptive
+• No assumptions
+Decision Tree
+Properties
+• Axis-aligned
+• Rectangular regions
+• Rule-based
+Key Insight
+Different methods create fundamentally different decision boundaries!
+39
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 45 of 57</div>
+<div class="page-content">
+Detailed Comparison Table
+Criterion
+Naive Bayes
+K-Nearest Neighbors
+Decision Trees
+Type
+Probabilistic
+Instance-based
+Rule-based
+Training Time
+Very fast (O(nd))
+None (O(1))
+Medium (O(nd log n))
+Prediction Time
+Very fast (O(Cd))
+Slow (O(nd))
+Fast (O(log n))
+Memory
+Low (parameters only)
+High (stores all data)
+Medium (tree structure)
+Interpretability
+Medium (probabilistic)
+Low (no model)
+High (rules)
+Assumptions
+Feature independence
+Locality principle
+None
+Overfitting Risk
+Low
+Medium-High
+High (needs pruning)
+Handling Noise
+Robust
+Sensitive
+Medium
+Feature Scaling
+Not needed
+Critical
+Not needed
+Missing Values
+Can handle
+Requires imputation
+Can handle
+Categorical Features
+Natural
+Needs encoding
+Natural
+High Dimensions
+Good
+Poor (curse)
+Medium
+Imbalanced Data
+Prior adjustment
+Class weighting
+Sample weighting
+Recommendation
+Try all three methods and use cross-validation to choose the best for your data!
+40
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 46 of 57</div>
+<div class="page-content">
+When to Use Each Method
+Use Naive Bayes When:
+• Text classification (spam filtering, document categorization)
+• Real-time prediction required (fast training and prediction)
+• High-dimensional data (works well even with many features)
+• Small training set (few parameters to estimate)
+• Probabilistic output needed (uncertainty estimates)
+• Baseline model (quick first approach)
+Use K-Nearest Neighbors When:
+• Small to medium dataset (n &lt; 10, 000)
+• Low dimensions (d &lt; 20)
+• Non-linear patterns present
+• No training time budget
+• Anomaly detection (outliers far from neighbors)
+• Recommendation systems (similarity-based)
+Use Decision Trees When:
+• Interpretability crucial (medical, legal, financial decisions)
+• Mixed feature types (numerical and categorical)
+• Feature interactions important
+41
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 47 of 57</div>
+<div class="page-content">
+Performance Comparison: Iris Dataset
+Accuracy Comparison
+Method
+Train
+Test
+Naive Bayes
+96.0%
+93.3%
+KNN (k = 5)
+96.7%
+96.7%
+Decision Tree (depth=3)
+98.3%
+93.3%
+Timing Comparison
+Method
+Train
+Predict
+Naive Bayes
+&lt;1 ms
+&lt;1 ms
+KNN
+0 ms
+2-5 ms
+Decision Tree
+1-2 ms
+&lt;1 ms
+Key Insights
+• All methods perform well on Iris
+• KNN best test accuracy
+• Decision tree shows slight overfit
+• Naive Bayes fastest overall
+• Timing differences negligible for small data
+Important Note
+Performance varies greatly by dataset!
+Always use cross-validation to compare methods on
+your specific data.
+42
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 48 of 57</div>
+<div class="page-content">
+Best Practices &amp; Guidelines
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 49 of 57</div>
+<div class="page-content">
+General Best Practices
+Data Preprocessing
+• Handle missing values: Impute or remove (method-dependent)
+• Scale features: Essential for KNN, not for Naive Bayes/Trees
+• Encode categorical: One-hot encoding (KNN), label encoding (Trees)
+• Remove outliers: Especially important for KNN
+• Feature engineering: Create domain-specific features
+• Balance classes: Use SMOTE, class weights, or resampling
+Model Selection &amp; Tuning
+• Split data properly: Train/validation/test or cross-validation
+• Tune hyperparameters: Grid search or random search
+• Compare multiple methods: Don’t commit to one prematurely
+• Use appropriate metrics: Accuracy, precision, recall, F1, AUC
+• Validate generalization: Check on held-out test set
+Model Interpretation
+• Analyze errors: Confusion matrix, error analysis
+• Feature importance: Which features matter most?
+• Decision boundaries: Visualize for 2D data
+• Cross-validate: Report mean and std of metrics
+43
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 50 of 57</div>
+<div class="page-content">
+Common Pitfalls &amp; Solutions
+Pitfall 1: Not Scaling Features (KNN)
+Problem: Features with large ranges dominate distance calculations
+Solution: Always use StandardScaler or MinMaxScaler for KNN
+Pitfall 2: Using Test Data for Hyperparameter Tuning
+Problem: Test accuracy is optimistically biased
+Solution: Use separate validation set or cross-validation
+Pitfall 3: Overfitting Deep Decision Trees
+Problem: Tree memorizes training data, poor generalization
+Solution: Use pruning (max depth, min samples split, min samples leaf)
+Pitfall 4: Ignoring Class Imbalance
+Problem: Majority class dominates, poor minority class performance
+Solution: Use class weights, SMOTE, or stratified sampling
+Pitfall 5: Naive Bayes with Correlated Features
+Problem: Independence assumption violated, overconfident predictions
+Solution: Remove redundant features or use different method
+44
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 51 of 57</div>
+<div class="page-content">
+Hyperparameter Tuning Guide
+Naive Bayes
+• Type: Gaussian, Multinomial, or Bernoulli (match to data type)
+• Smoothing α: Try [0.1, 0.5, 1.0, 2.0, 5.0] (for discrete features)
+• Priors: Uniform or class-balanced (adjust for imbalance)
+K-Nearest Neighbors
+• k: Try odd values [1, 3, 5, 7, 9, 15, 21] (cross-validate!)
+• Distance metric: Euclidean, Manhattan, Minkowski
+• Weights: ’uniform’ or ’distance’ (weight by inverse distance)
+• Algorithm: ’brute’, ’kd tree’, ’ball tree’ (for efficiency)
+Decision Trees
+• max depth: Try [3, 5, 7, 10, 15, None] (most important!)
+• min samples split: Try [2, 10, 20, 50] (prevent overfitting)
+• min samples leaf: Try [1, 5, 10, 20] (smoother boundaries)
+• criterion: ’gini’ or ’entropy’ (usually similar performance)
+• max features: ’sqrt’, ’log2’, or None (for Random Forest)
+Tip
+Use GridSearchCV or RandomizedSearchCV from scikit-learn for systematic tuning!
+45
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 52 of 57</div>
+<div class="page-content">
+Feature Engineering Tips
+For Naive Bayes
+• Text: Use TF-IDF or count vectors (Multinomial NB)
+• Discretize: Bin continuous features if needed
+• Remove correlated: Drop highly redundant features
+• Log transform: For skewed distributions (Gaussian NB)
+For K-Nearest Neighbors
+• Dimensionality reduction: Use PCA to reduce features
+• Feature selection: Remove irrelevant/noisy features
+• Polynomial features: Create interaction terms
+• Distance metric: Choose appropriate for domain (e.g., cosine for text)
+For Decision Trees
+• Keep raw features: Trees handle non-linearity automatically
+• Interaction terms: Not needed (tree finds them)
+• Categorical encoding: Use label encoding (not one-hot)
+• Create domain features: Trees can use them directly
+Universal Tip
+Domain knowledge is more valuable than complex feature engineering!
+46
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 53 of 57</div>
+<div class="page-content">
+Summary &amp; Conclusion
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 54 of 57</div>
+<div class="page-content">
+Key Takeaways
+Core Concepts
+• Classification: Supervised learning for discrete labels
+• Three fundamental approaches: Probabilistic, instance-based, rule-based
+• Different assumptions: Match method to data characteristics
+• Trade-offs: Speed vs accuracy vs interpretability
+Method Summaries
+• Naive Bayes: Fast probabilistic, assumes independence, great for text
+• K-Nearest Neighbors: Simple instance-based, non-parametric, slow prediction
+• Decision Trees: Interpretable rules, non-linear, prone to overfit
+Best Practices
+• Preprocess appropriately: Scaling for KNN, encoding for trees
+• Use cross-validation: For model selection and hyperparameter tuning
+• Try multiple methods: No single best classifier for all problems
+• Interpret results: Understand why model makes predictions
+47
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 55 of 57</div>
+<div class="page-content">
+What We Covered
+1. Introduction: Classification definition, applications, comparison with regression
+2. Naive Bayes: Bayes theorem, independence assumption, Gaussian/Multinomial/Bernoulli variants, worked
+example
+3. K-Nearest Neighbors: Distance metrics, algorithm, choosing k, curse of dimensionality, worked example
+4. Decision Trees: CART algorithm, splitting criteria (Gini/Entropy), pruning, feature importance, worked
+example
+5. Comparison: Decision boundaries, performance metrics, when to use each method
+6. Best Practices: Data preprocessing, hyperparameter tuning, common pitfalls, feature engineering
+Next Steps
+• Practice: Implement all three methods from scratch
+• Experiment: Try on different datasets (UCI ML Repository)
+• Read ahead: Ensemble methods (Random Forest, Boosting)
+• Workshop: Hands-on exercises in Jupyter notebook
+48
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 56 of 57</div>
+<div class="page-content">
+Further Reading
+Textbooks
+• Hastie et al.: ”The Elements of Statistical Learning” (Ch. 9: Additive Models, Trees)
+• Bishop: ”Pattern Recognition and Machine Learning” (Ch. 4: Linear Models for Classification)
+• Murphy: ”Machine Learning: A Probabilistic Perspective” (Ch. 3, 16: Generative and Discriminative
+Models)
+• Mitchell: ”Machine Learning” (Ch. 3: Decision Tree Learning)
+Key Papers
+• Breiman et al. (1984): ”Classification and Regression Trees (CART)”
+• Quinlan (1986): ”Induction of Decision Trees (ID3)”
+• Cover &amp; Hart (1967): ”Nearest Neighbor Pattern Classification”
+• Rish (2001): ”An Empirical Study of the Naive Bayes Classifier”
+Implementations
+• scikit-learn: GaussianNB, MultinomialNB, KNeighborsClassifier, DecisionTreeClassifier
+• Documentation: https://scikit-learn.org/stable/supervised learning.html
+• Tutorials: scikit-learn user guide, Kaggle Learn
+49
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 57 of 57</div>
+<div class="page-content">
+Questions?
+Thank you for your attention!
+Noel Jeffrey Pinton
+Department of Computer Science
+University of the Philippines - Cebu
+49
+
+</div>
+</div>
+
+</body>
+</html>
