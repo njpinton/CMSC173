@@ -1,0 +1,836 @@
+<!DOCTYPE html>                                                                                                                               
+<html lang="en">                                                                                                                              
+<head>                                                                                                                                        
+    <meta charset="UTF-8">                                                                                                                    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">                                                                    
+    <title>Parameter Estimation - CMSC 173</title>                                                                                            
+    <style>                                                                                                                                   
+        * {                                                                                                                                   
+            margin: 0;                                                                                                                        
+            padding: 0;                                                                                                                       
+            box-sizing: border-box;                                                                                                           
+        }                                                                                                                                     
+                                                                                                                                              
+        body {                                                                                                                                
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;                                                                     
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);                                                                    
+            overflow: hidden;                                                                                                                 
+        }                                                                                                                                     
+                                                                                                                                              
+        .presentation-container {                                                                                                             
+            width: 100vw;                                                                                                                     
+            height: 100vh;                                                                                                                    
+            display: flex;                                                                                                                    
+            align-items: center;                                                                                                              
+            justify-content: center;                                                                                                          
+        }                                                                                                                                     
+                                                                                                                                              
+        .slide {                                                                                                                              
+            display: none;                                                                                                                    
+            width: 90%;                                                                                                                       
+            max-width: 1200px;                                                                                                                
+            height: 85vh;                                                                                                                     
+            background: white;                                                                                                                
+            border-radius: 10px;                                                                                                              
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);                                                                                       
+            padding: 50px 60px;                                                                                                               
+            overflow-y: auto;                                                                                                                 
+        }                                                                                                                                     
+                                                                                                                                              
+        .slide.active {                                                                                                                       
+            display: block;                                                                                                                   
+            animation: slideIn 0.5s ease-out;                                                                                                 
+        }                                                                                                                                     
+                                                                                                                                              
+        @keyframes slideIn {                                                                                                                  
+            from {                                                                                                                            
+                opacity: 0;                                                                                                                   
+                transform: translateY(20px);                                                                                                  
+            }                                                                                                                                 
+            to {                                                                                                                              
+                opacity: 1;                                                                                                                   
+                transform: translateY(0);                                                                                                     
+            }                                                                                                                                 
+        }                                                                                                                                     
+                                                                                                                                              
+        h1 {                                                                                                                                  
+            color: #2c3e50;                                                                                                                   
+            font-size: 2.5em;                                                                                                                 
+            margin-bottom: 20px;                                                                                                              
+            border-bottom: 4px solid #667eea;                                                                                                 
+            padding-bottom: 15px;                                                                                                             
+        }                                                                                                                                     
+                                                                                                                                              
+        h2 {                                                                                                                                  
+            color: #34495e;                                                                                                                   
+            font-size: 2em;                                                                                                                   
+            margin-top: 30px;                                                                                                                 
+            margin-bottom: 15px;                                                                                                              
+        }                                                                                                                                     
+                                                                                                                                              
+        h3 {                                                                                                                                  
+            color: #546e7a;                                                                                                                   
+            font-size: 1.5em;                                                                                                                 
+            margin-top: 25px;                                                                                                                 
+            margin-bottom: 10px;                                                                                                              
+        }                                                                                                                                     
+                                                                                                                                              
+        .subtitle {                                                                                                                           
+            color: #7f8c8d;                                                                                                                   
+            font-size: 1.3em;                                                                                                                 
+            margin-bottom: 10px;                                                                                                              
+        }                                                                                                                                     
+                                                                                                                                              
+        .author {                                                                                                                             
+            color: #95a5a6;                                                                                                                   
+            font-size: 1.1em;                                                                                                                 
+            margin-bottom: 5px;                                                                                                               
+        }                                                                                                                                     
+                                                                                                                                              
+        ul, ol {                                                                                                                              
+            margin-left: 30px;                                                                                                                
+            margin-top: 15px;                                                                                                                 
+            line-height: 1.8;                                                                                                                 
+        }                                                                                                                                     
+                                                                                                                                              
+        li {                                                                                                                                  
+            margin-bottom: 10px;                                                                                                              
+        }                                                                                                                                     
+                                                                                                                                              
+        .alert-block {                                                                                                                        
+            background: #fff3cd;                                                                                                              
+            border-left: 5px solid #ffc107;                                                                                                   
+            padding: 20px;                                                                                                                    
+            margin: 20px 0;                                                                                                                   
+            border-radius: 5px;                                                                                                               
+        }                                                                                                                                     
+                                                                                                                                              
+        .info-block {                                                                                                                         
+            background: #d1ecf1;                                                                                                              
+            border-left: 5px solid #0c5460;                                                                                                   
+            padding: 20px;                                                                                                                    
+            margin: 20px 0;                                                                                                                   
+            border-radius: 5px;                                                                                                               
+        }                                                                                                                                     
+                                                                                                                                              
+        .example-block {                                                                                                                      
+            background: #d4edda;                                                                                                              
+            border-left: 5px solid #28a745;                                                                                                   
+            padding: 20px;                                                                                                                    
+            margin: 20px 0;                                                                                                                   
+            border-radius: 5px;                                                                                                               
+        }                                                                                                                                     
+                                                                                                                                              
+        .mom-block {                                                                                                                          
+            background: #e3f2fd;                                                                                                              
+            border-left: 5px solid #2196f3;                                                                                                   
+            padding: 20px;                                                                                                                    
+            margin: 20px 0;                                                                                                                   
+            border-radius: 5px;                                                                                                               
+        }                                                                                                                                     
+                                                                                                                                              
+        .mle-block {                                                                                                                          
+            background: #fff8e1;                                                                                                              
+            border-left: 5px solid #ffc107;                                                                                                   
+            padding: 20px;                                                                                                                    
+            margin: 20px 0;                                                                                                                   
+            border-radius: 5px;                                                                                                               
+        }                                                                                                                                     
+                                                                                                                                              
+        .tech-block {                                                                                                                         
+            background: #e0f2f1;                                                                                                              
+            border-left: 5px solid #009688;                                                                                                   
+            padding: 20px;                                                                                                                    
+            margin: 20px 0;                                                                                                                   
+            border-radius: 5px;                                                                                                               
+        }                                                                                                                                     
+                                                                                                                                              
+        .columns {                                                                                                                            
+            display: flex;                                                                                                                    
+            gap: 30px;                                                                                                                        
+            margin: 20px 0;                                                                                                                   
+        }                                                                                                                                     
+                                                                                                                                              
+        .column {                                                                                                                             
+            flex: 1;                                                                                                                          
+        }                                                                                                                                     
+                                                                                                                                              
+        .formula {                                                                                                                            
+            background: #f8f9fa;                                                                                                              
+            padding: 15px;                                                                                                                    
+            margin: 15px 0;                                                                                                                   
+            border-radius: 5px;                                                                                                               
+            font-family: 'Courier New', monospace;                                                                                            
+            overflow-x: auto;                                                                                                                 
+        }                                                                                                                                     
+                                                                                                                                              
+        .navigation {                                                                                                                         
+            position: fixed;                                                                                                                  
+            bottom: 30px;                                                                                                                     
+            left: 50%;                                                                                                                        
+            transform: translateX(-50%);                                                                                                      
+            display: flex;                                                                                                                    
+            gap: 20px;                                                                                                                        
+            z-index: 1000;                                                                                                                    
+        }                                                                                                                                     
+                                                                                                                                              
+        button {                                                                                                                              
+            background: #667eea;                                                                                                              
+            color: white;                                                                                                                     
+            border: none;                                                                                                                     
+            padding: 15px 30px;                                                                                                               
+            border-radius: 50px;                                                                                                              
+            cursor: pointer;                                                                                                                  
+            font-size: 16px;                                                                                                                  
+            transition: all 0.3s ease;                                                                                                        
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);                                                                                  
+        }                                                                                                                                     
+                                                                                                                                              
+        button:hover {                                                                                                                        
+            background: #764ba2;                                                                                                              
+            transform: translateY(-2px);                                                                                                      
+            box-shadow: 0 6px 20px rgba(118, 75, 162, 0.4);                                                                                   
+        }                                                                                                                                     
+                                                                                                                                              
+        button:disabled {                                                                                                                     
+            background: #bdc3c7;                                                                                                              
+            cursor: not-allowed;                                                                                                              
+            transform: none;                                                                                                                  
+        }                                                                                                                                     
+                                                                                                                                              
+        .slide-counter {                                                                                                                      
+            position: fixed;                                                                                                                  
+            top: 20px;                                                                                                                        
+            right: 30px;                                                                                                                      
+            background: rgba(255, 255, 255, 0.9);                                                                                             
+            padding: 10px 20px;                                                                                                               
+            border-radius: 50px;                                                                                                              
+            font-weight: bold;                                                                                                                
+            color: #2c3e50;                                                                                                                   
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);                                                                                        
+        }                                                                                                                                     
+                                                                                                                                              
+        strong {                                                                                                                              
+            color: #2c3e50;                                                                                                                   
+        }                                                                                                                                     
+                                                                                                                                              
+        code {                                                                                                                                
+            background: #f8f9fa;                                                                                                              
+            padding: 2px 6px;                                                                                                                 
+            border-radius: 3px;                                                                                                               
+            font-family: 'Courier New', monospace;                                                                                            
+            color: #e83e8c;                                                                                                                   
+        }                                                                                                                                     
+                                                                                                                                              
+        .block-title {                                                                                                                        
+            font-weight: bold;                                                                                                                
+            font-size: 1.2em;                                                                                                                 
+            margin-bottom: 10px;                                                                                                              
+        }                                                                                                                                     
+    </style>                                                                                                                                  
+</head>                                                                                                                                       
+<body>                                                                                                                                        
+    <div class="presentation-container">                                                                                                      
+        <!-- Slide 1: Title -->                                                                                                               
+        <div class="slide active">                                                                                                            
+            <h1 style="text-align: center; margin-top: 150px;">Parameter Estimation</h1>                                                      
+            <p class="subtitle" style="text-align: center;">Method of Moments & Maximum Likelihood Estimation</p>                             
+            <p class="author" style="text-align: center; margin-top: 30px;">CMSC 173: Machine Learning</p>                                    
+        </div>                                                                                                                                
+                                                                                                                                              
+        <!-- Slide 2: Course Outline -->                                                                                                      
+        <div class="slide">                                                                                                                   
+            <h1>Course Outline</h1>                                                                                                           
+            <ul>                                                                                                                              
+                <li><strong>Introduction</strong> - What is parameter estimation?</li>                                                        
+                <li><strong>Statistical Foundations</strong> - Key concepts and notation</li>                                                 
+                <li><strong>Method of Moments</strong> - Classical parameter estimation</li>                                                  
+                <li><strong>Maximum Likelihood Estimation</strong> - Optimal parameter estimation</li>                                        
+                <li><strong>Comparison</strong> - When to use which method</li>                                                               
+                <li><strong>Applications</strong> - Real-world examples</li>                                                                  
+                <li><strong>Advanced Topics</strong> - Extensions and modern approaches</li>                                                  
+                <li><strong>Best Practices</strong> - Common pitfalls and guidelines</li>                                                     
+            </ul>                                                                                                                             
+        </div>                                                                                                                                
+                                                                                                                                              
+        <!-- Slide 3: What is Parameter Estimation? -->                                                                                       
+        <div class="slide">                                                                                                                   
+            <h1>What is Parameter Estimation?</h1>                                                                                            
+            <div class="alert-block">                                                                                                         
+                <div class="block-title">Definition</div>                                                                                     
+                Parameter estimation is the process of inferring the values of unknown parameters that characterize a probability distribution
+ from observed data.                                                                                                                          
+            </div>                                                                                                                            
+            <div class="columns">                                                                                                             
+                <div class="column">                                                                                                          
+                    <h3>The Problem:</h3>                                                                                                     
+                    <ul>                                                                                                                      
+                        <li>We have data samples: {x₁, x₂, ..., xₙ}</li>                                                                      
+                        <li>We assume a distribution family: f(x|θ)</li>                                                                      
+                        <li>We need to find: θ̂</li>                                                                                           
+                    </ul>                                                                                                                     
+                </div>                                                                                                                        
+                <div class="column">                                                                                                          
+                    <h3>Examples:</h3>                                                                                                        
+                    <ul>                                                                                                                      
+                        <li>Normal distribution: μ, σ²</li>                                                                                   
+                        <li>Poisson distribution: λ</li>                                                                                      
+                        <li>Linear regression: β₀, β₁</li>                                                                                    
+                    </ul>                                                                                                                     
+                </div>                                                                                                                        
+            </div>                                                                                                                            
+        </div>                                                                                                                                
+                                                                                                                                              
+        <!-- Slide 4: Why Parameter Estimation Matters -->                                                                                    
+        <div class="slide">                                                                                                                   
+            <h1>Why Parameter Estimation Matters</h1>                                                                                         
+            <div class="columns">                                                                                                             
+                <div class="column">                                                                                                          
+                    <h3>Machine Learning Applications:</h3>                                                                                   
+                    <ul>                                                                                                                      
+                        <li><strong>Supervised Learning:</strong> Estimating model weights</li>                                               
+                        <li><strong>Unsupervised Learning:</strong> Finding cluster parameters</li>                                           
+                        <li><strong>Probabilistic Models:</strong> Bayesian inference</li>                                                    
+                        <li><strong>Time Series:</strong> ARIMA parameters</li>                                                               
+                        <li><strong>Deep Learning:</strong> Neural network weights</li>                                                       
+                    </ul>                                                                                                                     
+                </div>                                                                                                                        
+                <div class="column">                                                                                                          
+                    <div class="example-block">                                                                                               
+                        <div class="block-title">Linear Regression Example:</div>                                                             
+                        <p>Given data (xᵢ, yᵢ), estimate:</p>                                                                                 
+                        <div class="formula">y = β₀ + β₁x + ε</div>                                                                           
+                        <p>Find β̂₀, β̂₁ that best fit the data.</p>                                                                            
+                    </div>                                                                                                                    
+                </div>                                                                                                                        
+            </div>                                                                                                                            
+        </div>                                                                                                                                
+                                                                                                                                              
+        <!-- Slide 5: Estimation Quality Criteria -->                                                                                         
+        <div class="slide">                                                                                                                   
+            <h1>Estimation Quality Criteria</h1>                                                                                              
+            <div class="tech-block">                                                                                                          
+                <div class="block-title">Desirable Properties of Estimators</div>                                                             
+                <ul>                                                                                                                          
+                    <li><strong>Unbiased:</strong> E[θ̂] = θ</li>                                                                              
+                    <li><strong>Consistent:</strong> θ̂ → θ as n → ∞</li>                                                                      
+                    <li><strong>Efficient:</strong> Minimum variance among unbiased estimators</li>                                           
+                    <li><strong>Sufficient:</strong> Uses all information in the data</li>                                                    
+                </ul>                                                                                                                         
+            </div>                                                                                                                            
+            <div class="columns">                                                                                                             
+                <div class="column">                                                                                                          
+                    <h3>Bias-Variance Tradeoff:</h3>                                                                                          
+                    <div class="formula">MSE = Bias² + Variance + Noise</div>                                                                 
+                </div>                                                                                                                        
+                <div class="column">                                                                                                          
+                    <h3>Cramér-Rao Lower Bound:</h3>                                                                                          
+                    <div class="formula">Var(θ̂) ≥ 1/I(θ)</div>                                                                                
+                </div>                                                                                                                        
+            </div>                                                                                                                            
+        </div>                                                                                                                                
+                                                                                                                                              
+        <!-- Slide 6: Key Concepts and Notation -->                                                                                           
+        <div class="slide">                                                                                                                   
+            <h1>Key Concepts and Notation</h1>                                                                                                
+            <div class="columns">                                                                                                             
+                <div class="column">                                                                                                          
+                    <h3>Random Variables:</h3>                                                                                                
+                    <ul>                                                                                                                      
+                        <li>X: Random variable</li>                                                                                           
+                        <li>x: Observed value</li>                                                                                            
+                        <li>θ: True parameter</li>                                                                                            
+                        <li>θ̂: Estimated parameter</li>                                                                                       
+                    </ul>                                                                                                                     
+                </div>                                                                                                                        
+                <div class="column">                                                                                                          
+                    <h3>Distributions:</h3>                                                                                                   
+                    <ul>                                                                                                                      
+                        <li>f(x|θ): PDF/PMF</li>                                                                                              
+                        <li>F(x|θ): CDF</li>                                                                                                  
+                        <li>L(θ|x): Likelihood</li>                                                                                           
+                    </ul>                                                                                                                     
+                </div>                                                                                                                        
+            </div>                                                                                                                            
+            <div class="alert-block">                                                                                                         
+                <div class="block-title">Sample vs Population</div>                                                                           
+                <ul>                                                                                                                          
+                    <li><strong>Population:</strong> μ = E[X], σ² = Var(X)</li>                                                               
+                    <li><strong>Sample:</strong> x̄ = (1/n)Σxᵢ, s² = (1/(n-1))Σ(xᵢ - x̄)²</li>                                                  
+                </ul>                                                                                                                         
+            </div>                                                                                                                            
+        </div>                                                                                                                                
+                                                                                                                                              
+        <!-- Slide 7: Moments and Central Moments -->                                                                                         
+        <div class="slide">                                                                                                                   
+            <h1>Moments and Central Moments</h1>                                                                                              
+            <div class="tech-block">                                                                                                          
+                <div class="block-title">Definition of Moments</div>                                                                          
+                <p>The k-th moment of a random variable X:</p>                                                                                
+                <div class="formula">mₖ = E[Xᵏ] = ∫ xᵏ f(x) dx</div>                                                                          
+            </div>                                                                                                                            
+            <div class="columns">                                                                                                             
+                <div class="column">                                                                                                          
+                    <h3>Raw Moments:</h3>                                                                                                     
+                    <ul>                                                                                                                      
+                        <li>m₁ = E[X] = μ (mean)</li>                                                                                         
+                        <li>m₂ = E[X²]</li>                                                                                                   
+                        <li>m₃ = E[X³]</li>                                                                                                   
+                        <li>m₄ = E[X⁴]</li>                                                                                                   
+                    </ul>                                                                                                                     
+                </div>                                                                                                                        
+                <div class="column">                                                                                                          
+                    <h3>Central Moments:</h3>                                                                                                 
+                    <ul>                                                                                                                      
+                        <li>μ₁ = 0</li>                                                                                                       
+                        <li>μ₂ = E[(X-μ)²] = σ² (variance)</li>                                                                               
+                        <li>μ₃ = E[(X-μ)³] (skewness)</li>                                                                                    
+                        <li>μ₄ = E[(X-μ)⁴] (kurtosis)</li>                                                                                    
+                    </ul>                                                                                                                     
+                </div>                                                                                                                        
+            </div>                                                                                                                            
+        </div>                                                                                                                                
+                                                                                                                                              
+        <!-- Slide 8: Method of Moments - Basic Idea -->                                                                                      
+        <div class="slide">                                                                                                                   
+            <h1>Method of Moments: Basic Idea</h1>                                                                                            
+            <div class="mom-block">                                                                                                           
+                <div class="block-title">Core Principle</div>                                                                                 
+                Match sample moments to theoretical moments to estimate parameters.                                                           
+            </div>                                                                                                                            
+            <h3>Algorithm:</h3>                                                                                                               
+            <ol>                                                                                                                              
+                <li>Express theoretical moments in terms of parameters: mₖ(θ)</li>                                                            
+                <li>Calculate sample moments: m̂ₖ = (1/n)Σxᵢᵏ</li>                                                                             
+                <li>Set theoretical = sample: mₖ(θ) = m̂ₖ</li>                                                                                 
+                <li>Solve system of equations for θ̂</li>                                                                                      
+            </ol>                                                                                                                             
+            <div class="alert-block" style="margin-top: 30px;">                                                                               
+                <div class="block-title">Key Insight</div>                                                                                    
+                If we can express moments as functions of parameters, we can invert to find parameters from moments.                          
+            </div>                                                                                                                            
+        </div>                                                                                                                                
+                                                                                                                                              
+        <!-- Slide 9: MoM Example - Normal Distribution -->                                                                                   
+        <div class="slide">                                                                                                                   
+            <h1>MoM Example: Normal Distribution</h1>                                                                                         
+            <p><strong>Problem:</strong> Estimate μ and σ² for N(μ, σ²)</p>                                                                   
+            <div class="columns">                                                                                                             
+                <div class="column">                                                                                                          
+                    <h3>Step 1: Theoretical moments</h3>                                                                                      
+                    <div class="formula">                                                                                                     
+                        m₁ = E[X] = μ<br>                                                                                                     
+                        m₂ = E[X²] = μ² + σ²                                                                                                  
+                    </div>                                                                                                                    
+                </div>                                                                                                                        
+                <div class="column">                                                                                                          
+                    <h3>Step 2: Sample moments</h3>                                                                                           
+                    <div class="formula">                                                                                                     
+                        m̂₁ = (1/n)Σxᵢ = x̄<br>                                                                                                 
+                        m̂₂ = (1/n)Σxᵢ²                                                                                                        
+                    </div>                                                                                                                    
+                </div>                                                                                                                        
+            </div>                                                                                                                            
+            <h3>Step 3: Set equal and solve</h3>                                                                                              
+            <div class="formula">                                                                                                             
+                μ = x̄<br>                                                                                                                     
+                μ² + σ² = (1/n)Σxᵢ²                                                                                                           
+            </div>                                                                                                                            
+            <h3>Step 4: Solution</h3>                                                                                                         
+            <div class="formula">                                                                                                             
+                μ̂ₘₒₘ = x̄<br>                                                                                                                  
+                σ̂²ₘₒₘ = (1/n)Σxᵢ² - x̄² = (1/n)Σ(xᵢ - x̄)²                                                                                      
+            </div>                                                                                                                            
+        </div>                                                                                                                                
+                                                                                                                                              
+        <!-- Slide 10: MoM Example - Poisson Distribution -->                                                                                 
+        <div class="slide">                                                                                                                   
+            <h1>MoM Example: Poisson Distribution</h1>                                                                                        
+            <p><strong>Problem:</strong> Estimate λ for Poisson(λ)</p>                                                                        
+            <div class="columns">                                                                                                             
+                <div class="column">                                                                                                          
+                    <h3>Theoretical moment:</h3>                                                                                              
+                    <p>For Poisson distribution:</p>                                                                                          
+                    <div class="formula">E[X] = λ</div>                                                                                       
+                    <h3>Sample moment:</h3>                                                                                                   
+                    <div class="formula">m̂₁ = x̄ = (1/n)Σxᵢ</div>                                                                              
+                    <h3>MoM Estimate:</h3>                                                                                                    
+                    <div class="formula">λ̂ₘₒₘ = x̄</div>                                                                                       
+                </div>                                                                                                                        
+                <div class="column">                                                                                                          
+                    <div class="example-block">                                                                                               
+                        <div class="block-title">Example</div>                                                                                
+                        <p>Data: [2, 1, 3, 0, 2, 1, 4, 1]</p>                                                                                 
+                        <p><strong>Sample mean:</strong></p>                                                                                  
+                        <div class="formula">x̄ = 14/8 = 1.75</div>                                                                            
+                        <p><strong>MoM estimate:</strong></p>                                                                                 
+                        <div class="formula">λ̂ = 1.75</div>                                                                                   
+                    </div>                                                                                                                    
+                </div>                                                                                                                        
+            </div>                                                                                                                            
+        </div>                                                                                                                                
+                                                                                                                                              
+        <!-- Slide 11: Properties of Method of Moments -->                                                                                    
+        <div class="slide">                                                                                                                   
+            <h1>Properties of Method of Moments</h1>                                                                                          
+            <div class="columns">                                                                                                             
+                <div class="column">                                                                                                          
+                    <div class="info-block">                                                                                                  
+                        <div class="block-title">Advantages</div>                                                                             
+                        <ul>                                                                                                                  
+                            <li><strong>Simple:</strong> Easy to compute</li>                                                                 
+                            <li><strong>Consistent:</strong> θ̂ → θ as n → ∞</li>                                                              
+                            <li><strong>General:</strong> Works for any distribution</li>                                                     
+                            <li><strong>Intuitive:</strong> Matches sample to theory</li>                                                     
+                        </ul>                                                                                                                 
+                    </div>                                                                                                                    
+                </div>                                                                                                                        
+                <div class="column">                                                                                                          
+                    <div class="alert-block">                                                                                                 
+                        <div class="block-title">Disadvantages</div>                                                                          
+                        <ul>                                                                                                                  
+                            <li><strong>Not optimal:</strong> Higher variance than MLE</li>                                                   
+                            <li><strong>Existence:</strong> Solutions may not exist</li>                                                      
+                            <li><strong>Uniqueness:</strong> Multiple solutions possible</li>                                                 
+                            <li><strong>Boundary:</strong> May give invalid estimates</li>                                                    
+                        </ul>                                                                                                                 
+                    </div>                                                                                                                    
+                </div>                                                                                                                        
+            </div>                                                                                                                            
+        </div>                                                                                                                                
+                                                                                                                                              
+        <!-- Slide 12: Maximum Likelihood - Basic Idea -->                                                                                    
+        <div class="slide">                                                                                                                   
+            <h1>Maximum Likelihood: Basic Idea</h1>                                                                                           
+            <div class="mle-block">                                                                                                           
+                <div class="block-title">Core Principle</div>                                                                                 
+                Find parameter values that make the observed data most likely.                                                                
+            </div>                                                                                                                            
+            <h3>Likelihood Function:</h3>                                                                                                     
+            <p>For independent observations x₁, x₂, ..., xₙ:</p>                                                                              
+            <div class="formula">L(θ) = L(θ | x₁, ..., xₙ) = ∏ᵢ f(xᵢ | θ)</div>                                                               
+            <h3>Log-Likelihood:</h3>                                                                                                          
+            <div class="formula">ℓ(θ) = log L(θ) = Σᵢ log f(xᵢ | θ)</div>                                                                     
+            <div class="alert-block">                                                                                                         
+                <div class="block-title">Maximum Likelihood Estimator (MLE)</div>                                                             
+                <div class="formula">θ̂ₘₗₑ = argmax L(θ) = argmax ℓ(θ)</div>                                                                   
+            </div>                                                                                                                            
+        </div>                                                                                                                                
+                                                                                                                                              
+        <!-- Slide 13: Finding the MLE -->                                                                                                    
+        <div class="slide">                                                                                                                   
+            <h1>Finding the MLE: Calculus Approach</h1>                                                                                       
+            <h3>Method 1: Differentiation</h3>                                                                                                
+            <p>For continuous parameter space, solve:</p>                                                                                     
+            <div class="formula">dℓ(θ)/dθ = 0</div>                                                                                           
+            <h3>Score Function:</h3>                                                                                                          
+            <div class="formula">S(θ) = dℓ(θ)/dθ = Σᵢ d log f(xᵢ|θ)/dθ</div>                                                                  
+            <div class="columns">                                                                                                             
+                <div class="column">                                                                                                          
+                    <h3>For vector parameters θ:</h3>                                                                                         
+                    <div class="formula">∇ₜℓ(θ) = 0</div>                                                                                     
+                    <p>This gives a system of equations to solve.</p>                                                                         
+                </div>                                                                                                                        
+                <div class="column">                                                                                                          
+                    <h3>Second-order condition:</h3>                                                                                          
+                    <div class="formula">d²ℓ(θ)/dθ² < 0</div>                                                                                 
+                    <p>Ensures we have a maximum, not minimum.</p>                                                                            
+                </div>                                                                                                                        
+            </div>                                                                                                                            
+        </div>                                                                                                                                
+                                                                                                                                              
+        <!-- Slide 14: MLE Example - Normal Distribution -->                                                                                  
+        <div class="slide">                                                                                                                   
+            <h1>MLE Example: Normal Distribution</h1>                                                                                         
+            <p><strong>Problem:</strong> Estimate μ and σ² for N(μ, σ²)</p>                                                                   
+            <h3>Log-likelihood:</h3>                                                                                                          
+            <div class="formula">                                                                                                             
+                ℓ(μ, σ²) = Σᵢ log f(xᵢ | μ, σ²)<br>                                                                                           
+                = -n/2 log(2π) - n/2 log(σ²) - 1/(2σ²) Σᵢ(xᵢ-μ)²                                                                              
+            </div>                                                                                                                            
+            <h3>Taking derivatives:</h3>                                                                                                      
+            <div class="formula">                                                                                                             
+                ∂ℓ/∂μ = 1/σ² Σᵢ(xᵢ - μ) = 0<br>                                                                                               
+                ∂ℓ/∂σ² = -n/(2σ²) + 1/(2(σ²)²) Σᵢ(xᵢ-μ)² = 0                                                                                  
+            </div>                                                                                                                            
+            <h3>MLE Solutions:</h3>                                                                                                           
+            <div class="formula">                                                                                                             
+                μ̂ₘₗₑ = x̄<br>                                                                                                                  
+                σ̂²ₘₗₑ = (1/n)Σᵢ(xᵢ - x̄)²                                                                                                      
+            </div>                                                                                                                            
+        </div>                                                                                                                                
+                                                                                                                                              
+        <!-- Slide 15: MLE Example - Poisson Distribution -->                                                                                 
+        <div class="slide">                                                                                                                   
+            <h1>MLE Example: Poisson Distribution</h1>                                                                                        
+            <p><strong>Problem:</strong> Estimate λ for Poisson(λ)</p>                                                                        
+            <h3>PMF:</h3>                                                                                                                     
+            <div class="formula">P(X = k) = λᵏ e⁻ᵏ / k!</div>                                                                                 
+            <h3>Log-likelihood:</h3>                                                                                                          
+            <div class="formula">                                                                                                             
+                ℓ(λ) = Σᵢ log P(Xᵢ = xᵢ | λ)<br>                                                                                              
+                = log(λ) Σᵢ xᵢ - nλ - Σᵢ log(xᵢ!)                                                                                             
+            </div>                                                                                                                            
+            <h3>Score function:</h3>                                                                                                          
+            <div class="formula">dℓ(λ)/dλ = (1/λ)Σᵢ xᵢ - n = 0</div>                                                                          
+            <h3>MLE Solution:</h3>                                                                                                            
+            <div class="formula">λ̂ₘₗₑ = (1/n)Σᵢ xᵢ = x̄</div>                                                                                  
+            <div class="alert-block">                                                                                                         
+                <div class="block-title">Note</div>                                                                                           
+                For Poisson distribution, MLE and MoM give the same result!                                                                   
+            </div>                                                                                                                            
+        </div>                                                                                                                                
+                                                                                                                                              
+        <!-- Slide 16: Properties of MLE -->                                                                                                  
+        <div class="slide">                                                                                                                   
+            <h1>Properties of Maximum Likelihood Estimators</h1>                                                                              
+            <div class="tech-block">                                                                                                          
+                <div class="block-title">Asymptotic Properties (Large Sample)</div>                                                           
+                <p>Under regularity conditions:</p>                                                                                           
+                <ul>                                                                                                                          
+                    <li><strong>Consistency:</strong> θ̂ₘₗₑ → θ</li>                                                                           
+                    <li><strong>Asymptotic Normality:</strong> √n(θ̂ₘₗₑ - θ) → N(0, I(θ)⁻¹)</li>                                               
+                    <li><strong>Efficiency:</strong> Achieves Cramér-Rao lower bound</li>                                                     
+                    <li><strong>Invariance:</strong> If θ̂ is MLE of θ, then g(θ̂) is MLE of g(θ)</li>                                          
+                </ul>                                                                                                                         
+            </div>                                                                                                                            
+            <div class="columns">                                                                                                             
+                <div class="column">                                                                                                          
+                    <h3>Fisher Information:</h3>                                                                                              
+                    <div class="formula">I(θ) = -E[d²ℓ(θ)/dθ²]</div>                                                                          
+                    <p>Higher information ⇒ lower variance</p>                                                                                
+                </div>                                                                                                                        
+                <div class="column">                                                                                                          
+                    <h3>Observed Information:</h3>                                                                                            
+                    <div class="formula">J(θ̂) = -d²ℓ(θ)/dθ²|θ=θ̂</div>                                                                         
+                    <p>Used for confidence intervals</p>                                                                                      
+                </div>                                                                                                                        
+            </div>                                                                                                                            
+        </div>                                                                                                                                
+                                                                                                                                              
+        <!-- Slide 17: Comparison -->                                                                                                         
+        <div class="slide">                                                                                                                   
+            <h1>Method of Moments vs Maximum Likelihood</h1>                                                                                  
+            <div class="columns">                                                                                                             
+                <div class="column">                                                                                                          
+                    <div class="mom-block">                                                                                                   
+                        <div class="block-title">Method of Moments</div>                                                                      
+                        <h3>Pros:</h3>                                                                                                        
+                        <ul>                                                                                                                  
+                            <li>Simple computation</li>                                                                                       
+                            <li>Always exists (if moments exist)</li>                                                                         
+                            <li>Distribution-free approach</li>                                                                               
+                            <li>Good starting values for MLE</li>                                                                             
+                        </ul>                                                                                                                 
+                        <h3>Cons:</h3>                                                                                                        
+                        <ul>                                                                                                                  
+                            <li>Not optimal (higher variance)</li>                                                                            
+                            <li>May give invalid estimates</li>                                                                               
+                            <li>Doesn't use full data information</li>                                                                        
+                        </ul>                                                                                                                 
+                    </div>                                                                                                                    
+                </div>                                                                                                                        
+                <div class="column">                                                                                                          
+                    <div class="mle-block">                                                                                                   
+                        <div class="block-title">Maximum Likelihood</div>                                                                     
+                        <h3>Pros:</h3>                                                                                                        
+                        <ul>                                                                                                                  
+                            <li>Optimal (minimum variance)</li>                                                                               
+                            <li>Uses full data information</li>                                                                               
+                            <li>Good theoretical properties</li>                                                                              
+                            <li>Invariance property</li>                                                                                      
+                        </ul>                                                                                                                 
+                        <h3>Cons:</h3>                                                                                                        
+                        <ul>                                                                                                                  
+                            <li>May require numerical methods</li>                                                                            
+                            <li>Can be computationally intensive</li>                                                                         
+                            <li>Requires specification of full distribution</li>                                                              
+                        </ul>                                                                                                                 
+                    </div>                                                                                                                    
+                </div>                                                                                                                        
+            </div>                                                                                                                            
+        </div>                                                                                                                                
+                                                                                                                                              
+        <!-- Slide 18: When to Use Which Method -->                                                                                           
+        <div class="slide">                                                                                                                   
+            <h1>When to Use Which Method?</h1>                                                                                                
+            <div class="columns">                                                                                                             
+                <div class="column">                                                                                                          
+                    <div class="info-block">                                                                                                  
+                        <div class="block-title">Use Method of Moments When:</div>                                                            
+                        <ul>                                                                                                                  
+                            <li>Quick estimates needed</li>                                                                                   
+                            <li>Computational resources limited</li>                                                                          
+                            <li>Distribution family uncertain</li>                                                                            
+                            <li>Starting values for optimization</li>                                                                         
+                            <li>Robust estimates desired</li>                                                                                 
+                            <li>Teaching/illustration purposes</li>                                                                           
+                        </ul>                                                                                                                 
+                    </div>                                                                                                                    
+                </div>                                                                                                                        
+                <div class="column">                                                                                                          
+                    <div class="info-block">                                                                                                  
+                        <div class="block-title">Use Maximum Likelihood When:</div>                                                           
+                        <ul>                                                                                                                  
+                            <li>Optimal estimates needed</li>                                                                                 
+                            <li>Distribution well-specified</li>                                                                              
+                            <li>Large sample sizes</li>                                                                                       
+                            <li>Inference required (confidence intervals)</li>                                                                
+                            <li>Model comparison needed</li>                                                                                  
+                            <li>Production/research applications</li>                                                                         
+                        </ul>                                                                                                                 
+                    </div>                                                                                                                    
+                </div>                                                                                                                        
+            </div>                                                                                                                            
+            <div class="alert-block">                                                                                                         
+                <div class="block-title">Practical Strategy</div>                                                                             
+                <ol>                                                                                                                          
+                    <li>Start with Method of Moments for initial estimates</li>                                                               
+                    <li>Use MoM estimates as starting values for MLE optimization</li>                                                        
+                    <li>Compare results and choose based on application needs</li>                                                            
+                    <li>Consider computational cost vs. statistical efficiency trade-off</li>                                                 
+                </ol>                                                                                                                         
+            </div>                                                                                                                            
+        </div>                                                                                                                                
+                                                                                                                                              
+        <!-- Slide 19: Linear Regression Application -->                                                                                      
+        <div class="slide">                                                                                                                   
+            <h1>Linear Regression Parameter Estimation</h1>                                                                                   
+            <p><strong>Model:</strong> yᵢ = β₀ + β₁xᵢ + εᵢ, where εᵢ ~ N(0, σ²)</p>                                                           
+            <div class="columns">                                                                                                             
+                <div class="column">                                                                                                          
+                    <h3>Method of Moments:</h3>                                                                                               
+                    <div class="formula">                                                                                                     
+                        E[Y] = β₀ + β₁E[X]<br>                                                                                                
+                        E[XY] = β₀E[X] + β₁E[X²]                                                                                              
+                    </div>                                                                                                                    
+                    <p>Solving:</p>                                                                                                           
+                    <div class="formula">                                                                                                     
+                        β̂₁ = (x̄ȳ - x̄ȳ) / (x̄² - x̄²)<br>                                                                                        
+                        β̂₀ = ȳ - β̂₁x̄                                                                                                          
+                    </div>                                                                                                                    
+                </div>                                                                                                                        
+                <div class="column">                                                                                                          
+                    <h3>Maximum Likelihood:</h3>                                                                                              
+                    <div class="formula">                                                                                                     
+                        ℓ(β, σ²) = -n/2 log(2πσ²)<br>                                                                                         
+                        - 1/(2σ²) Σᵢ(yᵢ - β₀ - β₁xᵢ)²                                                                                         
+                    </div>                                                                                                                    
+                    <p>MLE gives same result:</p>                                                                                             
+                    <div class="formula">                                                                                                     
+                        β̂₁ = Σ(xᵢ - x̄)(yᵢ - ȳ) / Σ(xᵢ - x̄)²<br>                                                                               
+                        β̂₀ = ȳ - β̂₁x̄                                                                                                          
+                    </div>                                                                                                                    
+                </div>                                                                                                                        
+            </div>                                                                                                                            
+        </div>                                                                                                                                
+                                                                                                                                              
+        <!-- Slide 20: Summary -->                                                                                                            
+        <div class="slide">                                                                                                                   
+            <h1>Summary and Key Takeaways</h1>                                                                                                
+            <div class="columns">                                                                                                             
+                <div class="column">                                                                                                          
+                    <div class="mom-block">                                                                                                   
+                        <div class="block-title">Method of Moments</div>                                                                      
+                        <h3>When to use:</h3>                                                                                                 
+                        <ul>                                                                                                                  
+                            <li>Quick estimates needed</li>                                                                                   
+                            <li>Simple distributions</li>                                                                                     
+                            <li>Starting values for MLE</li>                                                                                  
+                            <li>Computational constraints</li>                                                                                
+                        </ul>                                                                                                                 
+                        <p><strong>Key insight:</strong> Match theoretical and sample moments</p>                                             
+                    </div>                                                                                                                    
+                </div>                                                                                                                        
+                <div class="column">                                                                                                          
+                    <div class="mle-block">                                                                                                   
+                        <div class="block-title">Maximum Likelihood</div>                                                                     
+                        <h3>When to use:</h3>                                                                                                 
+                        <ul>                                                                                                                  
+                            <li>Optimal estimates desired</li>                                                                                
+                            <li>Large sample sizes</li>                                                                                       
+                            <li>Inference required</li>                                                                                       
+                            <li>Model comparison</li>                                                                                         
+                        </ul>                                                                                                                 
+                        <p><strong>Key insight:</strong> Find parameters that maximize data likelihood</p>                                    
+                    </div>                                                                                                                    
+                </div>                                                                                                                        
+            </div>                                                                                                                            
+            <div class="alert-block">                                                                                                         
+                <div class="block-title">General Principles</div>                                                                             
+                <ul>                                                                                                                          
+                    <li><strong>Start simple:</strong> Use MoM, then refine with MLE if needed</li>                                           
+                    <li><strong>Validate assumptions:</strong> Check distributional assumptions</li>                                          
+                    <li><strong>Assess uncertainty:</strong> Always provide confidence intervals</li>                                         
+                    <li><strong>Consider alternatives:</strong> Robust methods for outliers</li>                                              
+                    <li><strong>Use diagnostics:</strong> Residual analysis and goodness-of-fit</li>                                          
+                </ul>                                                                                                                         
+            </div>                                                                                                                            
+            <p style="text-align: center; margin-top: 30px; font-size: 1.3em; font-weight: bold;">                                            
+                Parameter estimation is fundamental to statistical modeling and machine learning!                                             
+            </p>                                                                                                                              
+        </div>                                                                                                                                
+    </div>                                                                                                                                    
+                                                                                                                                              
+    <div class="slide-counter">                                                                                                               
+        <span id="current-slide">1</span> / <span id="total-slides">20</span>                                                                 
+    </div>                                                                                                                                    
+                                                                                                                                              
+    <div class="navigation">                                                                                                                  
+        <button id="prev-btn" onclick="previousSlide()">← Previous</button>                                                                   
+        <button id="next-btn" onclick="nextSlide()">Next →</button>                                                                           
+    </div>                                                                                                                                    
+                                                                                                                                              
+    <script>                                                                                                                                  
+        let currentSlide = 0;                                                                                                                 
+        const slides = document.querySelectorAll('.slide');                                                                                   
+        const totalSlides = slides.length;                                                                                                    
+        const currentSlideSpan = document.getElementById('current-slide');                                                                    
+        const totalSlidesSpan = document.getElementById('total-slides');                                                                      
+        const prevBtn = document.getElementById('prev-btn');                                                                                  
+        const nextBtn = document.getElementById('next-btn');                                                                                  
+                                                                                                                                              
+        totalSlidesSpan.textContent = totalSlides;                                                                                            
+                                                                                                                                              
+        function showSlide(n) {                                                                                                               
+            slides[currentSlide].classList.remove('active');                                                                                  
+            currentSlide = (n + totalSlides) % totalSlides;                                                                                   
+            slides[currentSlide].classList.add('active');                                                                                     
+            currentSlideSpan.textContent = currentSlide + 1;                                                                                  
+                                                                                                                                              
+            // Update button states                                                                                                           
+            prevBtn.disabled = currentSlide === 0;                                                                                            
+            nextBtn.disabled = currentSlide === totalSlides - 1;                                                                              
+                                                                                                                                              
+            // Scroll to top of slide                                                                                                         
+            slides[currentSlide].scrollTop = 0;                                                                                               
+        }                                                                                                                                     
+                                                                                                                                              
+        function nextSlide() {                                                                                                                
+            if (currentSlide < totalSlides - 1) {                                                                                             
+                showSlide(currentSlide + 1);                                                                                                  
+            }                                                                                                                                 
+        }                                                                                                                                     
+                                                                                                                                              
+        function previousSlide() {                                                                                                            
+            if (currentSlide > 0) {                                                                                                           
+                showSlide(currentSlide - 1);                                                                                                  
+            }                                                                                                                                 
+        }                                                                                                                                     
+                                                                                                                                              
+        // Keyboard navigation                                                                                                                
+        document.addEventListener('keydown', function(e) {                                                                                    
+            if (e.key === 'ArrowRight' || e.key === ' ') {                                                                                    
+                e.preventDefault();                                                                                                           
+                nextSlide();                                                                                                                  
+            } else if (e.key === 'ArrowLeft') {                                                                                               
+                e.preventDefault();                                                                                                           
+                previousSlide();                                                                                                              
+            }                                                                                                                                 
+        });                                                                                                                                   
+                                                                                                                                              
+        // Initialize                                                                                                                         
+        showSlide(0);                                                                                                                         
+    </script>                                                                                                                                 
+</body>                                                                                                                                       
+</html>

@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 4: Exploratory Data Analysis (EDA)</title>
+
+    <style>
+        body { font-family: sans-serif; margin: 2em; line-height: 1.6; background-color: #f4f7f6; color: #333; }
+        h1 { color: #00394c; font-size: 2.5em; text-align: center; }
+        h2 { color: #005f7f; font-size: 2em; border-bottom: 2px solid #e0e0e0; padding-bottom: 0.3em; }
+        h3 { color: #007f9f; font-size: 1.6em; }
+        h4 { color: #007f9f; font-size: 1.2em; }
+
+        .presentation-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 50px 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+            overflow-y: auto;
+            overflow-x: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            margin: 20px auto; /* Center the slide */
+            max-width: 1000px; /* Limit width */
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+            z-index: 10;
+        }
+
+        .slide.prev {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+
+        .slide-title {
+            background-color: #f0f0f0;
+            padding: 0.5em;
+            margin-top: 1.5em;
+            border-left: 5px solid #00394c;
+            margin-bottom: 1em;
+        }
+
+        .block {
+            border: 1px solid #eee;
+            padding: 1em;
+            margin-bottom: 1em;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        .alertblock {
+            border: 1px solid #f44336;
+            padding: 1em;
+            margin-bottom: 1em;
+            background-color: #ffebee;
+            color: #f44336;
+            border-radius: 5px;
+        }
+        .exampleblock {
+            border: 1px solid #4CAF50;
+            padding: 1em;
+            margin-bottom: 1em;
+            background-color: #e8f5e9;
+            color: #4CAF50;
+            border-radius: 5px;
+        }
+        img { max-width: 100%; height: auto; display: block; margin: 1em auto; border-radius: 4px; }
+        code { background-color: #e0e0e0; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace; }
+        a { color: #007bff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* Navigation Controls */
+        .nav-controls {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: #00394c;
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-btn:hover {
+            background: #005f7f;
+            transform: scale(1.1);
+        }
+
+        /* Slide Counter */
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: #00394c;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="slide-counter" id="slideCounter">1 / 28</div>
+
+    <div class="presentation-container" id="presentation">
+        <!-- Slide 1: Title Slide -->
+        <div class="slide active" data-slide="1">
+            <h1>Exploratory Data Analysis (EDA)</h1>
+            <h2>CMSC 173 - Machine Learning</h2>
+            <p style="text-align: center;">Course Lecture</p>
+            <p style="text-align: center;">University of the Philippines - Cebu</p>
+        </div>
+
+        <!-- Slide 2: Outline -->
+        <div class="slide" data-slide="2">
+            <h1>Outline</h1>
+            <ul>
+                <li>Introduction to EDA</li>
+                <li>Data Understanding & Types</li>
+                <li>Univariate Analysis</li>
+                <li>Bivariate Analysis</li>
+                <li>Missing Data Handling</li>
+                <li>Outlier Detection</li>
+                <li>Feature Engineering</li>
+                <li>Feature Selection</li>
+                <li>Data Normalization</li>
+                <li>Advanced EDA Topics</li>
+                <li>EDA to ML Pipeline Integration</li>
+                <li>Summary & Next Steps</li>
+            </ul>
+        </div>
+
+        <!-- Section: Introduction to EDA -->
+        <div class="slide" data-slide="3">
+            <h2>Introduction to EDA</h2>
+        </div>
+
+        <!-- Slide 4: What is Exploratory Data Analysis? -->
+        <div class="slide" data-slide="4">
+            <h3>What is Exploratory Data Analysis?</h3>
+            <div class="block">
+                <h4>Definition</h4>
+                <p><b>EDA</b> is the process of investigating datasets to summarize their main characteristics, often using statistical graphics and other data visualization methods.</p>
+                <h4>Primary Goals:</h4>
+                <ul>
+                    <li><b>Understand</b> data structure and quality</li>
+                    <li><b>Discover</b> patterns and relationships</li>
+                    <li><b>Identify</b> anomalies and outliers</li>
+                    <li><b>Guide</b> feature engineering decisions</li>
+                    <li><b>Inform</b> modeling strategy</li>
+                </ul>
+                <h4>Key Questions EDA Answers:</h4>
+                <ul>
+                    <li>What does my data look like?</li>
+                    <li>Is my data clean and complete?</li>
+                    <li>What patterns exist?</li>
+                    <li>Which features are important?</li>
+                </ul>
+            </div>
+            <div class="alertblock">
+                <h4>Key Insight</h4>
+                <p><b>EDA is iterative!</b> Insights from one analysis often lead to new questions and deeper investigations.</p>
+            </div>
+            <img src="../figures/01_data_types_overview.png" alt="EDA Process Overview">
+        </div>
+
+        <!-- Slide 5: The EDA Workflow -->
+        <div class="slide" data-slide="5">
+            <h3>The EDA Workflow</h3>
+            <p>A typical EDA workflow involves Data Loading, Initial Inspection, Data Cleaning, Visualization, Statistical Analysis, and deriving Insights & Patterns, with feedback loops between stages.</p>
+            <div class="block">
+                <h4>Data Loading</h4>
+                <ul>
+                    <li>Import datasets</li>
+                    <li>Check file formats</li>
+                    <li>Handle encoding issues</li>
+                </ul>
+            </div>
+            <div class="block">
+                <h4>Statistical Analysis</h4>
+                <ul>
+                    <li>Descriptive statistics</li>
+                    <li>Correlation analysis</li>
+                    <li>Distribution testing</li>
+                </ul>
+            </div>
+            <div class="block">
+                <h4>Key Outcome</h4>
+                <ul>
+                    <li>Clean, understood data</li>
+                    <li>Feature insights</li>
+                    <li>Modeling strategy</li>
+                </ul>
+            </div>
+            <img src="../figures/workflow.jpg" alt="EDA Workflow Diagram">
+        </div>
+
+        <!-- Slide 6: Why EDA is Critical for Machine Learning -->
+        <div class="slide" data-slide="6">
+            <h3>Why EDA is Critical for Machine Learning</h3>
+            <div class="alertblock">
+                <h4>Without EDA - Common Pitfalls:</h4>
+                <ul>
+                    <li>Garbage In, Garbage Out</li>
+                    <li>Poor model performance</li>
+                    <li>Biased predictions</li>
+                    <li>Overfitting to noise</li>
+                    <li>Missing important patterns</li>
+                    <li>Wasted computational resources</li>
+                </ul>
+            </div>
+            <div class="exampleblock">
+                <h4>With Proper EDA - Benefits Achieved:</h4>
+                <ul>
+                    <li>High-quality, clean data</li>
+                    <li>Optimal feature selection</li>
+                    <li>Appropriate model choice</li>
+                    <li>Better generalization</li>
+                    <li>Actionable insights</li>
+                    <li>Efficient resource usage</li>
+                </ul>
+            </div>
+            <p>Studies show that proper EDA can improve model performance by 15-30% and reduce development time by 40-60%.</p>
+        </div>
+
+        <!-- Section: Data Understanding & Types -->
+        <div class="slide" data-slide="7">
+            <h2>Data Understanding & Types</h2>
+        </div>
+
+        <!-- Slide 8: Understanding Your Dataset -->
+        <div class="slide" data-slide="8">
+            <h3>Understanding Your Dataset</h3>
+            <img src="../figures/01_data_types_overview.png" alt="Data Types Overview">
+            <div class="alertblock">
+                <h4>First Steps</h4>
+                <p>Always start with: <code>df.info()</code>, <code>df.describe()</code>, <code>df.shape</code>, and <code>df.head()</code></p>
+            </div>
+        </div>
+
+        <!-- Slide 9: Data Types Classification -->
+        <div class="slide" data-slide="9">
+            <h3>Data Types Classification</h3>
+            <div class="block">
+                <h4>Numerical Data</h4>
+                <p><b>Continuous Variables:</b> Can take any value in a range (e.g., age, salary)</p>
+                <p><b>Discrete Variables:</b> Countable, distinct values (e.g., number of children)</p>
+            </div>
+            <div class="block">
+                <h4>Categorical Data</h4>
+                <p><b>Nominal Variables:</b> No natural ordering (e.g., color, gender)</p>
+                <p><b>Ordinal Variables:</b> Natural ordering exists (e.g., education level, rating)</p>
+            </div>
+            <div class="block">
+                <h4>Practical Tip</h4>
+                <p><b>Encoding Strategy:</b> Numerical → Keep as-is; Nominal → One-hot encoding; Ordinal → Label encoding</p>
+            </div>
+        </div>
+
+        <!-- Slide 10: Sample Dataset: Titanic Survival Analysis -->
+        <div class="slide" data-slide="10">
+            <h3>Sample Dataset: Titanic Survival Analysis</h3>
+            <div class="block">
+                <p>Contains information on 891 passengers aboard the Titanic. Goal: Predict passenger survival based on their attributes.</p>
+                <p>Numerical Features: Age, Fare, SibSp, Parch</p>
+                <p>Categorical Features: Sex, Embarked, Pclass</p>
+                <p>Target Variable: Survived (Binary 0/1)</p>
+            </div>
+            <p><code>Sample Data Table (from LaTeX, simplified):</code></p>
+            <pre>
+PassengerId | Survived | Pclass | Sex    | Age  | SibSp | Parch | Fare   | Embarked
+------------|----------|--------|--------|------|-------|-------|--------|----------
+1           | 0        | 3      | male   | 22.0 | 1     | 0     | 7.25   | S
+2           | 1        | 1      | female | 38.0 | 1     | 0     | 71.28  | C
+...
+            </pre>
+        </div>
+
+        <!-- Slide 11: Sample Dataset: Iris Species Classification -->
+        <div class="slide" data-slide="11">
+            <h3>Sample Dataset: Iris Species Classification</h3>
+            <div class="block">
+                <p>Classic dataset with 150 iris flowers from 3 species. Goal: Classify species based on flower measurements.</p>
+                <p>Numerical Features: Sepal Length, Sepal Width, Petal Length, Petal Width</p>
+                <p>Target Variable: Species (3-class categorical)</p>
+            </div>
+            <p><code>Sample Data Table (from LaTeX, simplified):</code></p>
+            <pre>
+Sepal Length | Sepal Width | Petal Length | Petal Width | Species
+-------------|-------------|--------------|-------------|----------
+5.1          | 3.5         | 1.4          | 0.2         | setosa
+4.9          | 3.0         | 1.4          | 0.2         | setosa
+...
+            </pre>
+            <div class="block">
+                <h4>EDA Advantages</h4>
+                <p><b>Perfect for Learning:</b> Small size, clean data, clear patterns, well-separated classes, interpretable features</p>
+            </div>
+        </div>
+
+        <!-- Slide 12: Iris Dataset: Advanced Visualization Techniques -->
+        <div class="slide" data-slide="12">
+            <h3>Iris Dataset: Advanced Visualization Techniques</h3>
+            <div class="block">
+                <h4>Correlogram Analysis</h4>
+                <p>Visualizes correlations between numerical features. Example: Strong correlation between Petal length and Petal width (r=0.96).</p>
+                <img src="../figures/04_correlation_analysis.png" alt="Correlogram Analysis">
+            </div>
+            <div class="alertblock">
+                <h4>Box Plot Insights</h4>
+                <p>Clear separation: Species distinguishable by petal features.</p>
+                <img src="../figures/05_model_selection.png" alt="Box Plot Example">
+            </div>
+            <div class="block">
+                <h4>Violin Plot Analysis</h4>
+                <p>Combines: Box plot summary statistics + density estimation + distribution shape visualization.</p>
+            </div>
+        </div>
+
+        <!-- Section: Univariate Analysis -->
+        <div class="slide" data-slide="13">
+            <h2>Univariate Analysis</h2>
+        </div>
+
+        <!-- Slide 14: Univariate Analysis - Numerical Variables -->
+        <div class="slide" data-slide="14">
+            <h3>Univariate Analysis - Numerical Variables</h3>
+            <img src="../figures/02_univariate_numerical.png" alt="Univariate Numerical Analysis">
+            <div class="alertblock">
+                <h4>Key Observations</h4>
+                <p><b>Age:</b> Right-skewed, missing values; <b>Fare:</b> Heavy right tail, potential outliers</p>
+            </div>
+        </div>
+
+        <!-- Slide 15: Statistical Measures for Numerical Data -->
+        <div class="slide" data-slide="15">
+            <h3>Statistical Measures for Numerical Data</h3>
+            <div class="block">
+                <h4>Central Tendency</h4>
+                <p>For variable :</p>
+                <p><b>Mean (Arithmetic):</b> </p>
+                <p><b>Median:</b> Middle value when sorted</p>
+                <p><b>Mode:</b> Most frequent value</p>
+            </div>
+            <div class="block">
+                <h4>Dispersion Measures</h4>
+                <p><b>Variance:</b> </p>
+                <p><b>Standard Deviation:</b> </p>
+                <p><b>Interquartile Range:</b> </p>
+                <p><b>Range:</b> </p>
+            </div>
+            <div class="block">
+                <h4>Practical Guidelines</h4>
+                <p><b>Skewed data:</b> Use median & IQR; <b>Normal data:</b> Use mean & standard deviation</p>
+            </div>
+        </div>
+
+        <!-- Slide 16: Univariate Analysis - Categorical Variables -->
+        <div class="slide" data-slide="16">
+            <h3>Univariate Analysis - Categorical Variables</h3>
+            <img src="../figures/03_univariate_categorical.png" alt="Univariate Categorical Analysis">
+            <div class="alertblock">
+                <h4>Key Insights</h4>
+                <p><b>Gender imbalance:</b> 65% male passengers; <b>Class distribution:</b> 55% third class; <b>Embarkation:</b> 72% from Southampton</p>
+            </div>
+        </div>
+
+        <!-- Slide 17: Statistical Measures for Categorical Data -->
+        <div class="slide" data-slide="17">
+            <h3>Statistical Measures for Categorical Data</h3>
+            <div class="block">
+                <h4>Frequency Analysis</h4>
+                <p>For categorical variable  with categories :</p>
+                <p><b>Frequency:</b> </p>
+                <p><b>Relative Frequency:</b> </p>
+                <p><b>Mode:</b> Category with highest frequency</p>
+            </div>
+            <div class="block">
+                <h4>Visualization Guidelines</h4>
+                <p><b>Bar Charts:</b> Best for comparing categories</p>
+                <p><b>Pie Charts:</b> Good for showing proportions (limit to <= 5 categories)</p>
+            </div>
+            <div class="exampleblock">
+                <h4>Chi-Square Test</h4>
+                <p> Test for uniform distribution: </p>
+            </div>
+        </div>
+
+        <!-- Slide 18: Distribution Analysis & Normality Testing -->
+        <div class="slide" data-slide="18">
+            <h3>Distribution Analysis & Normality Testing</h3>
+            <div class="block">
+                <h4>Common Distributions</h4>
+                <p><strong>Normal Distribution:</strong> </p>
+                <p><strong>Log-Normal Distribution:</strong> </p>
+                <p><strong> Skewness:</strong> </p>
+            </div>
+            <div class="block">
+                <h4>Normality Tests</h4>
+                <p><strong>Shapiro-Wilk Test:</strong> </p>
+                <p><strong>Kolmogorov-Smirnov Test:</strong> </p>
+                <p><strong>Anderson-Darling Test:</strong> More sensitive to tail deviations</p>
+            </div>
+            <div class="alertblock">
+                <h4>Decision Rule</h4>
+                <p>If : Reject normality assumption; Consider transformations (log, square root, Box-Cox)</p>
+            </div>
+        </div>
+
+        <!-- Section: Bivariate Analysis -->
+        <div class="slide" data-slide="19">
+            <h2>Bivariate Analysis</h2>
+        </div>
+
+        <!-- Slide 20: Correlation Analysis -->
+        <div class="slide" data-slide="20">
+            <h3>Correlation Analysis</h3>
+            <img src="../figures/04_correlation_analysis.png" alt="Correlation Analysis">
+            <div class="alertblock">
+                <h4>Correlation Insights</h4>
+                <p><b>Strong correlations:</b> Fare-Survival (0.26), Age-Survival (-0.07); <b>Weak correlations:</b> SibSp-Parch (0.41)</p>
+            </div>
+        </div>
+
+        <!-- Slide 21: Correlation Coefficients & Interpretation -->
+        <div class="slide" data-slide="21">
+            <h3>Correlation Coefficients & Interpretation</h3>
+            <div class="block">
+                <h4>Pearson Correlation</h4>
+                <p>For linear relationships: </p>
+                <p><b>Range:</b> </p>
+                <ul>
+                    <li>: Perfect positive correlation</li>
+                    <li>: No linear correlation</li>
+                    <li>: Perfect negative correlation</li>
+                </ul>
+            </div>
+            <div class="block">
+                <h4>Non-Linear Correlations</h4>
+                <p><strong>Spearman Rank Correlation:</strong> </p>
+                <p><strong>Kendall's Tau:</strong> </p>
+            </div>
+            <div class="exampleblock">
+                <h4>Interpretation Guide</h4>
+                <ul>
+                    <li>: Weak relationship</li>
+                    <li>: Moderate relationship</li>
+                    <li>: Strong relationship</li>
+                </ul>
+            </div>
+            <div class="alertblock">
+                <h4>Remember</h4>
+                <p><b>Correlation ≠ Causation!</b> Always investigate the underlying mechanisms.</p>
+            </div>
+        </div>
+
+        <!-- Slide 22: Bivariate Analysis - Feature Relationships -->
+        <div class="slide" data-slide="22">
+            <h3>Bivariate Analysis - Feature Relationships</h3>
+            <img src="../figures/10_bivariate_analysis.png" alt="Bivariate Analysis">
+            <div class="alertblock">
+                <h4>Key Patterns</h4>
+                <p><b>Gender effect:</b> Women had 74% survival rate vs men 19%; <b>Class effect:</b> 1st class 63% vs 3rd class 24%</p>
+            </div>
+        </div>
+
+        <!-- Slide 23: Cross-Tabulation & Contingency Tables -->
+        <div class="slide" data-slide="23">
+            <h3>Cross-Tabulation & Contingency Tables</h3>
+            <div class="block">
+                <h4>Contingency Table</h4>
+                <p>For categorical variables  and :</p>
+                <pre>
+|     | B1  | B2  | Total |
+|-----|-----|-----|-------|
+| A1  | n11 | n12 | n1.   |
+| A2  | n21 | n22 | n2.   |
+|-----|-----|-----|-------|
+| Total | n.1 | n.2 | n     |
+                </pre>
+                <p><strong>Joint Probability:</strong> </p>
+                <p><strong> Marginal Probability:</strong> , </p>
+            </div>
+            <div class="block">
+                <h4>Independence Test</h4>
+                <p><strong>Chi-Square Test:</strong> </p>
+                <p>where </p>
+                <p><strong> Degrees of freedom:</strong> </p>
+                <p><strong> Cram's V (Effect Size):</strong> </p>
+            </div>
+            <div class="block">
+                <h4>Interpretation</h4>
+                <p>: 0 = no association, 1 = perfect association</p>
+            </div>
+        </div>
+
+        <!-- Section: Missing Data Handling -->
+        <div class="slide" data-slide="24">
+            <h2>Missing Data Handling</h2>
+        </div>
+
+        <!-- Slide 25: Missing Data Analysis -->
+        <div class="slide" data-slide="25">
+            <h3>Missing Data Analysis</h3>
+            <img src="../figures/05_missing_data_analysis.png" alt="Missing Data Analysis">
+            <div class="alertblock">
+                <h4>Missing Data Impact</h4>
+                <p><b>Age:</b> 20% missing values; <b>Pattern:</b> May not be random - could be related to passenger class or survival</p>
+            </div>
+        </div>
+
+        <!-- Slide 26: Types of Missing Data -->
+        <div class="slide" data-slide="26">
+            <h3>Types of Missing Data</h3>
+            <div class="block">
+                <h4>MCAR: Missing Completely at Random</h4>
+                <p><b>Definition:</b> Missing data is independent of both observed and unobserved data.</p>
+                <p><strong> Mathematical condition:</strong> </p>
+                <p><b>Example:</b> Survey responses lost due to mail delivery issues.</p>
+                <p><b>Implication:</b> Can use any imputation method without bias.</p>
+            </div>
+            <div class="block">
+                <h4>MAR: Missing at Random</h4>
+                <p><b>Definition:</b> Missing data depends on observed data, but not on unobserved data.</p>
+                <p><strong> Mathematical condition:</strong> </p>
+                <p><b>Example:</b> Older passengers more likely to have missing age data.</p>
+                <h4>MNAR: Missing Not at Random</h4>
+                <p>Missing data depends on unobserved data.</p>
+                <p><b>Example:</b> High-income individuals not reporting income.</p>
+            </div>
+            <div class="alertblock">
+                <h4>Handling Strategy</h4>
+                <p><b>MAR:</b> Multiple imputation; <b>MNAR:</b> Domain expertise required</p>
+            </div>
+        </div>
+
+        <!-- Slide 27: Imputation Strategies -->
+        <div class="slide" data-slide="27">
+            <h3>Imputation Strategies</h3>
+            <div class="block">
+                <h4>Simple Imputation</h4>
+                <p><strong> Mean/Mode Imputation:</strong> </p>
+                <p><strong> Median Imputation:</strong> </p>
+                <p><strong> Forward/Backward Fill:</strong> For time series data</p>
+                <p><strong> Constant Value:</strong> Domain-specific constant (e.g., 0, -1)</p>
+            </div>
+            <div class="alertblock">
+                <h4>Limitations</h4>
+                <p>Simple methods reduce variance and can introduce bias</p>
+            </div>
+            <div class="block">
+                <h4>Advanced Imputation</h4>
+                <p><strong> KNN Imputation:</strong> </p>
+                <p><strong> Multiple Imputation:</strong> Creates multiple complete datasets, analyzes each, pools results.</p>
+                <p><strong> Model-based:</strong> Linear regression, Random Forest, Deep learning approaches</p>
+            </div>
+            <div class="exampleblock">
+                <h4>Best Practice</h4>
+                <p><b>Always analyze missing data pattern before choosing imputation method</b></p>
+            </div>
+        </div>
+
+        <!-- Section: Outlier Detection -->
+        <div class="slide" data-slide="28">
+            <h2>Outlier Detection</h2>
+        </div>
+
+        <!-- Slide 29: Outlier Detection Methods -->
+        <div class="slide" data-slide="29">
+            <h3>Outlier Detection Methods</h3>
+            <img src="../figures/06_outlier_detection.png" alt="Outlier Detection">
+            <div class="alertblock">
+                <h4>Outlier Findings</h4>
+                <p><b>Fare:</b> 20 outliers detected using IQR method; <b>Age:</b> Few extreme values at high ages</p>
+            </div>
+        </div>
+
+        <!-- Slide 30: Statistical Outlier Detection Methods -->
+        <div class="slide" data-slide="30">
+            <h3>Statistical Outlier Detection Methods</h3>
+            <div class="block">
+                <h4>IQR Method</h4>
+                <p><strong> Interquartile Range:</strong> </p>
+                <p><strong> Outlier bounds:</strong> </p>
+                <p></p>
+                <p><strong> Outlier condition:</strong> </p>
+            </div>
+            <div class="block">
+                <h4>Z-Score Method</h4>
+                <p><strong> Standard Z-score:</strong> </p>
+                <p><strong> Outlier threshold:</strong> </p>
+                <p><strong> Limitation:</strong> Sensitive to outliers in mean and std calculation</p>
+            </div>
+            <div class="exampleblock">
+                <h4>Isolation Forest</h4>
+                <p><strong> Anomaly Score:</strong> </p>
+            </div>
+            <div class="block">
+                <h4>Decision Framework</h4>
+                <p><b>Normal distribution:</b> Z-score; <b>Skewed distribution:</b> IQR; <b>Multivariate:</b> Isolation Forest</p>
+            </div>
+        </div>
+
+        <!-- Slide 31: Multivariate Outlier Detection -->
+        <div class="slide" data-slide="31">
+            <h3>Multivariate Outlier Detection</h3>
+            <div class="block">
+                <h4>Mahalanobis Distance</h4>
+                <p>For multivariate data :</p>
+                <p></p>
+                <p><strong> Outlier threshold:</strong> </p>
+            </div>
+            <div class="block">
+                <h4>Local Outlier Factor (LOF)</h4>
+                <p><strong> LOF Score:</strong> </p>
+                <p><strong> Interpretation:</strong> LOF  1: Normal point; LOF  1: Outlier</p>
+            </div>
+            <div class="alertblock">
+                <h4>Key Insight</h4>
+                <p>Multivariate outliers may not be outliers in any single dimension</p>
+            </div>
+        </div>
+
+        <!-- Section: Feature Engineering -->
+        <div class="slide" data-slide="32">
+            <h2>Feature Engineering</h2>
+        </div>
+
+        <!-- Slide 33: Feature Engineering Examples -->
+        <div class="slide" data-slide="33">
+            <h3>Feature Engineering Examples</h3>
+            <img src="../figures/07_feature_engineering.png" alt="Feature Engineering Examples">
+            <div class="alertblock">
+                <h4>Engineering Insights</h4>
+                <p><b>Age binning:</b> Creates interpretable groups; <b>Family size:</b> Combines multiple features; <b>Title extraction:</b> Captures social status</p>
+            </div>
+        </div>
+
+        <!-- Slide 34: Feature Creation Techniques -->
+        <div class="slide" data-slide="34">
+            <h3>Feature Creation Techniques</h3>
+            <div class="block">
+                <h4>Binning & Discretization</h4>
+                <p><strong> Equal-width binning:</strong> </p>
+                <p><strong> Equal-frequency binning:</strong> Each bin contains  observations</p>
+                <p><strong> Quantile-based binning:</strong> Based on percentiles</p>
+                <p><strong> Domain-specific binning:</strong> Using expert knowledge</p>
+            </div>
+            <div class="block">
+                <h4>Feature Combinations</h4>
+                <p><strong> Arithmetic Operations:</strong> Addition, Multiplication, Division</p>
+                <p><strong> Boolean Operations:</strong> Logical AND, OR, Conditional</p>
+                <p><strong> String Operations:</strong> Length, Contains, Extract</p>
+            </div>
+            <div class="exampleblock">
+                <h4>Feature Engineering Guidelines</h4>
+                <p><b>Domain Knowledge:</b> Most important factor; <b>Iterative Process:</b> Create, test, refine; <b>Validation:</b> Always validate on holdout set</p>
+            </div>
+        </div>
+
+        <!-- Slide 35: Mathematical Transformations -->
+        <div class="slide" data-slide="35">
+            <h3>Mathematical Transformations</h3>
+            <div class="block">
+                <h4>Power Transformations</h4>
+                <p><strong> Log Transformation:</strong> </p>
+                <p><strong> Square Root:</strong> </p>
+                <p><strong> Box-Cox Transformation:</strong> </p>
+            </div>
+            <div class="block">
+                <h4>Trigonometric Features</h4>
+                <p>For cyclical data (time, angles):</p>
+                <p></p>
+                <p></p>
+            </div>
+            <div class="block">
+                <h4>When to Transform</h4>
+                <p>Transform when: skewed data, non-linear relationships, or specific model requirements</p>
+            </div>
+        </div>
+
+        <!-- Section: Feature Selection -->
+        <div class="slide" data-slide="36">
+            <h2>Feature Selection</h2>
+        </div>
+
+        <!-- Slide 37: Feature Selection Methods -->
+        <div class="slide" data-slide="37">
+            <h3>Feature Selection Methods</h3>
+            <img src="../figures/09_feature_selection.png" alt="Feature Selection Methods">
+            <div class="alertblock">
+                <h4>Selection Results</h4>
+                <p><b>Statistical:</b> Gender and fare most important; <b>Tree-based:</b> Consistent with domain knowledge about survival factors</p>
+            </div>
+        </div>
+
+        <!-- Slide 38: Statistical Feature Selection -->
+        <div class="slide" data-slide="38">
+            <h3>Statistical Feature Selection</h3>
+            <div class="block">
+                <h4>Filter Methods</h4>
+                <p><strong> Correlation-based:</strong> Select features with high correlation to target, low correlation to each other</p>
+                <p><strong> F-test (ANOVA):</strong> </p>
+                <p><strong> Chi-square test:</strong> </p>
+                <p><strong> Mutual Information:</strong> </p>
+            </div>
+            <div class="block">
+                <h4>Wrapper Methods</h4>
+                <p><strong> Forward Selection:</strong> Start with empty set, add best features iteratively</p>
+                <p><strong> Backward Elimination:</strong> Start with all features, remove worst iteratively</p>
+                <p><strong> Recursive Feature Elimination:</strong> </p>
+                <p><strong> Genetic Algorithm:</strong> Evolutionary approach to feature subset selection</p>
+            </div>
+            <div class="block">
+                <h4>Embedded Methods</h4>
+                <p><strong> L1 Regularization (Lasso):</strong> </p>
+            </div>
+        </div>
+
+        <!-- Slide 39: Tree-based Feature Importance -->
+        <div class="slide" data-slide="39">
+            <h3>Tree-based Feature Importance</h3>
+            <div class="block">
+                <h4>Random Forest Importance</h4>
+                <p><strong> Mean Decrease Impurity:</strong> </p>
+                <p><strong> Mean Decrease Accuracy:</strong> Permutation-based importance measuring prediction accuracy drop when feature is shuffled</p>
+            </div>
+            <div class="block">
+                <h4>Gradient Boosting Importance</h4>
+                <p><strong> Gain-based Importance:</strong> </p>
+                <p><strong> SHAP Values:</strong> Shapley Additive exPlanations provide unified measure</p>
+            </div>
+            <div class="alertblock">
+                <h4>Caution</h4>
+                <p>Tree-based importance can be biased toward high-cardinality categorical features</p>
+            </div>
+        </div>
+
+        <!-- Section: Data Normalization -->
+        <div class="slide" data-slide="40">
+            <h2>Data Normalization</h2>
+        </div>
+
+        <!-- Slide 41: Normalization Comparison -->
+        <div class="slide" data-slide="41">
+            <h3>Normalization Comparison</h3>
+            <img src="../figures/08_normalization_comparison.png" alt="Normalization Comparison">
+            <div class="alertblock">
+                <h4>Normalization Effects</h4>
+                <p><b>StandardScaler:</b> Zero mean, unit variance; <b>MinMaxScaler:</b> [0,1] range; <b>RobustScaler:</b> Median-based, outlier resistant</p>
+            </div>
+        </div>
+
+        <!-- Slide 42: Scaling Methods Mathematical Formulations -->
+        <div class="slide" data-slide="42">
+            <h3>Scaling Methods Mathematical Formulations</h3>
+            <div class="block">
+                <h4>Standard Scaling (Z-score)</h4>
+                <p></p>
+                <p><b>Properties:</b> Mean = 0, Std = 1, Preserves distribution shape, Sensitive to outliers</p>
+            </div>
+            <div class="block">
+                <h4>Min-Max Scaling</h4>
+                <p></p>
+                <p><b>Properties:</b> Range: [0, 1], Preserves relationships, Very sensitive to outliers</p>
+            </div>
+            <div class="block">
+                <h4>Robust Scaling</h4>
+                <p></p>
+                <p><b>Properties:</b> Median-centered, Uses interquartile range, Robust to outliers</p>
+            </div>
+            <div class="block">
+                <h4>Unit Vector Scaling</h4>
+                <p></p>
+                <p><strong> Use case:</strong> When magnitude matters more than individual values</p>
+            </div>
+            <div class="block">
+                <h4>Selection Guide</h4>
+                <p><b>Normal data + no outliers:</b> StandardScaler; <b>Bounded range needed:</b> MinMaxScaler; <b>Outliers present:</b> RobustScaler</p>
+            </div>
+        </div>
+
+        <!-- Slide 43: When & Why to Normalize -->
+        <div class="slide" data-slide="43">
+            <h3>When & Why to Normalize</h3>
+            <div class="block">
+                <h4>Algorithms Requiring Normalization</h4>
+                <p><strong> Distance-based:</strong> k-NN, k-means clustering, SVM with RBF kernel, Neural networks</p>
+                <p><strong> Gradient-based:</strong> Logistic regression, Linear regression with regularization, Deep learning</p>
+            </div>
+            <div class="block">
+                <h4>Algorithms Not Requiring Normalization</h4>
+                <p><strong> Tree-based methods:</strong> Decision trees, Random Forest, Gradient boosting</p>
+                <p><strong> Rule-based:</strong> Naive Bayes, Association rules</p>
+            </div>
+            <div class="alertblock">
+                <h4>Critical Rule</h4>
+                <p><b>Always fit scaler on training data only!</b> Apply same transformation to validation/test sets to avoid data leakage.</p>
+            </div>
+        </div>
+
+        <!-- Section: Advanced EDA Topics -->
+        <div class="slide" data-slide="44">
+            <h2>Advanced EDA Topics</h2>
+        </div>
+
+        <!-- Slide 45: Target Variable Analysis -->
+        <div class="slide" data-slide="45">
+            <h3>Target Variable Analysis</h3>
+            <img src="../figures/11_target_analysis.png" alt="Target Variable Analysis">
+            <div class="alertblock">
+                <h4>Target Insights</h4>
+                <p><b>Class imbalance:</b> 62% non-survival; <b>Gender-class interaction:</b> First-class women had 97% survival rate</p>
+            </div>
+        </div>
+
+        <!-- Slide 46: Business Insights from EDA -->
+        <div class="slide" data-slide="46">
+            <h3>Business Insights from EDA</h3>
+            <img src="../figures/12_business_insights.png" alt="Business Insights from EDA">
+            <div class="alertblock">
+                <h4>Actionable Insights</h4>
+                <p><b>Revenue impact:</b> Higher-paying passengers had better survival rates; <b>Port differences:</b> Embarkation port correlates with survival</p>
+            </div>
+        </div>
+
+        <!-- Slide 47: Advanced Visualization Techniques -->
+        <div class="slide" data-slide="47">
+            <h3>Advanced Visualization Techniques</h3>
+            <div class="block">
+                <h4>Dimensionality Reduction</h4>
+                <p><strong> Principal Component Analysis:</strong> </p>
+                <p><strong> t-SNE:</strong> </p>
+                <p><strong> UMAP:</strong> Uniform Manifold Approximation</p>
+            </div>
+            <div class="block">
+                <h4>Interactive Visualizations</h4>
+                <p><strong> Plotly Benefits:</strong> Zoom, pan, hover information, 3D scatter plots, Animated visualizations, Dashboard creation</p>
+                <p><strong> Parallel Coordinates:</strong> Visualize high-dimensional data relationships</p>
+                <p><strong> Sankey Diagrams:</strong> Show flow between categorical variables</p>
+                <p><strong> Radar Charts:</strong> Compare multiple features simultaneously</p>
+            </div>
+            <div class="block">
+                <h4>Best Practice</h4>
+                <p><b>Progressive Disclosure:</b> Start with simple plots, add complexity as needed for deeper insights</p>
+            </div>
+        </div>
+
+        <!-- Slide 48: Time Series EDA Considerations -->
+        <div class="slide" data-slide="48">
+            <h3>Time Series EDA Considerations</h3>
+            <div class="block">
+                <h4>Time Series Components</h4>
+                <p><strong> Decomposition:</strong> </p>
+                <p><strong> Stationarity Testing:</strong> Augmented Dickey-Fuller test</p>
+                <p><strong> Autocorrelation:</strong> </p>
+            </div>
+            <div class="block">
+                <h4>Seasonal Analysis</h4>
+                <p><strong> Seasonal Decomposition:</strong> STL, X-12-ARIMA, Classical decomposition</p>
+                <p><strong> Periodogram:</strong> </p>
+                <p><strong> Box-Cox for stabilization:</strong> Handle changing variance over time</p>
+            </div>
+            <div class="alertblock">
+                <h4>Time Series EDA Goals</h4>
+                <p>Identify trends, seasonality, outliers, structural breaks, and appropriate transformation needs</p>
+            </div>
+        </div>
+
+        <!-- Section: EDA to ML Pipeline Integration -->
+        <div class="slide" data-slide="49">
+            <h2>EDA to ML Pipeline Integration</h2>
+        </div>
+
+        <!-- Slide 50: EDA to ML Pipeline Integration -->
+        <div class="slide" data-slide="50">
+            <h3>EDA to ML Pipeline Integration</h3>
+            <img src="../figures/13_ml_pipeline_demo.png" alt="EDA to ML Pipeline Integration">
+            <div class="alertblock">
+                <h4>Pipeline Success</h4>
+                <p><b>EDA insights validated:</b> Gender and class are top predictors; <b>Model performance:</b> 85% accuracy achieved through proper preprocessing</p>
+            </div>
+        </div>
+
+        <!-- Slide 51: From EDA to Model Development -->
+        <div class="slide" data-slide="51">
+            <h3>From EDA to Model Development</h3>
+            <div class="block">
+                <h4>EDA-Informed Decisions</h4>
+                <p><b>Feature Engineering:</b> Age binning, Family size creation, Title extraction</p>
+                <p><b>Preprocessing Choices:</b> Median imputation for age, StandardScaler for fare, One-hot encoding for categorical variables</p>
+                <p><b>Model Selection:</b> Random Forest chosen for mixed data types</p>
+            </div>
+            <div class="block">
+                <h4>Validation Strategy</h4>
+                <p><b>Cross-Validation Design:</b> 5-fold CV</p>
+                <p><b>Stratification:</b> Maintain class balance</p>
+                <p><b>Performance Metrics:</b> Accuracy, Precision/Recall, F1-Score, AUC-ROC</p>
+                <p><b>Feature Importance Validation:</b> EDA findings confirmed by model</p>
+            </div>
+        </div>
+
+        <!-- Slide 52: EDA Best Practices & Common Pitfalls -->
+        <div class="slide" data-slide="52">
+            <h3>EDA Best Practices & Common Pitfalls</h3>
+            <div class="block">
+                <h4>Common Pitfalls</h4>
+                <p><b>Data Leakage:</b> Using future information, Target leakage in features, Scaling on entire dataset</p>
+                <p><strong>Confirmation Bias:</strong> Looking only for expected patterns, Ignoring contradictory evidence, Over-interpreting correlations</p>
+                <p><strong>Statistical Errors:</strong> Multiple testing without correction, Assuming causation from correlation, Ignoring sample size effects</p>
+            </div>
+            <div class="exampleblock">
+                <h4>Best Practices</h4>
+                <p><b>Systematic Approach:</b> Follow structured EDA workflow, Document all findings and decisions, Version control EDA notebooks</p>
+                <p><strong>Statistical Rigor:</strong> Apply multiple testing corrections, Use appropriate statistical tests, Report confidence intervals</p>
+                <p><strong>Reproducibility:</strong> Set random seeds, Save preprocessing parameters, Create reusable functions</p>
+                <p><strong>Communication:</strong> Clear visualizations, Executive summaries, Actionable recommendations</p>
+            </div>
+        </div>
+
+        <!-- Slide 53: EDA Checklist & Quality Assurance -->
+        <div class="slide" data-slide="53">
+            <h3>EDA Checklist & Quality Assurance</h3>
+            <div class="block">
+                <h4>Data Quality Checklist</h4>
+                <ul>
+                    <li><b>Completeness:</b> Missing value analysis</li>
+                    <li><b>Accuracy:</b> Outlier detection & validation</li>
+                    <li><b>Consistency:</b> Data type verification</li>
+                    <li><b>Uniqueness:</b> Duplicate detection</li>
+                    <li><b>Validity:</b> Range & format checking</li>
+                    <li><b>Timeliness:</b> Temporal analysis</li>
+                </ul>
+            </div>
+            <div class="block">
+                <h4>Statistical Validation</h4>
+                <ul>
+                    <li>Distribution testing</li>
+                    <li>Correlation significance tests</li>
+                    <li>Independence assumptions</li>
+                    <li>Sample size adequacy</li>
+                </ul>
+            </div>
+            <div class="block">
+                <h4>Visualization Checklist</h4>
+                <ul>
+                    <li><b>Clarity:</b> Clear labels & legends</li>
+                    <li><b>Completeness:</b> All data represented</li>
+                    <li><b>Accuracy:</b> Correct scales & axes</li>
+                    <li><b>Aesthetics:</b> Professional appearance</li>
+                    <li><b>Accessibility:</b> Color-blind friendly</li>
+                    <li><b>Context:</b> Meaningful titles & captions</li>
+                </ul>
+            </div>
+            <div class="block">
+                <h4>Documentation Standards</h4>
+                <ul>
+                    <li>Data source & collection methods</li>
+                    <li>Preprocessing steps & rationale</li>
+                    <li>Key findings & insights</li>
+                    <li>Limitations & assumptions</li>
+                    <li>Next steps & recommendations</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section: Summary & Next Steps -->
+        <div class="slide" data-slide="54">
+            <h2>Summary & Next Steps</h2>
+        </div>
+
+        <!-- Slide 55: Summary: Key Takeaways -->
+        <div class="slide" data-slide="55">
+            <h3>Summary: Key Takeaways</h3>
+            <div class="alertblock">
+                <h4>Core EDA Principles</h4>
+                <p><b>1. Systematic Approach</b></p>
+                <p><b>2. Statistical Rigor</b></p>
+                <p><b>3. Visual Communication</b></p>
+            </div>
+            <div class="exampleblock">
+                <h4>Practical Impact</h4>
+                <p><b>Model Performance</b></p>
+                <p><b>Business Value</b></p>
+                <p><b>Efficiency Gains</b></p>
+            </div>
+            <p style="text-align: center;"><code> Diagram (from LaTeX, simplified): Quality EDA -> Better Models -> Business Value</code></p>
+        </div>
+
+        <!-- Slide 56: Next Steps: Advanced EDA Topics -->
+        <div class="slide" data-slide="56">
+            <h3>Next Steps: Advanced EDA Topics</h3>
+            <div class="block">
+                <h4>Advanced Techniques</h4>
+                <p><strong> Automated EDA:</strong> pandas-profiling, sweetviz, autoviz</p>
+                <p><strong> Big Data EDA:</strong> Sampling strategies, Distributed computing, Stream processing</p>
+                <p><strong> Domain-Specific EDA:</strong> Text data analysis, Image data exploration, Time series deep-dive</p>
+            </div>
+            <div class="block">
+                <h4>Integration Topics</h4>
+                <p><strong> MLOps Integration:</strong> Automated data quality checks, Feature store management, Drift detection</p>
+                <p><strong> Causal Inference:</strong> Confounding variable identification, Causal graph construction, Treatment effect analysis</p>
+                <p><strong> Ethics & Fairness:</strong> Bias detection in data, Fairness metrics, Responsible AI practices</p>
+            </div>
+            <div class="block">
+                <h4>Learning Path</h4>
+                <p><b>Practice:</b> Apply EDA to diverse datasets; <b>Study:</b> Read domain literature; <b>Share:</b> Present findings to stakeholders</p>
+            </div>
+        </div>
+
+        <!-- Slide 57: Resources & Further Reading -->
+        <div class="slide" data-slide="57">
+            <h3>Resources & Further Reading</h3>
+            <div class="block">
+                <h4>Essential Books</h4>
+                <p><b>"Exploratory Data Analysis"</b> - John Tukey</p>
+                <p><b>"Python for Data Analysis"</b> - Wes McKinney</p>
+                <p><b>"The Elements of Statistical Learning"</b> - Hastie, Tibshirani, Friedman</p>
+                <p><b>"Fundamentals of Data Visualization"</b> - Claus Wilke</p>
+            </div>
+            <div class="block">
+                <h4>Online Resources</h4>
+                <p><b>Python Libraries:</b> pandas, seaborn, matplotlib, plotly, bokeh, scipy, statsmodels</p>
+                <p><b>R Libraries:</b> ggplot2, dplyr, corrplot, VIM, DataExplorer, dlookr</p>
+                <p><b>Courses:</b> Coursera: EDA with Python, edX: Data Science MicroMasters, Kaggle Learn: Data Visualization</p>
+            </div>
+            <p style="text-align: center; margin-top: 2em;"><i>"The greatest value of a picture is when it forces us to notice what we never expected to see."</i> - John Tukey</p>
+        </div>
+
+        <!-- Final Slide: Back to Home -->
+        <div class="slide" data-slide="58">
+            <h1 style="text-align: center;">Thank You!</h1>
+            <p style="text-align: center; font-size: 1.5em; margin-top: 2em;"><a href="/">Back to Home</a></p>
+        </div>
+
+    </div>
+
+    <div class="nav-controls">
+        <button class="nav-btn" id="prevBtn">&lt;</button>
+        <button class="nav-btn" id="nextBtn">&gt;</button>
+    </div>
+
+    <script>
+        const presentation = document.getElementById('presentation');
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progressBar');
+        const slideCounter = document.getElementById('slideCounter');
+        let currentSlideIndex = 0;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active', 'prev');
+                if (i === index) {
+                    slide.classList.add('active');
+                } else if (i < index) {
+                    slide.classList.add('prev');
+                }
+            });
+            currentSlideIndex = index;
+            updateProgressBar();
+            updateSlideCounter();
+        }
+
+        function nextSlide() {
+            if (currentSlideIndex < slides.length - 1) {
+                showSlide(currentSlideIndex + 1);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlideIndex > 0) {
+                showSlide(currentSlideIndex - 1);
+            }
+        }
+
+        function updateProgressBar() {
+            const progress = (currentSlideIndex / (slides.length - 1)) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        function updateSlideCounter() {
+            slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+        }
+
+        document.getElementById('nextBtn').addEventListener('click', nextSlide);
+        document.getElementById('prevBtn').addEventListener('click', prevSlide);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // Initialize presentation
+        showSlide(0);
+    </script>
+</body>
+</html>
