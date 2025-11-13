@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>clustering_slides</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .page {
+            background-color: white;
+            margin: 20px 0;
+            padding: 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            min-height: 400px;
+        }
+        .page-number {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        .page-content {
+            line-height: 1.8;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 12pt;
+        }
+        .note {
+            color: #666;
+            font-style: italic;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-left: 3px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+<div class="note">
+    This is a text-only version of the slides. For the full visual experience with images and formatting, please refer to the PDF version.
+</div>
+
+<div class="page">
+<div class="page-number">Page 1 of 61</div>
+<div class="page-content">
+Clustering
+CMSC 173 - Machine Learning
+Noel Jeffrey Pinton
+October 6, 2025
+Department of Computer Science
+University of the Philippines - Cebu
+1
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 2 of 61</div>
+<div class="page-content">
+Outline
+Introduction &amp; Motivation
+Foundation: Distance &amp; Similarity
+Partitional Clustering: K-Means
+Soft Clustering: Gaussian Mixture Models
+Hierarchical Clustering
+Cluster Validation &amp; Evaluation
+Real-World Applications
+Best Practices &amp; Guidelines
+Summary &amp; Conclusion
+2
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 3 of 61</div>
+<div class="page-content">
+Introduction &amp; Motivation
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 4 of 61</div>
+<div class="page-content">
+What is Clustering?
+Definition
+Clustering is the task of grouping a set of objects
+such that objects in the same group (cluster) are
+more similar to each other than to those in other
+groups.
+Key Characteristics
+• Unsupervised learning
+• No labeled data required
+• Discover hidden patterns
+• Data-driven groupings
+Goal
+Find natural groupings in data without prior knowledge of group labels.
+3
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 5 of 61</div>
+<div class="page-content">
+Supervised vs Unsupervised Learning
+Supervised Learning
+• Training data has labels
+• Learn mapping: f : X →Y
+• Goal: Predict labels for new data
+• Examples: Classification, regression
+Example:
+• Input: Email text
+• Label: Spam/Not Spam
+• Task: Learn to classify
+Unsupervised Learning
+• Training data has no labels
+• Discover structure in X
+• Goal: Find patterns, groups
+• Examples: Clustering, dimensionality reduction
+Example:
+• Input: Customer purchase data
+• No labels
+• Task: Find customer segments
+Clustering = Unsupervised
+We discover groups without knowing what they should be in advance.
+4
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 6 of 61</div>
+<div class="page-content">
+Real-World Applications
+Business &amp; Marketing
+• Customer segmentation: Group customers by
+behavior
+• Market research: Identify consumer groups
+• Recommendation systems: Group similar items
+Biology &amp; Medicine
+• Gene expression: Find related genes
+• Disease diagnosis: Identify patient subgroups
+• Protein structure: Analyze protein families
+Image &amp; Vision
+• Image segmentation: Group pixels by similarity
+• Object recognition: Cluster visual features
+• Color quantization: Reduce color palette
+Text &amp; Web
+• Document clustering: Group similar documents
+• Topic modeling: Discover themes
+• Social network analysis: Find communities
+Common Theme
+All involve finding structure in unlabeled data!
+5
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 7 of 61</div>
+<div class="page-content">
+Types of Clustering
+Partitional Clustering
+• Divide data into K non-overlapping groups
+• Each point belongs to exactly one cluster
+• Flat structure
+• Examples: K-Means, K-Medoids, GMM
+Characteristics:
+• Need to specify K
+• Fast and scalable
+• Sensitive to initialization
+Hierarchical Clustering
+• Build a tree of clusters (dendrogram)
+• Can extract K clusters at any level
+• Nested structure
+• Examples: Agglomerative, Divisive
+Characteristics:
+• No need to specify K upfront
+• More interpretable hierarchy
+• Computationally expensive
+This Lecture
+Focus on Partitional (K-Means, GMM) and Hierarchical methods.
+6
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 8 of 61</div>
+<div class="page-content">
+Foundation: Distance &amp; Similarity
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 9 of 61</div>
+<div class="page-content">
+Distance Metrics
+Common Distance Metrics
+For x = (x1, . . . , xd) and y = (y1, . . . , yd):
+1. Euclidean Distance (L2)
+d(x, y) =
+v
+u
+u
+t
+d
+X
+i=1
+(xi −yi)2
+2. Manhattan Distance (L1)
+d(x, y) =
+d
+X
+i=1
+|xi −yi|
+3. Chebyshev Distance (L∞)
+d(x, y) = max
+i
+|xi −yi|
+4. Cosine Similarity
+sim(x, y) =
+x · y
+∥x∥∥y∥
+7
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 10 of 61</div>
+<div class="page-content">
+Properties of Distance Metrics
+A valid distance metric must satisfy:
+Metric Axioms
+For all points x, y, z:
+1. Non-negativity: d(x, y) ≥0
+2. Identity: d(x, y) = 0 ⇐⇒x = y
+3. Symmetry: d(x, y) = d(y, x)
+4. Triangle inequality: d(x, z) ≤d(x, y) + d(y, z)
+Choosing the Right Metric
+• Euclidean: Most common, assumes all features equally important
+• Manhattan: Less sensitive to outliers, good for high dimensions
+• Cosine: Good for text/document clustering (direction matters)
+• Custom: Domain-specific distances (e.g., edit distance for strings)
+8
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 11 of 61</div>
+<div class="page-content">
+Partitional Clustering: K-Means
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 12 of 61</div>
+<div class="page-content">
+K-Means Algorithm: Overview
+Goal
+Partition n points into K clusters
+Key Idea
+• Each cluster has centroid (mean)
+• Assign points to nearest centroid
+• Update centroids iteratively
+• Minimize within-cluster variance
+Input &amp; Output
+Input:
+• Dataset X, Number K
+Output:
+• Assignments {C1, . . . , CK }
+• Centroids {µ1, . . . , µK }
+9
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 13 of 61</div>
+<div class="page-content">
+K-Means Objective Function
+Minimize within-cluster sum of squares (WCSS):
+Objective
+J =
+K
+X
+k=1
+X
+xi ∈Ck
+∥xi −µk∥2
+where:
+• Ck = set of points in cluster k
+• µk = centroid of cluster k
+• ∥· ∥= Euclidean distance
+Interpretation
+• Minimize total squared distance from points to their centroids
+• Encourages compact, spherical clusters
+• Also called inertia or distortion
+• NP-hard to minimize globally, but heuristics work well
+Note
+K-Means finds local minimum, not necessarily global!
+10
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 14 of 61</div>
+<div class="page-content">
+K-Means Algorithm (Lloyd’s Algorithm)
+Algorithm 1 K-Means Clustering
+Require: Dataset X = {x1, . . . , xn}, number of clusters K
+Ensure: Cluster assignments and centroids
+1: Initialize K centroids {µ1, . . . , µK } randomly
+2: repeat
+3:
+Assignment Step:
+4:
+for each data point xi do
+5:
+Assign xi to cluster k∗= arg mink ∥xi −µk∥2
+6:
+end for
+7:
+Update Step:
+8:
+for each cluster k = 1, . . . , K do
+9:
+Update centroid: µk =
+1
+|Ck |
+P
+xi ∈Ck xi
+10:
+end for
+11: until centroids do not change (or max iterations reached)
+Key Properties
+Convergence: Guaranteed (objective always decreases).
+Complexity: O(nKdT) where T = iterations
+11
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 15 of 61</div>
+<div class="page-content">
+K-Means Example: Dataset
+Let’s apply K-Means to a toy dataset with K = 2
+Dataset (4 points, 2D)
+Point
+x1
+x2
+A
+1
+2
+B
+2
+1
+C
+4
+3
+D
+5
+4
+Goal
+Cluster into K = 2 groups
+x1
+x2
+1
+2
+3
+4
+5
+6
+1
+2
+3
+4
+5
+A
+B
+C
+D
+12
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 16 of 61</div>
+<div class="page-content">
+K-Means Example: Step 1 - Initialization
+Step 1: Randomly initialize 2 centroids
+Random Initialization
+Let’s choose first two points as centroids:
+µ1 = Point A = (1, 2)
+µ2 = Point D = (5, 4)
+Note
+In practice, use K-Means++ initialization!
+x1
+x2
+A
+B
+C
+D
+µ1
+µ2
+13
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 17 of 61</div>
+<div class="page-content">
+K-Means Example: Step 2 - Assignment
+Step 2: Assign each point to nearest centroid
+Distance Calculations
+For each point, compute distance to both centroids:
+Point A (1,2):
+• To µ1:
+p
+(1 −1)2 + (2 −2)2 = 0
+• To µ2:
+p
+(1 −5)2 + (2 −4)2 = 4.47
+• ⇒Assign to Cluster 1
+Point B (2,1):
+• To µ1:
+p
+(2 −1)2 + (1 −2)2 = 1.41
+• To µ2:
+p
+(2 −5)2 + (1 −4)2 = 4.24
+• ⇒Assign to Cluster 1
+Point C (4,3):
+• To µ1:
+p
+(4 −1)2 + (3 −2)2 = 3.16
+• To µ2:
+p
+(4 −5)2 + (3 −4)2 = 1.41
+• ⇒Assign to Cluster 2
+Point D (5,4):
+• To µ1:
+p
+(5 −1)2 + (4 −2)2 = 4.47
+• To µ2:
+p
+(5 −5)2 + (4 −4)2 = 0
+x1
+x2
+A
+B
+C
+D
+µ1
+µ2
+Clusters
+C1: {A, B}
+C2: {C, D}
+14
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 18 of 61</div>
+<div class="page-content">
+K-Means Example: Step 3 - Update Centroids
+Step 3: Recompute centroids as mean of assigned points
+New Centroids
+Cluster 1 contains: A(1,2), B(2,1)
+µ1 = 1
+2 [(1, 2) + (2, 1)]
+=
+ 1 + 2
+2
+, 2 + 1
+2
+
+= (1.5, 1.5)
+Cluster 2 contains: C(4,3), D(5,4)
+µ2 = 1
+2 [(4, 3) + (5, 4)]
+=
+ 4 + 5
+2
+, 3 + 4
+2
+
+= (4.5, 3.5)
+x1
+x2
+A
+B
+C
+D
+µ1
+µ2
+Centroids moved!
+Old (dashed) →New (solid)
+15
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 19 of 61</div>
+<div class="page-content">
+K-Means Example: Iteration 2 - Assignment
+Iteration 2: Re-assign points to NEW centroids
+Distance Calculations
+Using new centroids µ1 = (1.5, 1.5), µ2 = (4.5, 3.5):
+Point A (1,2):
+• To µ1:
+p
+(1 −1.5)2 + (2 −1.5)2 = 0.71
+• To µ2:
+p
+(1 −4.5)2 + (2 −3.5)2 = 3.81
+• ⇒Cluster 1 (no change)
+Point B (2,1):
+• To µ1:
+p
+(2 −1.5)2 + (1 −1.5)2 = 0.71
+• To µ2:
+p
+(2 −4.5)2 + (1 −3.5)2 = 3.54
+• ⇒Cluster 1 (no change)
+Point C (4,3):
+• To µ1:
+p
+(4 −1.5)2 + (3 −1.5)2 = 2.92
+• To µ2:
+p
+(4 −4.5)2 + (3 −3.5)2 = 0.71
+• ⇒Cluster 2 (no change)
+Point D (5,4):
+• To µ1:
+p
+(5 −1.5)2 + (4 −1.5)2 = 4.30
+• To µ2:
+p
+(5 −4.5)2 + (4 −3.5)2 = 0.71
+x1
+x2
+A
+B
+C
+D
+µ1
+µ2
+Result
+No changes!
+Assignments: Same as before
+16
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 20 of 61</div>
+<div class="page-content">
+K-Means Example: Convergence
+Step 4: Check convergence
+Convergence Achieved!
+Since no points changed clusters, the algorithm has
+converged.
+Final Clusters:
+• Cluster 1: {A(1,2), B(2,1)}
+• Cluster 2: {C(4,3), D(5,4)}
+Final Centroids:
+• µ1 = (1.5, 1.5)
+• µ2 = (4.5, 3.5)
+x1
+x2
+A
+B
+C
+D
+µ1
+µ2
+C1
+C2
+Key Insight
+K-Means partitions space with linear decision boundaries (Voronoi cells)
+17
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 21 of 61</div>
+<div class="page-content">
+K-Means: Voronoi Tesselation
+Geometric Interpretation
+K-Means creates a Voronoi diagram:
+• Space partitioned into regions
+• Points closest to one centroid
+• Decision boundaries are linear
+• Forms convex, polygonal cells
+Implications
+• Works well for spherical clusters
+• Struggles with elongated shapes
+• Assumes equal variance
+• Sensitive to outliers
+18
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 22 of 61</div>
+<div class="page-content">
+K-Means Initialization: The Challenge
+Problem
+Sensitive to initial centroids
+Random Init Issues
+• Poor local minima
+• High variance
+• Multiple runs needed
+Practice
+Run 10-100 times, keep best
+WCSS
+19
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 23 of 61</div>
+<div class="page-content">
+K-Means++ Initialization
+Smarter initialization strategy (Arthur &amp; Vassilvitskii, 2007)
+K-Means++ Algorithm
+1. Choose first centroid µ1 uniformly at random from data points
+2. For k = 2, . . . , K:
+• For each point xi, compute D(xi) = distance to nearest centroid
+• Choose next centroid µk with probability ∝D(xi)2
+3. Run standard K-Means with these initial centroids
+Advantages
+• Spreads out initial centroids
+• Provably better: O(log K)-competitive with optimal
+• Lower variance, more consistent results
+• Standard in scikit-learn and most libraries
+Recommendation
+Always use K-Means++ unless you have domain knowledge for better initialization.
+20
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 24 of 61</div>
+<div class="page-content">
+Choosing K: The Elbow Method
+Elbow Method
+1. Run K-Means for K = 1, 2, . . . , Kmax
+2. Plot WCSS vs K
+3. Look for the ”elbow” point
+4. Choose K with diminishing returns
+Interpretation
+• WCSS decreases as K increases
+• Elbow = fit vs complexity trade-off
+• Not always clear/unique
+21
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 25 of 61</div>
+<div class="page-content">
+Choosing K: Silhouette Analysis
+Silhouette Coefficient
+For each point xi:
+1. ai = avg distance to same cluster
+2. bi = avg distance to nearest other
+3. Silhouette:
+si =
+bi −ai
+max(ai, bi)
+Range: si ∈[−1, 1]
+• si ≈1: Well clustered
+• si ≈0: On border
+• si &lt; 0: Wrong cluster
+Usage
+Choose K maximizing avg score
+22
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 26 of 61</div>
+<div class="page-content">
+Soft Clustering: Gaussian Mixture
+Models
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 27 of 61</div>
+<div class="page-content">
+Limitations of K-Means
+Key Issues
+• Hard assignments: Binary membership
+• Spherical clusters: Equal variance assumed
+• No uncertainty: Can’t express doubt
+• Outliers: Forced into clusters
+When K-Means Struggles
+• Elongated/elliptical clusters
+• Different sizes/densities
+• Overlapping clusters
+• Need probability of membership
+Solution
+Gaussian Mixture Models (GMM) provide soft, probabilistic clustering
+23
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 28 of 61</div>
+<div class="page-content">
+Gaussian Mixture Models: Formulation
+Model data as generated from mixture of K Gaussian distributions
+Generative Model
+p(x) =
+K
+X
+k=1
+πkN(x|µk, Σk)
+where:
+• πk = mixing coefficient (prior probability of cluster k), P
+k πk = 1
+• µk = mean of Gaussian k
+• Σk = covariance matrix of Gaussian k
+• N(x|µ, Σ) = multivariate Gaussian
+Soft Assignment
+Probability that point xi belongs to cluster k:
+γik = p(zi = k|xi) =
+πkN(xi|µk, Σk)
+PK
+j=1 πjN(xi|µj, Σj)
+24
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 29 of 61</div>
+<div class="page-content">
+GMM: Expectation-Maximization Algorithm
+Learn parameters {πk, µk, Σk} using EM
+EM Algorithm
+Initialize: Random µk, Σk = I, πk = 1/K
+Repeat until convergence:
+E-step: Compute responsibilities (soft assignments)
+γik =
+πkN(xi|µk, Σk)
+PK
+j=1 πjN(xi|µj, Σj)
+M-step: Update parameters
+πk = 1
+n
+n
+X
+i=1
+γik,
+µk =
+P
+i γikxi
+P
+i γik
+,
+Σk =
+P
+i γik(xi −µk)(xi −µk)T
+P
+i γik
+Properties
+Monotonically increases likelihood. Guaranteed to converge to local maximum.
+25
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 30 of 61</div>
+<div class="page-content">
+GMM vs K-Means Comparison
+K-Means
+Pros:
+• Simple, fast, scalable
+• Easy to implement
+• Works well for spherical clusters
+• Less parameters to tune
+Cons:
+• Hard assignments only
+• Assumes spherical clusters
+• Sensitive to initialization
+• No measure of uncertainty
+GMM
+Pros:
+• Soft probabilistic assignments
+• Flexible cluster shapes (elliptical)
+• Measures uncertainty
+• Principled statistical model
+Cons:
+• Slower than K-Means
+• More parameters (Σk)
+• Can overfit with full covariance
+• Also sensitive to initialization
+Note
+K-Means is special case of GMM with Σk = σ2I and hard assignments!
+26
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 31 of 61</div>
+<div class="page-content">
+Hierarchical Clustering
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 32 of 61</div>
+<div class="page-content">
+Hierarchical Clustering: Overview
+Agglomerative (Bottom-up)
+• Start: Each point = cluster
+• Merge closest clusters
+• End: One cluster
+Divisive (Top-down)
+• Start: All in one cluster
+• Split clusters iteratively
+• End: Each point separate
+Key Advantage
+No need to specify K upfront! Cut dendrogram at any height to get desired clusters.
+27
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 33 of 61</div>
+<div class="page-content">
+Agglomerative Clustering Algorithm
+Most common hierarchical method
+Algorithm
+1. Initialize: Each of n points is own cluster
+2. Compute: Distance matrix between all clusters
+3. Repeat until one cluster remains:
+• Find pair of closest clusters
+• Merge them into single cluster
+• Update distance matrix
+4. Output: Dendrogram showing merge history
+Complexity
+Time: O(n2 log n) with efficient data structures
+Space: O(n2) for distance matrix
+Challenge
+How do we measure distance between clusters (not just points)?
+28
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 34 of 61</div>
+<div class="page-content">
+Hierarchical Clustering Example: Dataset
+Let’s apply Agglomerative Clustering to 5 points (Single Linkage)
+Dataset (5 points, 1D)
+Point
+Position
+A
+2
+B
+4
+C
+5
+D
+10
+E
+12
+Goal
+Build dendrogram using Single Linkage
+0
+2
+4
+6
+8
+A
+B
+C
+Initial State
+Each point = own cluster
+5 clusters: {A}, {B}, {C}, {D}, {E}
+29
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 35 of 61</div>
+<div class="page-content">
+Hierarchical Example: Step 1 - Distance Matrix
+Step 1: Compute pairwise distance matrix
+Distance Matrix
+A
+B
+C
+D
+E
+A
+0
+2
+3
+8
+10
+B
+2
+0
+1
+6
+8
+C
+3
+1
+0
+5
+7
+D
+8
+6
+5
+0
+2
+E
+10
+8
+7
+2
+0
+Find Minimum
+Smallest distance = 1 between B and C
+⇒Merge {B} and {C}
+Dendrogram (Step 1)
+A
+B
+C
+D
+E
+h=1
+height
+0
+1
+2
+3
+4
+5
+Current Clusters
+{A}, {B, C}, {D}, {E}
+4 clusters remain
+30
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 36 of 61</div>
+<div class="page-content">
+Hierarchical Example: Step 2 - Update Matrix
+Step 2: Update distance matrix using Single Linkage
+Single Linkage Rule
+d({B, C}, X) = min(d(B, X), d(C, X))
+New distances to cluster {B,C}:
+• d({B, C}, A) = min(2, 3) = 2
+• d({B, C}, D) = min(6, 5) = 5
+• d({B, C}, E) = min(8, 7) = 7
+Updated Matrix
+A
+{B,C}
+D
+E
+A
+0
+2
+8
+10
+{B,C}
+2
+0
+5
+7
+D
+8
+5
+0
+2
+E
+10
+7
+2
+0
+Dendrogram (Step 2)
+A
+B
+C
+D
+E
+h=2
+height
+0
+1
+2
+3
+4
+5
+Next Merge
+Min distance = 2
+Merge {D} and {E} at height 2
+31
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 37 of 61</div>
+<div class="page-content">
+Hierarchical Example: Steps 3-4
+Continue merging until one cluster remains
+Step 3
+Clusters: {A}, {B,C}, {D,E}
+Updated distances:
+• d(A, {B, C}) = 2
+• d(A, {D, E}) = 8
+• d({B, C}, {D, E}) = 5
+Min = 2: Merge A with {B,C}
+New cluster: {A, B, C} at height 2
+Step 4 (Final)
+Clusters: {A,B,C}, {D,E}
+Distance: d({A, B, C}, {D, E}) = 5
+Final merge at height 5
+One cluster: {A, B, C, D, E}
+Complete Dendrogram
+A
+B
+C
+D
+E
+h=5
+h=2
+h=1
+h=2
+height
+0
+1
+2
+3
+4
+5
+Interpretation
+Cut at different heights to get different K clusters
+32
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 38 of 61</div>
+<div class="page-content">
+Hierarchical Example: Cutting the Dendrogram
+Extract different numbers of clusters by cutting at different heights
+A
+B
+C
+D
+E
+K=2: {A,B,C}, {D,E}
+K=3: {A,B,C}, {D}, {E}
+K=4: {A}, {B,C}, {D}, {E}
+height
+0
+1
+2
+3
+4
+5
+Key Advantage of Hierarchical Clustering
+No need to pre-specify K! The dendrogram shows the full hierarchy.
+33
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 39 of 61</div>
+<div class="page-content">
+Linkage Criteria
+Different ways to measure inter-cluster distance
+Common Linkage Methods
+For clusters Ci and Cj:
+1. Single Linkage (MIN):
+d(Ci, Cj) =
+min
+x∈Ci ,y∈Cj
+d(x, y)
+2. Complete Linkage (MAX):
+d(Ci, Cj) =
+max
+x∈Ci ,y∈Cj
+d(x, y)
+3. Average Linkage:
+d(Ci, Cj) =
+1
+|Ci||Cj|
+X
+x∈Ci
+X
+y∈Cj
+d(x, y)
+4. Ward’s Linkage:
+d(Ci, Cj) = increase in WCSS when merging Ci and Cj
+34
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 40 of 61</div>
+<div class="page-content">
+Linkage Methods: Comparison
+35
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 41 of 61</div>
+<div class="page-content">
+Dendrograms: Interpretation
+Reading Dendrograms
+• Leaves: Individual points
+• Height: Merge distance
+• Branches: Relationships
+• Cut: Extract K clusters
+Extracting Clusters
+Cut at height h:
+• Higher →fewer clusters
+• Lower →more clusters
+• Choose via validation
+Advantage
+Explore different K without re-running!
+36
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 42 of 61</div>
+<div class="page-content">
+Cluster Validation &amp; Evaluation
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 43 of 61</div>
+<div class="page-content">
+Types of Cluster Validation
+How do we assess clustering quality?
+Internal Validation
+Use only the data itself
+Measures:
+• Silhouette coefficient
+• Davies-Bouldin index
+• Calinski-Harabasz score
+• Dunn index
+Idea: Good clusters are compact and well-separated
+External Validation
+Compare to ground truth labels
+Measures:
+• Adjusted Rand Index (ARI)
+• Normalized Mutual Information (NMI)
+• V-measure
+• Purity
+Idea: Good clustering agrees with true labels
+When to Use Each
+Internal: Unsupervised setting (no labels)
+External: When ground truth available (benchmarking)
+37
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 44 of 61</div>
+<div class="page-content">
+Internal Metrics: Formulas
+1. Silhouette Coefficient
+s = 1
+n
+n
+X
+i=1
+bi −ai
+max(ai, bi)
+Range: [−1, 1], higher is better
+2. Davies-Bouldin Index
+DB = 1
+K
+K
+X
+k=1
+max
+k′̸=k
+σk + σk′
+d(µk, µk′)
+Range: [0, ∞), lower is better
+3. Calinski-Harabasz Score (Variance Ratio)
+CH = Between-cluster variance
+Within-cluster variance × n −K
+K −1
+Range: [0, ∞), higher is better
+Usage
+Use multiple metrics! Different metrics may favor different clusterings.
+38
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 45 of 61</div>
+<div class="page-content">
+Internal Validation: Visualization
+Metric Values vs K
+Optimal K Comparison
+Observation
+Different metrics may suggest different optimal K. Use domain knowledge!
+39
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 46 of 61</div>
+<div class="page-content">
+External Metrics: Formulas
+Given true labels Y and predicted labels C:
+1. Adjusted Rand Index (ARI)
+ARI =
+RI −E[RI]
+max(RI) −E[RI]
+• Range: [−1, 1], higher is better
+• ARI = 1: Perfect agreement
+• ARI ≈0: Random labeling
+• Adjusted for chance
+2. Normalized Mutual Information (NMI)
+NMI(Y , C) =
+2 · I(Y ; C)
+H(Y ) + H(C)
+• Range: [0, 1], higher is better
+• NMI = 1: Perfect agreement
+• Based on information theory
+• Normalized for different K
+40
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 47 of 61</div>
+<div class="page-content">
+External Validation: Example
+Validation Metrics
+Confusion Matrix
+Note
+External validation only for benchmarking. In real unsupervised tasks, no ground truth!
+41
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 48 of 61</div>
+<div class="page-content">
+Real-World Applications
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 49 of 61</div>
+<div class="page-content">
+Application: Customer Segmentation
+Business Impact
+• Targeted marketing: Strategies per segment
+• Product development: Tailor to groups
+• Resource allocation: Focus on high-value
+• Customer retention: Identify at-risk
+42
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 50 of 61</div>
+<div class="page-content">
+Application: Image Color Quantization
+Use Cases
+• Image compression: Reduce file size
+• Color palette: Identify dominant colors
+• Segmentation: Group similar pixels
+• Artistic effects: Posterization
+43
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 51 of 61</div>
+<div class="page-content">
+Application: Biological Data (Iris Dataset)
+44
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 52 of 61</div>
+<div class="page-content">
+Application: Document Clustering
+Text Mining Applications
+• Topic discovery: Find themes in document collections
+• News organization: Group similar articles
+• Search results: Organize by topic clusters
+• Recommendation: Find similar documents
+45
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 53 of 61</div>
+<div class="page-content">
+Best Practices &amp; Guidelines
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 54 of 61</div>
+<div class="page-content">
+Choosing a Clustering Algorithm
+Decision Guide
+Use K-Means when:
+• You know K (or can estimate it)
+• Data has roughly spherical clusters
+• Large dataset (scalability important)
+• Want fast, simple method
+Use GMM when:
+• Need probabilistic assignments
+• Clusters have different shapes/variances
+• Want to measure uncertainty
+• Have computational resources
+Use Hierarchical when:
+• Don’t know K in advance
+• Want to explore multiple granularities
+• Need interpretable hierarchy
+• Small to medium dataset (n &lt; 10, 000)
+46
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 55 of 61</div>
+<div class="page-content">
+Common Pitfalls &amp; Solutions
+Pitfall 1: Not Scaling Features
+Problem: Features with large ranges dominate distance
+Solution: Standardize features: z = x−µ
+σ
+Pitfall 2: Using Wrong Distance Metric
+Problem: Euclidean not always appropriate
+Solution: Match metric to data type (cosine for text, custom for categorical)
+Pitfall 3: Ignoring Outliers
+Problem: Outliers can distort clusters (especially K-Means)
+Solution: Detect and remove outliers, or use robust methods (DBSCAN, K-Medoids)
+Pitfall 4: Blindly Trusting One Metric
+Problem: Single validation metric may be misleading
+Solution: Use multiple metrics + visual inspection + domain knowledge
+47
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 56 of 61</div>
+<div class="page-content">
+Best Practices: Practical Tips
+Data Preprocessing
+• Scale features: Use StandardScaler or MinMaxScaler
+• Handle missing values: Impute or remove
+• Remove duplicates: Can bias cluster centers
+• Consider dimensionality reduction: PCA for high-dimensional data
+Model Selection
+• Try multiple K values: Use elbow + silhouette + domain knowledge
+• Run multiple times: Different initializations for K-Means
+• Validate results: Use both internal and visual validation
+• Compare algorithms: K-Means, GMM, Hierarchical
+Interpretation
+• Visualize clusters: 2D projections (PCA, t-SNE)
+• Inspect cluster centers: What characterizes each cluster?
+• Verify with domain experts: Do clusters make sense?
+• Iterate: Clustering is exploratory - refine based on insights
+48
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 57 of 61</div>
+<div class="page-content">
+Summary &amp; Conclusion
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 58 of 61</div>
+<div class="page-content">
+Key Takeaways
+Clustering Fundamentals
+• Unsupervised learning: Discover structure without labels
+• Distance metrics: Foundation of clustering (Euclidean, cosine, etc.)
+• Two main types: Partitional vs Hierarchical
+Key Algorithms
+• K-Means: Fast, simple, hard assignments, spherical clusters
+• GMM: Soft assignments, flexible shapes, probabilistic
+• Hierarchical: No need for K, produces dendrogram, O(n2)
+Validation
+• Internal: Silhouette, Davies-Bouldin, Calinski-Harabasz
+• External: ARI, NMI (when ground truth available)
+• Selection: Elbow method, silhouette analysis, domain knowledge
+49
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 59 of 61</div>
+<div class="page-content">
+What We Covered
+1. Introduction: Motivation, applications, clustering types
+2. Distance Metrics: Euclidean, Manhattan, cosine similarity
+3. K-Means: Algorithm, initialization (K-Means++), choosing K
+4. GMM: Soft clustering, EM algorithm, comparison with K-Means
+5. Hierarchical: Agglomerative, linkage methods, dendrograms
+6. Validation: Internal and external metrics
+7. Applications: Customer segmentation, image processing, bioinformatics
+8. Best Practices: Algorithm selection, preprocessing, pitfalls
+Next Steps
+• Practice: Try clustering on real datasets
+• Experiment: Compare different algorithms and parameters
+• Read: Advanced topics - DBSCAN, spectral clustering, etc.
+50
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 60 of 61</div>
+<div class="page-content">
+Further Reading
+Textbooks
+• Bishop: Pattern Recognition &amp; Machine Learning (Ch. 9)
+• Murphy: Probabilistic ML (Ch. 21)
+• Hastie et al.: Elements of Statistical Learning (Ch. 14)
+Key Papers
+• Arthur &amp; Vassilvitskii (2007): K-Means++
+• Dempster et al. (1977): EM Algorithm
+• Rousseeuw (1987): Silhouette Coefficient
+Implementations
+• scikit-learn: KMeans, GaussianMixture, AgglomerativeClustering
+• scipy: Hierarchical clustering (linkage, dendrogram)
+• R: kmeans, hclust, cluster package
+51
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 61 of 61</div>
+<div class="page-content">
+Questions?
+Thank you for your attention!
+Noel Jeffrey Pinton
+Department of Computer Science
+University of the Philippines - Cebu
+51
+
+</div>
+</div>
+
+</body>
+</html>

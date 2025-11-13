@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>neural_networks_slides</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .page {
+            background-color: white;
+            margin: 20px 0;
+            padding: 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            min-height: 400px;
+        }
+        .page-number {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        .page-content {
+            line-height: 1.8;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 12pt;
+        }
+        .note {
+            color: #666;
+            font-style: italic;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-left: 3px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+<div class="note">
+    This is a text-only version of the slides. For the full visual experience with images and formatting, please refer to the PDF version.
+</div>
+
+<div class="page">
+<div class="page-number">Page 1 of 53</div>
+<div class="page-content">
+Artificial Neural Networks
+CMSC 173 - Machine Learning
+Course Lecture
+1
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 2 of 53</div>
+<div class="page-content">
+Outline
+Introduction &amp; Motivation
+The Perceptron
+Activation Functions
+Multi-Layer Networks &amp; Architecture
+Forward Propagation
+Backpropagation Algorithm
+Regularization Techniques
+Training Best Practices
+Summary &amp; Applications
+2
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 3 of 53</div>
+<div class="page-content">
+Introduction &amp; Motivation
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 4 of 53</div>
+<div class="page-content">
+What Are Neural Networks?
+Artificial Neural Networks: Computing systems inspired by biological neural networks
+Biological Inspiration
+• Neurons: Basic processing units
+• Synapses: Weighted connections
+• Learning: Adapting connection strengths
+• Parallel processing: Massive connectivity
+Artificial Counterpart
+• Perceptrons: Mathematical neurons
+• Weights: Learnable parameters
+• Training: Gradient-based optimization
+• Layers: Organized processing units
+Key Insight
+Neural networks can learn complex non-linear mappings from data by adjusting weights through training.
+3
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 5 of 53</div>
+<div class="page-content">
+Why Neural Networks?
+Motivation: Limitations of Linear Models
+Linear Models
+• Limited to linear decision boundaries
+• Cannot solve XOR problem
+• Restricted representational power
+• Simple but insufficient for complex data
+Example: XOR Problem
+x1
+x2
+XOR
+0
+0
+0
+0
+1
+1
+1
+0
+1
+1
+1
+0
+No linear classifier can solve this!
+Neural Networks
+• Non-linear decision boundaries
+• Universal approximation capability
+• Hierarchical feature learning
+• Scalable to complex problems
+Universal Approximation Theorem: A neural network
+with a single hidden layer can approximate any
+continuous function to arbitrary accuracy (given
+sufficient neurons).
+Key Advantages:
+• Automatic feature extraction
+• End-to-end learning
+• Flexible architectures
+4
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 6 of 53</div>
+<div class="page-content">
+The Perceptron
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 7 of 53</div>
+<div class="page-content">
+The Perceptron: Building Block of Neural Networks
+x1
+x2
+x3
+x0
+P
+σ
+y
+w1
+w2
+w3
+b
+z = Pn
+i=1 wixi + b
+y = σ(z)
+Inputs
+Output
+Mathematical Model
+Linear Combination: z = Pn
+i=1 wixi + b = wT x + b
+Activation: y = σ(z) where σ is an activation function
+5
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 8 of 53</div>
+<div class="page-content">
+Neural Network Components and Architecture
+Single Processing Unit
+y
+x1
+x2
+...
+xD
+w0
+w1
+w2
+wD
+bias
+y := σ(z)
+Activation
+Function, σ
+Single processing unit with inputs x1, . . . , xD, weights
+w1, . . . , wD, bias w0, and activation function σ.
+Multi-Layer Perceptron
+x1
+x2
+x3
+x4
+y
+Input
+Hidden 1
+Hidden 2
+Output
+Multi-layer perceptron with fully connected layers. Each
+connection represents a learnable weight parameter.
+Key Concepts
+Processing Unit: z = PD
+i=1 wixi + w0, then y = σ(z)
+Network: Multiple units arranged in layers with feedforward connections
+6
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 9 of 53</div>
+<div class="page-content">
+Perceptron: Mathematical Formulation
+Complete Mathematical Description:
+z =
+n
+X
+i=1
+wixi + b = wT x + b
+(1)
+y = σ(z) = σ(wT x + b)
+(2)
+where:
+• x = [x1, x2, . . . , xn]T : input vector
+• w = [w1, w2, . . . , wn]T : weight vector
+• b: bias term
+• σ(·): activation function
+Step Function (Original)
+σ(z) =
+(
+1
+if z ≥0
+0
+if z &lt; 0
+Problem: Not differentiable
+Sigmoid Function (Modern)
+σ(z) =
+1
+1 + e−z
+Advantage: Smooth and differentiable
+7
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 10 of 53</div>
+<div class="page-content">
+Perceptron Learning Algorithm
+Goal: Learn weights w and bias b to minimize prediction error
+Original Perceptron Rule
+For misclassified point (xi, yi):
+wj := wj + α(yi −ˆyi)xij
+b := b + α(yi −ˆyi)
+where α is the learning rate.
+Convergence: Guaranteed for linearly separable data
+Gradient Descent (Modern)
+Define loss function: L = 1
+2 (y −ˆy)2
+Weight updates:
+wj := wj −α ∂L
+∂wj
+(3)
+= wj −α(y −ˆy)σ′(z)xj
+(4)
+b := b −α ∂L
+∂b
+(5)
+= b −α(y −ˆy)σ′(z)
+(6)
+Limitation
+Single perceptron can only learn linearly separable functions. Solution: Multi-layer networks!
+8
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 11 of 53</div>
+<div class="page-content">
+Activation Functions
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 12 of 53</div>
+<div class="page-content">
+Activation Functions: The Heart of Non-linearity
+Purpose
+Activation functions introduce non-linearity into the network, enabling it to learn complex patterns.
+9
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 13 of 53</div>
+<div class="page-content">
+Activation Functions: Mathematical Properties
+Sigmoid Function
+σ(x) =
+1
+1 + e−x
+Properties:
+• Range: (0, 1)
+• Smooth and differentiable
+• Output interpretable as probability
+Derivative:
+σ′(x) = σ(x)(1 −σ(x))
+Issues: Vanishing gradients for large |x|
+Hyperbolic Tangent
+tanh(x) = ex −e−x
+ex + e−x
+Properties:
+• Range: (−1, 1)
+• Zero-centered output
+• Steeper gradients than sigmoid
+Derivative:
+tanh′(x) = 1 −tanh2(x)
+Advantage: Better than sigmoid
+10
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 14 of 53</div>
+<div class="page-content">
+Activation Functions: ReLU Family
+ReLU (Rectified Linear Unit)
+ReLU(x) = max(0, x)
+Advantages:
+• Computationally efficient
+• No vanishing gradient for x &gt; 0
+• Sparse activation
+• Most popular choice
+Derivative:
+ReLU′(x) =
+(
+1
+if x &gt; 0
+0
+if x ≤0
+Leaky ReLU
+LeakyReLU(x) =
+(
+x
+if x &gt; 0
+αx
+if x ≤0
+Advantages:
+• Avoids ”dying ReLU” problem
+• Small gradient for negative inputs
+• Typically α = 0.01
+Derivative:
+LeakyReLU′(x) =
+(
+1
+if x &gt; 0
+α
+if x ≤0
+11
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 15 of 53</div>
+<div class="page-content">
+Activation Function Derivatives
+Why Derivatives Matter
+Derivatives are crucial for backpropagation - they determine how errors flow backward through the network
+12
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 16 of 53</div>
+<div class="page-content">
+Choosing Activation Functions
+Guidelines
+Hidden Layers:
+• ReLU: Default choice (fast, effective)
+• Leaky ReLU: If dying ReLU is a problem
+• Tanh: For zero-centered data
+• Sigmoid: Avoid (vanishing gradients)
+Output Layer:
+• Sigmoid: Binary classification
+• Softmax: Multi-class classification
+• Linear: Regression
+• Tanh: Regression (bounded output)
+Common Issues
+Vanishing Gradients:
+• Sigmoid/Tanh derivatives →0 for large inputs
+• Deep networks suffer from this
+• Solution: ReLU activations
+Dying ReLU:
+• Neurons get stuck at zero output
+• No gradient flows through
+• Solution: Leaky ReLU, initialization
+Best Practice
+Start with ReLU for hidden layers and choose output activation based on your task.
+13
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 17 of 53</div>
+<div class="page-content">
+Multi-Layer Networks &amp; Architecture
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 18 of 53</div>
+<div class="page-content">
+Multi-Layer Neural Network Architecture
+x0
+x1
+x2
+x3
+y0
+y1
+Input
+Hidden 1
+Hidden 2
+Output
+W(1), b(1)
+W(2), b(2)
+W(3), b(3)
+Forward Propagation
+Key Components
+Layers: Input →Hidden →Hidden →... →Output
+Connections: Each neuron connects to all neurons in the next layer (fully connected)
+14
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 19 of 53</div>
+<div class="page-content">
+Network Architecture: Mathematical Representation
+For a network with L layers:
+a(0) = x
+(input layer)
+(7)
+z(l) = W(l)a(l−1) + b(l)
+for l = 1, 2, . . . , L
+(8)
+a(l) = σ(l)(z(l))
+for l = 1, 2, . . . , L
+(9)
+ˆy = a(L)
+(output layer)
+(10)
+where:
+• W(l) ∈Rnl ×nl−1: weight matrix for layer l
+• b(l) ∈Rnl : bias vector for layer l
+• nl: number of neurons in layer l
+• σ(l): activation function for layer l
+15
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 20 of 53</div>
+<div class="page-content">
+Network Dimensions and Parameters
+Matrix Dimensions
+For layer l:
+• Input: a(l−1) has shape (nl−1, 1)
+• Weights: W(l) has shape (nl, nl−1)
+• Output: a(l) has shape (nl, 1)
+Batch Processing:
+• Input batch: A(l−1) has shape (nl−1, m)
+• Output batch: A(l) has shape (nl, m)
+• where m is the batch size
+Parameter Count
+Total parameters:
+L
+X
+l=1
+(nl × nl−1 + nl)
+Example: 784 →128 →64 →10
+784 × 128 + 128
+(11)
++ 128 × 64 + 64
+(12)
++ 64 × 10 + 10
+(13)
+= 109, 386 parameters
+(14)
+Memory scales with:
+• Network depth
+• Layer width
+• Batch size
+16
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 21 of 53</div>
+<div class="page-content">
+Network Design Considerations
+Depth vs Width
+Deeper Networks:
+• More layers, fewer neurons per layer
+• Better feature hierarchies
+• Can represent more complex functions
+• Risk: vanishing gradients
+Wider Networks:
+• Fewer layers, more neurons per layer
+• More parameters at each level
+• Easier to train
+• Risk: overfitting
+Architecture Guidelines
+Hidden Layer Size:
+• Start with 1-2 hidden layers
+• Size between input and output dimensions
+• Rule of thumb: pninput × noutput
+Number of Layers:
+• Simple problems: 1-2 hidden layers
+• Complex problems: 3+ layers
+• Very deep: Requires special techniques
+Rule of Thumb
+Start simple and gradually increase complexity. Use validation performance to guide architecture choices.
+17
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 22 of 53</div>
+<div class="page-content">
+Forward Propagation
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 23 of 53</div>
+<div class="page-content">
+Forward Propagation: Information Flow
+x1
+x2
+x3
+h1
+h2
+y
+z(1)
+σ
+a(1) = σ(z(1))
+z(2)
+σ
+a(2) = σ(z(2))
+z(1) = W(1)x + b(1)
+z(2) = W(2)a(1) + b(2)
+Input
+Hidden
+Output
+Forward Propagation
+Forward Pass
+Information flows from input to output, layer by layer, to compute predictions.
+18
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 24 of 53</div>
+<div class="page-content">
+Forward Propagation Algorithm
+Step-by-step Process:
+Algorithm 1 Forward Propagation
+1: Input: x, weights {W(l)}, biases {b(l)}
+2: Set a(0) = x
+3: for l = 1 to L do
+4:
+Compute pre-activation: z(l) = W(l)a(l−1) + b(l)
+5:
+Apply activation: a(l) = σ(l)(z(l))
+6: end for
+7: Output: ˆy = a(L)
+Vectorized Implementation
+For batch processing:
+Z(l) = A(l−1)W(l)T + b(l)
+(15)
+A(l) = σ(l)(Z(l))
+(16)
+where A(l) has shape (m, nl) for m examples.
+Computational Complexity: O(L · N · M) where L
+= layers, N = max neurons/layer, M = batch size
+Example Calculation
+Network: 2 →3 →1 Input: x = [0.5, 0.8]T
+Layer 1: z(1) = W(1)x + b(1) a(1) = σ(z(1))
+Layer 2: z(2) = w(2)T a(1) + b(2) ˆy = σ(z(2))
+All intermediate values z(l), a(l) are stored for
+backpropagation.
+19
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 25 of 53</div>
+<div class="page-content">
+Forward Propagation: Implementation Details
+Memory Considerations
+Storage Requirements:
+• Store all activations a(l)
+• Store all pre-activations z(l)
+• Needed for backpropagation
+Memory Usage:
+Memory ∝
+L
+X
+l=0
+nl × batch size
+Trade-offs:
+• Larger batches: More memory, better GPU
+utilization
+• Smaller batches: Less memory, more gradient
+noise
+Numerical Stability
+Common Issues:
+• Overflow: Large intermediate values
+• Underflow: Very small values →0
+• NaN propagation: Invalid operations
+Solutions:
+• Proper weight initialization
+• Batch normalization
+• Gradient clipping
+• Use stable activation functions (ReLU)
+Key Insight
+Forward propagation is computationally straightforward, but proper implementation requires attention to
+memory usage and numerical stability.
+20
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 26 of 53</div>
+<div class="page-content">
+Forward Pass: Handworked Example
+Network: 2 inputs →2 hidden →1 output (sigmoid activation)
+Given
+Input: x =
+"
+0.5
+0.8
+#
+Weights &amp; Biases:
+W(1) =
+"
+0.2
+0.4
+0.3
+0.1
+#
+,
+b(1) =
+"
+0.1
+0.2
+#
+W(2) =
+h
+0.6
+0.5
+i
+,
+b(2) = 0.3
+Activation: σ(z) =
+1
+1+e−z
+Step 1: Hidden Layer
+z(1) = W(1)x + b(1)
+=
+"
+0.2
+0.4
+0.3
+0.1
+# "
+0.5
+0.8
+#
++
+"
+0.1
+0.2
+#
+=
+"
+0.2(0.5) + 0.4(0.8)
+0.3(0.5) + 0.1(0.8)
+#
++
+"
+0.1
+0.2
+#
+=
+"
+0.1 + 0.32
+0.15 + 0.08
+#
++
+"
+0.1
+0.2
+#
+=
+"
+0.52
+0.43
+#
+21
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 27 of 53</div>
+<div class="page-content">
+Forward Pass: Handworked Example (continued)
+Step 2: Hidden Activations
+a(1) = σ(z(1)) = σ
+ "
+0.52
+0.43
+#!
+a(1)
+1
+= σ(0.52) =
+1
+1 + e−0.52 =
+1
+1 + 0.595 = 0.627
+a(1)
+2
+= σ(0.43) =
+1
+1 + e−0.43 =
+1
+1 + 0.651 = 0.606
+a(1) =
+"
+0.627
+0.606
+#
+Step 3: Output Layer
+z(2) = W(2)a(1) + b(2)
+=
+h
+0.6
+0.5
+i "
+0.627
+0.606
+#
++ 0.3
+= 0.6(0.627) + 0.5(0.606) + 0.3
+= 0.376 + 0.303 + 0.3 = 0.979
+Final Output:
+ˆy = σ(0.979) =
+1
+1 + e−0.979 = 0.727
+Summary
+Input [0.5, 0.8] →Hidden [0.627, 0.606] →Output 0.727
+22
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 28 of 53</div>
+<div class="page-content">
+Backpropagation Algorithm
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 29 of 53</div>
+<div class="page-content">
+Backpropagation: Error Flow
+x1
+x2
+x3
+h1
+h2
+y
+Error Backpropagation
+L
+Loss
+δ(2)
+δ(1)
+∂L
+∂W(1) = δ(1)xT
+∂L
+∂W(2) = δ(2)(a(1))T
+Input
+Hidden
+Output
+δ(1) = (W(2))T δ(2) ⊙σ′(z(1))
+δ(2) =
+∂L
+∂a(2) ⊙σ′(z(2))
+Backpropagation
+Efficient algorithm to compute gradients by propagating errors backward through the network using the chain
+rule.
+23
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 30 of 53</div>
+<div class="page-content">
+Mathematical Foundation: Chain Rule
+Goal: Compute
+∂L
+∂W(l) and
+∂L
+∂b(l) for all layers
+Chain Rule Application:
+∂L
+∂W(l) =
+∂L
+∂z(l)
+∂z(l)
+∂W(l)
+(17)
+∂L
+∂b(l) =
+∂L
+∂z(l)
+∂z(l)
+∂b(l)
+(18)
+∂L
+∂a(l−1) =
+∂L
+∂z(l)
+∂z(l)
+∂a(l−1)
+(19)
+Key Insight: Define error terms δ(l) =
+∂L
+∂z(l)
+Gradient Computations
+∂L
+∂W(l) = δ(l)(a(l−1))T
+(20)
+∂L
+∂b(l) = δ(l)
+(21)
+δ(l−1) = (W(l))T δ(l) ⊙σ′(z(l−1))
+(22)
+Output Layer
+For output layer L:
+δ(L) =
+∂L
+∂a(L) ⊙σ′(z(L))
+Common case (MSE + sigmoid):
+δ(L) = (a(L) −y) ⊙a(L) ⊙(1 −a(L))
+where ⊙denotes element-wise multiplication.
+24
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 31 of 53</div>
+<div class="page-content">
+Backpropagation Algorithm
+Algorithm 2 Backpropagation
+1: Input: Training example (x, y), network weights
+2: Forward Pass: Compute all a(l) and z(l) (store them!)
+3: Compute Output Error: δ(L) =
+∂L
+∂a(L) ⊙σ′(z(L))
+4: for l = L −1 down to 1 do
+5:
+Propagate Error: δ(l) = (W(l+1))T δ(l+1) ⊙σ′(z(l))
+6: end for
+7: for l = 1 to L do
+8:
+Compute Gradients:
+9:
+∂L
+∂W(l) = δ(l)(a(l−1))T
+10:
+∂L
+∂b(l) = δ(l)
+11: end for
+Computational Complexity
+Time: O(number of weights)
+• Same order as forward pass
+• Very efficient vs numerical gradients
+Space: O(network size)
+• Must store all activations
+Why Backpropagation Works
+• Efficiency: Reuses computations via chain rule
+• Automatic: No manual gradient derivation
+• Exact: Computes exact gradients
+• General: Works for any differentiable network
+Historical Impact:
+• Rumelhart Hinton Williams (1986)
+25
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 32 of 53</div>
+<div class="page-content">
+Computational Graph Perspective
+x
+w
+×
++
+σ
+z1
+z2
+y
+b
+wx
+wx + b
+L
+∂L
+∂y
+∂L
+∂z2
+∂L
+∂z1
+∂L
+∂w
+∂L
+∂b
+z1 = w · x
+z2 = z1 + b
+y = σ(z2)
+Modern View
+Backpropagation is automatic differentiation applied to computational graphs. Modern frameworks
+(TensorFlow, PyTorch) build these graphs automatically.
+26
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 33 of 53</div>
+<div class="page-content">
+4-Layer Neural Network: Differential Equation Derivation
+Network Structure: Input →Hidden1 →Hidden2 →Hidden3 →Output
+Forward Pass Equations:
+a(0) = x
+(input)
+(23)
+z(1) = W(1)a(0) + b(1),
+a(1) = σ(z(1))
+(24)
+z(2) = W(2)a(1) + b(2),
+a(2) = σ(z(2))
+(25)
+z(3) = W(3)a(2) + b(3),
+a(3) = σ(z(3))
+(26)
+z(4) = W(4)a(3) + b(4),
+a(4) = σ(z(4))
+(output)
+(27)
+Loss Function: L = 1
+2 ||a(4) −y||2
+Output Layer Error
+Starting from the output layer:
+δ(4) =
+∂L
+∂z(4)
+(28)
+=
+∂L
+∂a(4) ⊙∂a(4)
+∂z(4)
+(29)
+= (a(4) −y) ⊙σ′(z(4))
+(30)
+Chain Rule Application
+For hidden layers (l = 3, 2, 1):
+δ(l) =
+∂L
+∂z(l)
+(31)
+=
+∂L
+∂z(l+1)
+∂z(l+1)
+∂a(l)
+∂a(l)
+∂z(l)
+(32)
+= (W(l+1))T δ(l+1) ⊙σ′(z(l))
+(33)
+27
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 34 of 53</div>
+<div class="page-content">
+4-Layer Network: Complete Backpropagation Derivation
+Step-by-Step Gradient Computation:
+Error Propagation
+Layer 4 (Output):
+δ(4) = (a(4) −y) ⊙σ′(z(4))
+Layer 3:
+δ(3) = (W(4))T δ(4) ⊙σ′(z(3))
+Layer 2:
+δ(2) = (W(3))T δ(3) ⊙σ′(z(2))
+Layer 1:
+δ(1) = (W(2))T δ(2) ⊙σ′(z(1))
+Weight and Bias Gradients
+For each layer l = 1, 2, 3, 4:
+Weight Gradients:
+∂L
+∂W(l) = δ(l)(a(l−1))T
+Bias Gradients:
+∂L
+∂b(l) = δ(l)
+Update Rules:
+W(l) := W(l) −α
+∂L
+∂W(l)
+(34)
+b(l) := b(l) −α ∂L
+∂b(l)
+(35)
+Key Insight
+The error flows backward through the network, with each layer’s error depending on the next layer’s error
+multiplied by the transpose of the connecting weights.
+28
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 35 of 53</div>
+<div class="page-content">
+Gradient Descent Optimization
+Weight Update Rule
+W(l) := W(l) −α
+∂L
+∂W(l)
+b(l) := b(l) −α ∂L
+∂b(l)
+where α is the learning rate.
+29
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 36 of 53</div>
+<div class="page-content">
+Regularization Techniques
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 37 of 53</div>
+<div class="page-content">
+The Overfitting Problem
+Overfitting
+Model learns training data too well, memorizing noise instead of generalizable patterns.
+30
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 38 of 53</div>
+<div class="page-content">
+L1 and L2 Regularization
+Add penalty terms to the loss function to control model complexity
+L2 Regularization (Ridge)
+Ltotal = Ldata + λ
+X
+l
+||W(l)||2
+2
+where ||W(l)||2
+2 = P
+i
+P
+j(W (l)
+ij )2
+Effect:
+• Shrinks weights towards zero
+• Uniform penalty on all weights
+• Smooth weight distributions
+• Preferred for most applications
+Gradient Modification:
+∂Ltotal
+∂W(l) = ∂Ldata
+∂W(l) + 2λW(l)
+L1 Regularization (Lasso)
+Ltotal = Ldata + λ
+X
+l
+||W(l)||1
+where ||W(l)||1 = P
+i
+P
+j |W (l)
+ij |
+Effect:
+• Promotes sparsity (many weights →0)
+• Automatic feature selection
+• Creates sparse networks
+• Useful for interpretability
+Gradient Modification:
+∂Ltotal
+∂W(l) = ∂Ldata
+∂W(l) + λsign(W(l))
+Hyperparameter λ
+Controls regularization strength: larger λ →more regularization →simpler model
+31
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 39 of 53</div>
+<div class="page-content">
+L1 vs L2 Regularization Comparison
+When to Use L2
+• General-purpose regularization
+• All features potentially relevant
+• Want smooth weight shrinkage
+• Most common choice
+When to Use L1
+• Feature selection needed
+• Many irrelevant features
+• Want sparse models
+• Interpretability important
+32
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 40 of 53</div>
+<div class="page-content">
+Dropout: A Different Approach
+Training (with Dropout)
+x0
+x1
+x2
+x3
+X
+X
+y
+Testing (no Dropout)
+x0
+x1
+x2
+x3
+y
+Dropout rate: p = 0.5
+All neurons active
+Input
+Hidden
+Output
+Input
+Hidden
+Output
+Dropout Technique
+Randomly set neurons to zero during training to prevent co-adaptation and improve generalization.
+33
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 41 of 53</div>
+<div class="page-content">
+Dropout: Mathematical Formulation
+Training Phase:
+r(l) ∼Bernoulli(p)
+(dropout mask)
+(36)
+˜a(l) = r(l) ⊙a(l)
+(apply mask)
+(37)
+z(l+1) = W(l+1)˜a(l) + b(l+1)
+(38)
+Testing Phase:
+z(l+1) = p · W(l+1)a(l) + b(l+1)
+(scale weights)
+(39)
+Dropout Benefits
+• Prevents overfitting: Reduces complex
+co-adaptations
+• Model averaging: Approximates ensemble of
+networks
+• Robust features: Forces redundant
+representations
+• Easy to implement: Simple modification to
+forward pass
+Typical rates: 0.2-0.5 for hidden layers, 0.1-0.2 for
+input
+Implementation Notes
+Training vs Testing:
+• Training: Randomly drop neurons
+• Testing: Use all neurons but scale outputs
+• Modern frameworks handle this automatically
+Why Scaling Works:
+• Training: Each neuron is ”on” with probability p
+• Testing: All neurons are ”on”
+• Scaling by p maintains expected activation levels
+Best Practice
+34
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 42 of 53</div>
+<div class="page-content">
+Regularization Comparison
+Choosing Regularization
+Start with:
+• L2 regularization (λ = 0.01)
+• Dropout (rate = 0.5)
+• Early stopping
+If still overfitting:
+• Increase regularization strength
+• Add more dropout
+• Reduce model complexity
+Other Techniques
+Early Stopping:
+• Monitor validation loss
+• Stop when it starts increasing
+• Simple and effective
+Data Augmentation:
+• Artificially increase training data
+• Add noise, rotations, etc.
+• Domain-specific techniques
+35
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 43 of 53</div>
+<div class="page-content">
+Training Curves with Regularization
+Monitoring Training
+Use validation curves to detect overfitting and choose regularization strength.
+36
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 44 of 53</div>
+<div class="page-content">
+Training Best Practices
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 45 of 53</div>
+<div class="page-content">
+Weight Initialization
+Proper initialization is crucial for successful training
+Poor Initialization
+All zeros: No learning (symmetry)
+Wij = 0 ⇒no gradient flow
+Too large: Exploding gradients
+Wij ∼N(0, 1) ⇒saturation
+Too small: Vanishing gradients
+Wij ∼N(0, 0.01) ⇒weak signals
+Good Initialization
+Xavier/Glorot (Sigmoid/Tanh):
+Wij ∼N
+ 
+0,
+s
+2
+nin + nout
+!
+He initialization (ReLU):
+Wij ∼N
+ 
+0,
+s
+2
+nin
+!
+Bias initialization:
+bi = 0 (usually sufficient)
+Why These Work
+Maintain activation variance and gradient variance across layers during initialization.
+37
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 46 of 53</div>
+<div class="page-content">
+Learning Rate and Optimization
+Learning Rate Selection
+Too high: Overshooting, instability
+• Loss explodes or oscillates
+• Network doesn’t converge
+• Weights become very large
+Too low: Slow convergence
+• Training takes forever
+• Gets stuck in local minima
+• Poor final performance
+Good range: Typically 10−4 to 10−1
+Advanced Optimizers
+SGD with Momentum:
+vt = βvt−1 + (1 −β)∇L
+W := W −αvt
+Adam (Adaptive Moments):
+mt = β1mt−1 + (1 −β1)∇L
+(40)
+vt = β2vt−1 + (1 −β2)(∇L)2
+(41)
+W := W −α
+mt
+√vt + ϵ
+(42)
+Default choice: Adam with α = 0.001
+Learning Rate Scheduling
+Decay strategies: Step decay, exponential decay, cosine annealing. Start high, reduce during training.
+38
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 47 of 53</div>
+<div class="page-content">
+Training Diagnostics
+Monitor these metrics during training:
+Loss Monitoring
+• Training loss: Should decrease monotonically
+• Validation loss: Should decrease, then stabilize
+• Gap: Indicates overfitting if too large
+Warning Signs:
+• Loss increases: Learning rate too high
+• Loss plateaus early: Learning rate too low
+• Validation loss increases: Overfitting
+Gradient Monitoring
+• Gradient norms: Should be reasonable (10−6 to
+10−1)
+• Vanishing: Gradients →0 in early layers
+• Exploding: Gradients become very large
+Activation Monitoring
+• Activation statistics: Mean, std, sparsity
+• Dead neurons: Always output zero
+• Saturated neurons: Always in saturation region
+Healthy activations:
+• Reasonable variance (not too small/large)
+• Some sparsity (for ReLU)
+• No layers completely dead
+Weight Monitoring
+• Weight distributions: Should be reasonable
+• Weight updates: |∆W |/|W | ≈10−3
+• Layer-wise learning rates: May need adjustment
+Tools
+Use TensorBoard Weights &amp; Biases or similar tools for comprehensive monitoring and visualization
+39
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 48 of 53</div>
+<div class="page-content">
+Common Problems and Solutions
+Problem: Vanishing Gradients
+Symptoms:
+• Early layers don’t learn
+• Gradients approach zero
+Solutions:
+• Use ReLU activations
+• Proper weight initialization
+• Batch normalization
+Problem: Overfitting
+Symptoms:
+• Training accuracy ¿¿ validation accuracy
+• Validation loss increases
+Solutions:
+• Add regularization (L2, dropout)
+• Reduce model complexity
+• More training data
+Problem: Exploding Gradients
+Symptoms:
+• Loss becomes NaN
+• Weights blow up
+Solutions:
+• Gradient clipping
+• Lower learning rate
+• Better initialization
+Problem: Slow Convergence
+Symptoms:
+• Loss decreases slowly
+• Gets stuck in plateaus
+Solutions:
+• Increase learning rate
+• Use adaptive optimizers
+40
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 49 of 53</div>
+<div class="page-content">
+Summary &amp; Applications
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 50 of 53</div>
+<div class="page-content">
+Neural Networks: Key Takeaways
+Core Concepts
+• Perceptron: Basic building block
+• Multi-layer: Enable complex mappings
+• Activation functions: Provide non-linearity
+• Forward propagation: Compute predictions
+• Backpropagation: Compute gradients efficiently
+• Regularization: Prevent overfitting
+Mathematical Foundation
+• Matrix operations for efficiency
+• Chain rule for gradient computation
+• Optimization theory for training
+• Probability theory for interpretation
+Best Practices
+• Architecture: Start simple, add complexity
+gradually
+• Initialization: Xavier/He for proper gradient flow
+• Optimization: Adam optimizer with proper
+learning rate
+• Regularization: L2 + Dropout for generalization
+• Monitoring: Track loss, gradients, activations
+• Debugging: Systematic approach to problems
+When to Use Neural Networks
+• Large datasets available
+• Complex non-linear patterns
+• End-to-end learning desired
+• Feature engineering is difficult
+Modern Deep Learning
+These fundamentals scale to modern architectures: CNNs, RNNs, Transformers, ResNets, etc.
+41
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 51 of 53</div>
+<div class="page-content">
+Applications &amp; Real-World Impact
+Computer Vision
+• Image classification: ResNet, EfficientNet
+• Object detection: YOLO, R-CNN
+• Segmentation: U-Net, Mask R-CNN
+• Face recognition: DeepFace, FaceNet
+• Medical imaging: Cancer detection, radiology
+Natural Language Processing
+• Language models: GPT, BERT, T5
+• Translation: Google Translate, DeepL
+• Chatbots: ChatGPT, virtual assistants
+• Text analysis: Sentiment, summarization
+Other Domains
+• Speech: Recognition, synthesis, processing
+• Recommendation: Netflix, Amazon, Spotify
+• Games: AlphaGo, OpenAI Five, StarCraft
+• Robotics: Control, perception, planning
+• Finance: Trading, fraud detection, risk
+• Science: Drug discovery, climate modeling
+Emerging Areas
+• Generative AI: DALL-E, Midjourney, Stable
+Diffusion
+• Multimodal: CLIP, GPT-4V
+• Reinforcement Learning: Autonomous systems
+• Scientific Computing: Physics, chemistry,
+biology
+Impact
+Neural networks have revolutionized AI and are now fundamental to most modern machine learning
+applications.
+42
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 52 of 53</div>
+<div class="page-content">
+Looking Forward: Advanced Topics
+What’s Next After This Foundation?
+Specialized Architectures
+• Convolutional Neural Networks (CNNs)
+• Spatial structure exploitation
+• Translation invariance
+• Computer vision applications
+• Recurrent Neural Networks (RNNs)
+• Sequential data processing
+• Memory and temporal dynamics
+• LSTM, GRU variants
+• Transformer Networks
+• Attention mechanisms
+• Parallel processing
+• Modern NLP backbone
+Advanced Techniques
+• Batch Normalization
+• Internal covariate shift
+• Training acceleration
+• Residual Connections
+• Very deep networks
+• Gradient flow improvement
+• Attention Mechanisms
+• Selective focus
+• Long-range dependencies
+• Generative Models
+• VAEs, GANs, Diffusion
+• Creative AI applications
+Next Steps
+Practice implementation, experiment with real datasets, and explore specialized architectures for your
+domain of interest.
+43
+
+</div>
+</div>
+<div class="page">
+<div class="page-number">Page 53 of 53</div>
+<div class="page-content">
+Questions?
+43
+
+</div>
+</div>
+
+</body>
+</html>
