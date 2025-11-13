@@ -177,3 +177,15 @@ create_ml_educational_package_prompt_v2.txt
 *-temp.jpg
 
 midterm_exams/
+
+# ========================
+# Development and build tools
+# ========================
+# Presenter app - local development only
+presenter_app/
+
+# Developer documentation
+CLAUDE.md
+
+# Slide conversion utilities
+convert_slides_to_html.py
