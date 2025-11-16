@@ -182,7 +182,6 @@ midterm_exams/
 # Development and build tools
 # ========================
 # Presenter app - local development only
-presenter_app/
 
 # Developer documentation
 CLAUDE.md
@@ -194,3 +193,4 @@ generate_html_presentations.py
 generate_slides_from_latex.py
 generate_slides_from_pdf.py
 html_template.py
+.vercel

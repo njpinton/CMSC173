@@ -1,0 +1,31 @@
+.git
+.venv
+__pycache__
+*.ipynb
+*.pdf
+*.tex
+midterm_exams
+00 - Intro To Machine Learning
+01 - Parameter Estimation
+02 - Linear Regression
+03 - Regularization
+04 - Exploratory Data Analysis
+05 - Model Selection
+06 - Cross Validation
+07 - PCA
+08 - Logistic Regression
+09 - Classification
+10 - Kernel Methods
+11 - Clustering
+12 - Neural Networks
+13 - Advanced Neural Networks
+.claude
+.ipynb_checkpoints
+CourseOutline.pdf
+CourseOutline.tex
+README.md
+add_home_button.py
+convert_html_to_slides.py
+update_module_12.py
+.gitignore
+images
