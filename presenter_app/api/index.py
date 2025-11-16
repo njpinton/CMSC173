@@ -572,14 +572,14 @@ def admin_login():
                 return render_template('admin_login.html', error='Username and password are required')
 
             admin_username = os.environ.get('ADMIN_USERNAME', '')
-            admin_password_hash = os.environ.get('ADMIN_PASSWORD_HASH', '')
+            admin_password = os.environ.get('ADMIN_PASSWORD', '')
 
-            if not admin_username or not admin_password_hash:
+            if not admin_username or not admin_password:
                 logger.error("Admin credentials not properly configured")
                 return render_template('admin_login.html', error='Server misconfiguration')
 
-            # Use constant-time comparison and hashed password check
-            if username == admin_username and check_password_hash(admin_password_hash, password):
+            # Use constant-time comparison to prevent timing attacks
+            if username == admin_username and password == admin_password:
                 session['logged_in'] = True
                 session['is_admin'] = True
                 logger.info(f"Admin login successful for user {username}")
