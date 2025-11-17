@@ -291,15 +291,18 @@ def generate_backpropagation_svg():
 
 # Generate all SVG diagrams
 if __name__ == "__main__":
+    import os
+
     diagrams = {
         'perceptron_diagram.svg': generate_perceptron_svg(),
         'computational_graph_diagram.svg': generate_computational_graph_svg(),
         'backpropagation_diagram.svg': generate_backpropagation_svg(),
     }
 
-    output_dir = '/Users/njpinton/projects/git/CMSC173/presenter_app/static/diagrams'
+    # Use relative path from script location
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    output_dir = os.path.join(script_dir, 'static', 'diagrams')
 
-    import os
     os.makedirs(output_dir, exist_ok=True)
 
     for filename, content in diagrams.items():

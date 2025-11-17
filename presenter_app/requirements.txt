@@ -1,8 +1,5 @@
 Flask
 flask-cors
-flask-wtf
-Flask-SQLAlchemy
-Flask-SocketIO
+Flask-Limiter
 supabase
-gotrue
 python-dotenv

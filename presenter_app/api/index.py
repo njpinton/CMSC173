@@ -1,11 +1,14 @@
 from flask import Flask, render_template, send_from_directory, request, jsonify, session, redirect, url_for
 from flask_cors import CORS
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import os
 import re
 import logging
 from supabase import create_client, Client
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash
+import secrets
 from supabase_client import get_supabase_client, create_group, add_group_member, add_group_document, get_groups, get_group_details
 
 # Configure logging
@@ -22,7 +25,7 @@ logger = logging.getLogger(__name__)
 # SUPABASE_ANON_KEY=your_supabase_anon_key
 # FLASK_SECRET_KEY=your_secret_key (required - no default fallback)
 # ADMIN_USERNAME=admin
-# ADMIN_PASSWORD_HASH=hashed_password (use werkzeug.security.generate_password_hash())
+# ADMIN_PASSWORD_HASH=hashed_password (use: python -c "from werkzeug.security import generate_password_hash; print(generate_password_hash('your_password'))")
 #
 # You will also need to create a table in your Supabase project with the following schema:
 # CREATE TABLE module_views (
@@ -48,6 +51,14 @@ logger = logging.getLogger(__name__)
 # --------------------------
 
 app = Flask(__name__)
+
+# Session configuration
+from datetime import timedelta
+from functools import wraps
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=2)  # 2 hour session timeout
+app.config['SESSION_COOKIE_SECURE'] = os.environ.get('VERCEL_ENV') == 'production'  # HTTPS only in production
+app.config['SESSION_COOKIE_HTTPONLY'] = True  # Prevent JavaScript access
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # CSRF protection
 
 # Secret key management - secure by default
 secret_key = os.environ.get('FLASK_SECRET_KEY')
@@ -75,6 +86,15 @@ CORS(app, resources={
     r"/api/*": {"origins": allowed_origins, "methods": ["GET", "POST", "OPTIONS"]},
 }, supports_credentials=True)
 logger.info(f"CORS configured for origins: {allowed_origins}")
+
+# Rate limiting configuration
+limiter = Limiter(
+    app=app,
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"],
+    storage_uri="memory://"  # Use Redis in production for distributed systems
+)
+logger.info("Rate limiting configured")
 
 # Security configuration
 MAX_FILE_SIZE = 50 * 1024 * 1024  # 50 MB
@@ -119,6 +139,16 @@ def validate_input(value: str, max_length: int = 255, field_name: str = "input")
         return False, f"{field_name} contains invalid characters"
 
     return True, ""
+
+def admin_required(f):
+    """Decorator to require admin authentication for routes."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('logged_in') or not session.get('is_admin'):
+            logger.warning(f"Unauthorized access attempt to {request.endpoint}")
+            return jsonify({"error": "Unauthorized - Admin access required"}), 403
+        return f(*args, **kwargs)
+    return decorated_function
 
 # Module names and filenames for display
 MODULES = {
@@ -197,149 +227,7 @@ def get_available_modules():
 @app.route('/')
 def index():
     available_modules = get_available_modules()
-
-    html = """
-    <html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>CMSC 173: Machine Learning</title>
-        <style>
-            body {
-                font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-                background: linear-gradient(135deg, #1B5E4F 0%, #2D4F47 50%, #7A1E3F 100%);
-                min-height: 100vh;
-                margin: 0;
-                padding: 20px;
-            }
-            .container {
-                max-width: 1000px;
-                margin: 0 auto;
-                background: white;
-                border-radius: 12px;
-                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-                padding: 50px 40px;
-                overflow: hidden;
-            }
-            h1 {
-                color: #1B5E4F;
-                text-align: center;
-                font-size: 2.8em;
-                margin-bottom: 10px;
-                font-weight: 700;
-            }
-            .subtitle {
-                text-align: center;
-                color: #7A1E3F;
-                margin-bottom: 40px;
-                font-size: 1.2em;
-                font-weight: 600;
-                letter-spacing: 1px;
-            }
-            .modules-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                gap: 25px;
-                margin: 40px 0;
-            }
-            .module-card {
-                background: linear-gradient(135deg, #1B5E4F 0%, #7A1E3F 100%);
-                color: white;
-                padding: 30px;
-                border-radius: 10px;
-                text-decoration: none;
-                transition: all 0.3s ease;
-                box-shadow: 0 6px 20px rgba(27, 94, 79, 0.2);
-                border-top: 4px solid #D4AF37;
-                position: relative;
-                overflow: hidden;
-            }
-            .module-card::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(212,175,55,0.1)" stroke-width="1"/></svg>');
-                opacity: 0.5;
-            }
-            .module-card:hover {
-                transform: translateY(-8px);
-                box-shadow: 0 12px 35px rgba(27, 94, 79, 0.3);
-            }
-            .module-num {
-                font-size: 0.95em;
-                opacity: 0.9;
-                margin-bottom: 8px;
-                color: #D4AF37;
-                font-weight: 600;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-                position: relative;
-                z-index: 1;
-            }
-            .module-title {
-                font-size: 1.4em;
-                font-weight: 600;
-                position: relative;
-                z-index: 1;
-            }
-            .status {
-                text-align: center;
-                color: #888;
-                margin-top: 40px;
-                padding-top: 30px;
-                border-top: 2px solid #1B5E4F;
-                font-size: 1em;
-            }
-            .status strong {
-                color: #1B5E4F;
-                font-size: 1.3em;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>CMSC 173: Machine Learning</h1>
-            <p class="subtitle">Interactive HTML Presentations</p>
-            <div style="text-align: center; margin-bottom: 30px;">
-                <a href="/group_portal" style="
-                    background-color: #D4AF37;
-                    color: white;
-                    padding: 12px 25px;
-                    border-radius: 8px;
-                    text-decoration: none;
-                    font-weight: bold;
-                    font-size: 1.1em;
-                    transition: background-color 0.3s ease;
-                ">Group Project Portal</a>
-            </div>
-
-            <div class="modules-grid">
-    """
-
-    for module_num in sorted(available_modules.keys()):
-        module = available_modules[module_num]
-        html += f'''
-                <a href="/module/{module_num}" class="module-card">
-                    <div class="module-num">Module {module_num}</div>
-                    <div class="module-title">{module['title']}</div>
-                </a>
-        '''
-
-    html += f"""
-            </div>
-
-            <div class="status">
-                <p><strong>{len(available_modules)}</strong> of 14 modules available</p>
-            </div>
-        </div>
-    </body>
-    </html>
-    """
-
-    return html
+    return render_template('index.html', modules=available_modules)
 
 @app.route('/module/<int:module_number>')
 def show_module(module_number):
@@ -399,6 +287,7 @@ def serve_images(filename):
     return send_from_directory(images_dir, filename)
 
 @app.route('/api/groups', methods=['POST'])
+@limiter.limit("20 per hour")  # Rate limit group creation
 def create_group_api():
     supabase_client = get_supabase_client()
     if not supabase_client:
@@ -477,6 +366,7 @@ def get_group_details_api(group_id):
         return jsonify({"error": str(e)}), 500
 
 @app.route('/api/groups/<group_id>/documents', methods=['POST'])
+@limiter.limit("10 per hour")  # Rate limit file uploads
 def upload_document_api(group_id):
     supabase_client = get_supabase_client()
     if not supabase_client:
@@ -557,9 +447,11 @@ def upload_document_api(group_id):
 
 @app.route('/group_portal')
 def group_portal():
-    return render_template('group_portal.html', is_admin=False)
+    is_admin = session.get('logged_in', False) and session.get('is_admin', False)
+    return render_template('group_portal.html', is_admin=is_admin)
 
 @app.route('/admin_login', methods=['GET', 'POST'])
+@limiter.limit("5 per minute")  # Strict rate limit for login attempts
 def admin_login():
     if request.method == 'POST':
         try:
@@ -572,16 +464,20 @@ def admin_login():
                 return render_template('admin_login.html', error='Username and password are required')
 
             admin_username = os.environ.get('ADMIN_USERNAME', '')
-            admin_password = os.environ.get('ADMIN_PASSWORD', '')
+            admin_password_hash = os.environ.get('ADMIN_PASSWORD_HASH', '')
 
-            if not admin_username or not admin_password:
+            if not admin_username or not admin_password_hash:
                 logger.error("Admin credentials not properly configured")
                 return render_template('admin_login.html', error='Server misconfiguration')
 
             # Use constant-time comparison to prevent timing attacks
-            if username == admin_username and password == admin_password:
+            username_match = secrets.compare_digest(username, admin_username)
+            password_match = check_password_hash(admin_password_hash, password)
+
+            if username_match and password_match:
                 session['logged_in'] = True
                 session['is_admin'] = True
+                session.permanent = True  # Enable session timeout
                 logger.info(f"Admin login successful for user {username}")
                 return redirect(url_for('group_portal'))
             else:
@@ -592,6 +488,15 @@ def admin_login():
             logger.error(f"Error in admin login: {e}", exc_info=True)
             return render_template('admin_login.html', error='An error occurred during login')
     return render_template('admin_login.html')
+
+@app.route('/admin_logout', methods=['GET', 'POST'])
+def admin_logout():
+    """Logout admin user and clear session."""
+    if session.get('logged_in'):
+        username = session.get('username', 'unknown')
+        logger.info(f"Admin logout for user {username}")
+    session.clear()
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True, port=8788)

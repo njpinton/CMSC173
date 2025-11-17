@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMSC 173: Machine Learning</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #1B5E4F 0%, #2D4F47 50%, #7A1E3F 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 50px 40px;
+            overflow: hidden;
+        }
+        h1 {
+            color: #1B5E4F;
+            text-align: center;
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        .subtitle {
+            text-align: center;
+            color: #7A1E3F;
+            margin-bottom: 40px;
+            font-size: 1.2em;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+        .module-card {
+            background: linear-gradient(135deg, #1B5E4F 0%, #7A1E3F 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(27, 94, 79, 0.2);
+            border-top: 4px solid #D4AF37;
+            position: relative;
+            overflow: hidden;
+        }
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(212,175,55,0.1)" stroke-width="1"/></svg>');
+            opacity: 0.5;
+        }
+        .module-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px rgba(27, 94, 79, 0.3);
+        }
+        .module-num {
+            font-size: 0.95em;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            color: #D4AF37;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+        }
+        .module-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+        .status {
+            text-align: center;
+            color: #888;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #1B5E4F;
+            font-size: 1em;
+        }
+        .status strong {
+            color: #1B5E4F;
+            font-size: 1.3em;
+        }
+        .portal-button {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .portal-button a {
+            background-color: #D4AF37;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+        }
+        .portal-button a:hover {
+            background-color: #B8941F;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CMSC 173: Machine Learning</h1>
+        <p class="subtitle">Interactive HTML Presentations</p>
+        <div class="portal-button">
+            <a href="{{ url_for('group_portal') }}">Group Project Portal</a>
+        </div>
+
+        <div class="modules-grid">
+            {% for module_num in modules|sort %}
+            <a href="{{ url_for('show_module', module_number=module_num) }}" class="module-card">
+                <div class="module-num">Module {{ module_num }}</div>
+                <div class="module-title">{{ modules[module_num]['title'] }}</div>
+            </a>
+            {% endfor %}
+        </div>
+
+        <div class="status">
+            <p><strong>{{ modules|length }}</strong> of 14 modules available</p>
+        </div>
+    </div>
+</body>
+</html>
