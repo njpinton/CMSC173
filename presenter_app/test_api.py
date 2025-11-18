@@ -47,7 +47,7 @@ def mock_supabase(monkeypatch):
     mock_client.rpc.return_value = MagicMock()
     mock_client.rpc.return_value.execute.return_value = MagicMock()
 
-    monkeypatch.setattr('api.index.get_supabase_client', return_value=mock_client)
+    monkeypatch.setattr('api.index.get_supabase_client', lambda: mock_client)
     return mock_client
 
 
@@ -81,8 +81,13 @@ def test_validate_input():
     assert is_valid is False
 
 
-def test_create_group_api_valid(client, mock_supabase):
+def test_create_group_api_valid(client, mock_supabase, monkeypatch):
     """Test creating a group with valid data."""
+    # Mock the create_group and add_group_member functions
+    mock_group = {"id": "test-group-id", "group_name": "Test Group", "project_title": "Test Project"}
+    monkeypatch.setattr('api.index.create_group', lambda *args: mock_group)
+    monkeypatch.setattr('api.index.add_group_member', lambda *args: {"id": "member-id"})
+
     response = client.post(
         '/api/groups',
         json={
@@ -175,11 +180,11 @@ def test_upload_document_invalid_file_type(client, mock_supabase):
     assert "not allowed" in response.get_json()['error'].lower()
 
 
-def test_upload_document_valid(client, mock_supabase):
+def test_upload_document_valid(client, mock_supabase, monkeypatch):
     """Test valid document upload."""
-    mock_supabase.table.return_value.insert.return_value.execute.return_value = MagicMock(
-        data=[{"id": "doc1", "group_id": "group1", "document_title": "Test Doc"}]
-    )
+    # Mock the add_group_document function
+    mock_doc = {"id": "doc1", "group_id": "group1", "document_title": "Test Doc"}
+    monkeypatch.setattr('api.index.add_group_document', lambda *args: mock_doc)
 
     data = {
         'document_title': 'Test Doc',
