@@ -182,6 +182,7 @@ midterm_exams/
 # Development and build tools
 # ========================
 # Presenter app - local development only
+uploads/
 
 # Developer documentation
 CLAUDE.md
