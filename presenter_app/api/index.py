@@ -9,7 +9,7 @@ from supabase import create_client, Client
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash
 import secrets
-from supabase_client import get_supabase_client, create_group, add_group_member, add_group_document, get_groups, get_group_details
+from supabase_client import get_supabase_client, create_group, add_group_member, add_group_document, get_groups, get_group_details, delete_group
 
 # Configure logging
 logging.basicConfig(
@@ -497,6 +497,74 @@ def admin_logout():
         logger.info(f"Admin logout for user {username}")
     session.clear()
     return redirect(url_for('index'))
+
+@app.route('/api/groups/<group_id>', methods=['DELETE'])
+@admin_required
+def delete_group_api(group_id):
+    """Delete a group and all associated data (admin only)."""
+    supabase_client = get_supabase_client()
+    if not supabase_client:
+        return jsonify({"error": "Supabase not configured"}), 500
+
+    try:
+        # Validate group_id
+        is_valid, error_msg = validate_input(group_id, 255, "group_id")
+        if not is_valid:
+            logger.warning(f"Invalid group_id for deletion: {error_msg}")
+            return jsonify({"error": error_msg}), 400
+
+        # Get group details to find associated files
+        group_details = get_group_details(group_id)
+        if not group_details:
+            return jsonify({"error": "Group not found"}), 404
+
+        # Delete physical files
+        upload_folder = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
+        if group_details.get('documents'):
+            for doc in group_details['documents']:
+                file_path = doc.get('file_path', '')
+                if file_path and os.path.exists(file_path):
+                    try:
+                        os.remove(file_path)
+                        logger.info(f"Deleted file: {file_path}")
+                    except Exception as e:
+                        logger.error(f"Error deleting file {file_path}: {e}")
+
+        # Delete group from database
+        success = delete_group(group_id)
+        if success:
+            logger.info(f"Group {group_id} deleted by admin")
+            return jsonify({"message": "Group deleted successfully"}), 200
+        return jsonify({"error": "Failed to delete group"}), 500
+    except Exception as e:
+        logger.error(f"Error in delete_group_api: {e}", exc_info=True)
+        return jsonify({"error": "Internal server error"}), 500
+
+@app.route('/uploads/<filename>')
+def serve_uploaded_file(filename):
+    """Serve uploaded files from the uploads directory."""
+    # Security: Use secure_filename to prevent directory traversal
+    safe_filename = secure_filename(filename)
+    upload_folder = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
+
+    # Verify file exists and is within upload folder
+    file_path = os.path.join(upload_folder, safe_filename)
+    real_path = os.path.realpath(file_path)
+    real_upload_folder = os.path.realpath(upload_folder)
+
+    if not real_path.startswith(real_upload_folder):
+        logger.warning(f"Path traversal attempt detected for file: {filename}")
+        return jsonify({"error": "Invalid file path"}), 400
+
+    if not os.path.exists(file_path):
+        logger.warning(f"File not found: {filename}")
+        return jsonify({"error": "File not found"}), 404
+
+    try:
+        return send_from_directory(upload_folder, safe_filename)
+    except Exception as e:
+        logger.error(f"Error serving file {filename}: {e}", exc_info=True)
+        return jsonify({"error": "Error serving file"}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=8788)
