@@ -450,6 +450,12 @@ def group_portal():
     is_admin = session.get('logged_in', False) and session.get('is_admin', False)
     return render_template('group_portal.html', is_admin=is_admin)
 
+@app.route('/admin_dashboard')
+@admin_required
+def admin_dashboard():
+    """Admin-only dashboard showing all groups and their submissions."""
+    return render_template('admin_dashboard.html')
+
 @app.route('/admin_login', methods=['GET', 'POST'])
 @limiter.limit("5 per minute")  # Strict rate limit for login attempts
 def admin_login():
