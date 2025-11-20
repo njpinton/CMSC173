@@ -10,6 +10,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash
 import secrets
 from supabase_client import get_supabase_client, create_group, add_group_member, add_group_document, get_groups, get_group_details, delete_group
+from storage_helper import upload_file_to_storage, delete_file_from_storage, get_public_url
 
 # Configure logging
 logging.basicConfig(
@@ -406,39 +407,36 @@ def upload_document_api(group_id):
             logger.warning(f"Invalid document_title: {error_msg}")
             return jsonify({"error": error_msg}), 400
 
-        # Store files locally in uploads directory
-        # TODO: Consider migrating to cloud storage (Supabase Storage, S3)
-        upload_folder = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
-        os.makedirs(upload_folder, exist_ok=True)
+        # Upload file to Supabase Storage
+        logger.info(f"Uploading file to Supabase Storage for group {group_id}")
+        storage_path, file_size, mime_type = upload_file_to_storage(file, group_id, document_title)
 
-        # Use secure filename and add timestamp to prevent collisions
-        import time
-        secure_name = secure_filename(file.filename)
-        filename = f"{int(time.time())}_{secure_name}"
-        file_path = os.path.join(upload_folder, filename)
+        if not storage_path:
+            logger.error(f"Failed to upload file to storage for group {group_id}")
+            return jsonify({"error": "Failed to upload file to storage"}), 500
 
-        # Ensure file_path is within upload_folder (path traversal prevention)
-        real_path = os.path.realpath(file_path)
-        real_upload_folder = os.path.realpath(upload_folder)
-        if not real_path.startswith(real_upload_folder):
-            logger.error(f"Path traversal attempt detected: {file_path}")
-            return jsonify({"error": "Invalid file path"}), 400
-
-        file.save(file_path)
-        logger.info(f"File saved: {filename} for group {group_id}")
+        logger.info(f"File uploaded to storage: {storage_path} for group {group_id}")
 
         try:
-            new_document = add_group_document(group_id, document_title, file_path)
+            # Store metadata in database
+            new_document = add_group_document(group_id, document_title, storage_path)
             if new_document:
                 logger.info(f"Document metadata added for group {group_id}")
+                # Add file size and mime type if returned from storage
+                if file_size:
+                    new_document['file_size'] = file_size
+                if mime_type:
+                    new_document['mime_type'] = mime_type
                 return jsonify(new_document), 201
             return jsonify({"error": "Failed to add document metadata"}), 500
         except Exception as e:
             logger.error(f"Error adding document metadata: {e}", exc_info=True)
-            # Clean up file if metadata insertion fails
+            # Clean up file from storage if metadata insertion fails
             try:
-                os.remove(file_path)
+                delete_file_from_storage(storage_path)
+                logger.info(f"Cleaned up storage file after metadata failure: {storage_path}")
             except:
+                logger.error(f"Failed to clean up storage file: {storage_path}")
                 pass
             return jsonify({"error": "Failed to process document"}), 500
     except Exception as e:
@@ -524,17 +522,16 @@ def delete_group_api(group_id):
         if not group_details:
             return jsonify({"error": "Group not found"}), 404
 
-        # Delete physical files
-        upload_folder = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
+        # Delete files from Supabase Storage
         if group_details.get('documents'):
             for doc in group_details['documents']:
-                file_path = doc.get('file_path', '')
-                if file_path and os.path.exists(file_path):
+                storage_path = doc.get('file_path', '')
+                if storage_path:
                     try:
-                        os.remove(file_path)
-                        logger.info(f"Deleted file: {file_path}")
+                        delete_file_from_storage(storage_path)
+                        logger.info(f"Deleted file from storage: {storage_path}")
                     except Exception as e:
-                        logger.error(f"Error deleting file {file_path}: {e}")
+                        logger.error(f"Error deleting file from storage {storage_path}: {e}")
 
         # Delete group from database
         success = delete_group(group_id)
@@ -546,30 +543,40 @@ def delete_group_api(group_id):
         logger.error(f"Error in delete_group_api: {e}", exc_info=True)
         return jsonify({"error": "Internal server error"}), 500
 
-@app.route('/uploads/<filename>')
-def serve_uploaded_file(filename):
-    """Serve uploaded files from the uploads directory."""
-    # Security: Use secure_filename to prevent directory traversal
-    safe_filename = secure_filename(filename)
-    upload_folder = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
-
-    # Verify file exists and is within upload folder
-    file_path = os.path.join(upload_folder, safe_filename)
-    real_path = os.path.realpath(file_path)
-    real_upload_folder = os.path.realpath(upload_folder)
-
-    if not real_path.startswith(real_upload_folder):
-        logger.warning(f"Path traversal attempt detected for file: {filename}")
-        return jsonify({"error": "Invalid file path"}), 400
-
-    if not os.path.exists(file_path):
-        logger.warning(f"File not found: {filename}")
-        return jsonify({"error": "File not found"}), 404
-
+@app.route('/uploads/<path:storage_path>')
+def serve_uploaded_file(storage_path):
+    """
+    Redirect to Supabase Storage public URL for the file.
+    storage_path can be either:
+    - Full path: group-documents/groupid/filename
+    - Just filename: will search database for matching file
+    """
     try:
-        return send_from_directory(upload_folder, safe_filename)
+        # If it's just a filename, search in database
+        if '/' not in storage_path:
+            # Search for file in database
+            supabase = get_supabase_client()
+            if supabase:
+                response = supabase.table('group_documents').select('file_path').ilike('file_path', f'%{storage_path}').execute()
+                if response.data and len(response.data) > 0:
+                    storage_path = response.data[0]['file_path']
+                else:
+                    logger.warning(f"File not found in database: {storage_path}")
+                    return jsonify({"error": "File not found"}), 404
+
+        # Get public URL from Supabase Storage
+        public_url = get_public_url(storage_path)
+
+        if not public_url:
+            logger.error(f"Failed to get public URL for: {storage_path}")
+            return jsonify({"error": "File not accessible"}), 404
+
+        # Redirect to the Supabase Storage URL
+        logger.info(f"Redirecting to storage URL for: {storage_path}")
+        return redirect(public_url)
+
     except Exception as e:
-        logger.error(f"Error serving file {filename}: {e}", exc_info=True)
+        logger.error(f"Error serving file {storage_path}: {e}", exc_info=True)
         return jsonify({"error": "Error serving file"}), 500
 
 if __name__ == '__main__':

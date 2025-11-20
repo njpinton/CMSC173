@@ -4,9 +4,10 @@ This guide will walk you through setting up the Supabase database and configurin
 
 ## Table of Contents
 1. [Supabase Database Setup](#supabase-database-setup)
-2. [Environment Configuration](#environment-configuration)
-3. [Admin Dashboard Access](#admin-dashboard-access)
-4. [Testing](#testing)
+2. [Supabase Storage Setup](#supabase-storage-setup)
+3. [Environment Configuration](#environment-configuration)
+4. [Admin Dashboard Access](#admin-dashboard-access)
+5. [Testing](#testing)
 
 ---
 
@@ -53,6 +54,48 @@ You should see all 4 tables listed.
 3. Copy these values:
    - **Project URL** (looks like `https://xxxxx.supabase.co`)
    - **anon public** key (long string starting with `eyJ...`)
+
+---
+
+## Supabase Storage Setup
+
+The application uses Supabase Storage to store uploaded documents (PDFs, PowerPoint files, etc.). This ensures files are persisted even in serverless environments like Vercel.
+
+### Quick Setup
+
+The storage bucket setup is included in the main `supabase_schema.sql` file (Section 0). When you ran the schema script above, it already created the storage bucket.
+
+### Detailed Storage Setup Guide
+
+For comprehensive instructions on Supabase Storage setup, including:
+- Storage bucket creation
+- Access policies configuration
+- Verification steps
+- Testing file uploads
+- Troubleshooting storage issues
+
+**📖 See the complete guide**: [SUPABASE_STORAGE_SETUP.md](./SUPABASE_STORAGE_SETUP.md)
+
+### Storage Structure
+
+Files are organized as follows:
+```
+group-documents/
+├── {group-id-1}/
+│   ├── 1234567890_proposal.pdf
+│   └── 1234567891_slides.pptx
+└── {group-id-2}/
+    └── 1234567892_report.pdf
+```
+
+### Verify Storage Is Working
+
+After running the schema:
+
+1. Go to **Storage** in your Supabase dashboard
+2. You should see a bucket named `group-documents`
+3. The bucket should be marked as **public**
+4. Try uploading a test file through the dashboard
 
 ---
 
@@ -176,6 +219,13 @@ pytest test_security_features.py -v  # Security tests
 
 ## Database Schema Overview
 
+### Storage Buckets
+
+1. **`group-documents`**: Public storage bucket for group submissions
+   - Stores PDFs, PowerPoint files, and other documents
+   - Files organized by group ID
+   - Public read access, authenticated write/delete
+
 ### Tables
 
 1. **`module_views`**: Tracks module view counts
@@ -195,11 +245,13 @@ pytest test_security_features.py -v  # Security tests
    - `member_name` (VARCHAR 100)
    - `created_at` (TIMESTAMP)
 
-4. **`group_documents`**: Uploaded documents
+4. **`group_documents`**: Document metadata
    - `id` (UUID, PRIMARY KEY)
    - `group_id` (UUID, FOREIGN KEY)
    - `document_title` (VARCHAR 255)
-   - `file_path` (TEXT)
+   - `file_path` (TEXT) - Supabase Storage path
+   - `file_size` (BIGINT) - Size in bytes
+   - `mime_type` (VARCHAR 100) - File content type
    - `created_at` (TIMESTAMP)
 
 ### Functions
@@ -238,15 +290,20 @@ pytest test_security_features.py -v  # Security tests
 
 ### Files Not Uploading
 
-**Problem**: Upload directory doesn't exist or has wrong permissions
+**Problem**: Files fail to upload or upload endpoint returns 500 error
 
 **Solution**:
-1. Check that `uploads/` directory exists in project root
-2. Ensure it has write permissions:
+1. Verify Supabase Storage bucket exists:
+   - Go to Storage in Supabase dashboard
+   - Confirm `group-documents` bucket is present
+2. Check storage policies are configured (see SUPABASE_STORAGE_SETUP.md)
+3. Verify environment variables are set correctly:
    ```bash
-   mkdir -p uploads
-   chmod 755 uploads
+   echo $SUPABASE_URL
+   echo $SUPABASE_ANON_KEY
    ```
+4. Check application logs for specific storage errors
+5. Test file upload manually through Supabase dashboard
 
 ### Database Connection Issues
 

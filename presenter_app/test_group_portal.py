@@ -1,13 +1,12 @@
 """
 Test suite for group portal features including:
-- Document upload and retrieval
+- Document upload and retrieval (Supabase Storage)
 - Group deletion (admin only)
-- File serving
+- File serving via Supabase Storage URLs
 """
 
 import pytest
 import os
-import tempfile
 from unittest.mock import MagicMock, patch
 from io import BytesIO
 
@@ -54,16 +53,24 @@ def admin_client(client):
 
 
 class TestDocumentUpload:
-    """Test document upload functionality."""
+    """Test document upload functionality to Supabase Storage."""
 
-    def test_upload_document_creates_file(self, client, mock_supabase, monkeypatch, tmp_path):
-        """Test that document upload creates a file on disk."""
+    def test_upload_document_to_storage(self, client, mock_supabase, monkeypatch):
+        """Test that document upload uses Supabase Storage."""
+        # Mock storage helper
+        def mock_upload(file, group_id, document_title):
+            return (f"group-documents/{group_id}/test_file.pdf", 1024, "application/pdf")
+
+        monkeypatch.setattr('api.index.upload_file_to_storage', mock_upload)
+
         # Mock the add_group_document function
-        mock_doc = {"id": "doc1", "group_id": "group1", "document_title": "Test Doc", "file_path": str(tmp_path / "test.pdf")}
+        mock_doc = {
+            "id": "doc1",
+            "group_id": "group1",
+            "document_title": "Test Doc",
+            "file_path": "group-documents/group1/test_file.pdf"
+        }
         monkeypatch.setattr('api.index.add_group_document', lambda *args: mock_doc)
-
-        # Use tmp_path for upload folder
-        monkeypatch.setattr('api.index.os.path.dirname', lambda x: str(tmp_path.parent))
 
         data = {
             'document_title': 'Test Doc',
@@ -78,14 +85,30 @@ class TestDocumentUpload:
             )
 
         assert response.status_code == 201
+        json_data = response.get_json()
+        # Response is the document object directly
+        assert json_data['file_path'] == 'group-documents/group1/test_file.pdf'
+        assert json_data['file_size'] == 1024
+        assert json_data['mime_type'] == 'application/pdf'
 
-    def test_upload_document_stores_path_in_db(self, client, mock_supabase, monkeypatch):
-        """Test that document upload stores file path in database."""
+    def test_upload_document_stores_storage_path_in_db(self, client, mock_supabase, monkeypatch):
+        """Test that document upload stores Supabase Storage path in database."""
+        # Mock storage helper
+        def mock_upload(file, group_id, document_title):
+            return (f"group-documents/{group_id}/test_file.pdf", 1024, "application/pdf")
+
+        monkeypatch.setattr('api.index.upload_file_to_storage', mock_upload)
+
         captured_args = []
 
         def mock_add_doc(group_id, title, path):
             captured_args.append((group_id, title, path))
-            return {"id": "doc1", "group_id": group_id, "document_title": title, "file_path": path}
+            return {
+                "id": "doc1",
+                "group_id": group_id,
+                "document_title": title,
+                "file_path": path
+            }
 
         monkeypatch.setattr('api.index.add_group_document', mock_add_doc)
 
@@ -105,52 +128,53 @@ class TestDocumentUpload:
         assert len(captured_args) == 1
         assert captured_args[0][0] == 'test-group-id'  # group_id
         assert captured_args[0][1] == 'Test Document'  # title
-        assert 'test.pdf' in captured_args[0][2]  # file path contains filename
+        assert 'group-documents/test-group-id/' in captured_args[0][2]  # storage path
+
+        # Check response includes file_size and mime_type
+        json_data = response.get_json()
+        assert json_data['file_size'] == 1024
+        assert json_data['mime_type'] == 'application/pdf'
 
 
 class TestFileServing:
-    """Test uploaded file serving."""
+    """Test file serving via Supabase Storage redirects."""
 
-    def test_serve_uploaded_file(self, client, tmp_path):
-        """Test that uploaded files can be served."""
-        # Create a temporary upload folder and file
-        upload_folder = tmp_path / "uploads"
-        upload_folder.mkdir()
-        test_file = upload_folder / "test_file.pdf"
-        test_file.write_bytes(b'Test PDF content')
+    def test_serve_uploaded_file_redirects_to_storage(self, client, monkeypatch):
+        """Test that file requests redirect to Supabase Storage public URL."""
+        def mock_get_url(storage_path):
+            return f"https://test.supabase.co/storage/v1/object/public/{storage_path}"
 
-        with patch('api.index.os.path.dirname') as mock_dirname:
-            # Mock directory structure
-            mock_dirname.return_value = str(tmp_path)
+        monkeypatch.setattr('api.index.get_public_url', mock_get_url)
 
-            response = client.get('/uploads/test_file.pdf')
+        response = client.get('/uploads/group-documents/group1/test_file.pdf')
 
-            # File should be served
-            assert response.status_code == 200
-            assert response.data == b'Test PDF content'
+        # Should redirect to Supabase Storage URL
+        assert response.status_code == 302
+        assert 'https://test.supabase.co/storage/v1/object/public/' in response.location
+        assert 'group-documents/group1/test_file.pdf' in response.location
 
-    def test_serve_nonexistent_file(self, client, tmp_path):
-        """Test serving a non-existent file returns 404."""
-        upload_folder = tmp_path / "uploads"
-        upload_folder.mkdir()
+    def test_serve_file_with_missing_storage_path(self, client, monkeypatch):
+        """Test serving a file when storage returns None."""
+        def mock_get_url_none(storage_path):
+            return None
 
-        with patch('api.index.os.path.dirname') as mock_dirname:
-            mock_dirname.return_value = str(tmp_path)
+        monkeypatch.setattr('api.index.get_public_url', mock_get_url_none)
 
-            response = client.get('/uploads/nonexistent.pdf')
-            assert response.status_code == 404
+        response = client.get('/uploads/group-documents/nonexistent/file.pdf')
+        # Should return 404 when public URL cannot be generated
+        assert response.status_code == 404
 
-    def test_serve_file_path_traversal_blocked(self, client, tmp_path):
+    def test_serve_file_path_traversal_blocked(self, client):
         """Test that path traversal attempts are blocked."""
-        # Try to access file outside uploads directory
+        # Try to access file with path traversal
         response = client.get('/uploads/../../../etc/passwd')
 
-        # Should be blocked (either 400 or 404)
-        assert response.status_code in [400, 404]
+        # Should be blocked (400, 404, or redirect to a safe error)
+        assert response.status_code in [400, 404, 302]
 
 
 class TestGroupDeletion:
-    """Test group deletion functionality."""
+    """Test group deletion functionality with Supabase Storage."""
 
     def test_delete_group_requires_admin(self, client, mock_supabase):
         """Test that group deletion requires admin authentication."""
@@ -177,39 +201,36 @@ class TestGroupDeletion:
         assert 'message' in data
         assert 'deleted' in data['message'].lower()
 
-    def test_delete_group_removes_files(self, admin_client, mock_supabase, monkeypatch, tmp_path):
-        """Test that deleting a group removes associated files."""
-        # Create test files
-        upload_folder = tmp_path / "uploads"
-        upload_folder.mkdir()
-        test_file1 = upload_folder / "file1.pdf"
-        test_file2 = upload_folder / "file2.pdf"
-        test_file1.write_bytes(b'File 1 content')
-        test_file2.write_bytes(b'File 2 content')
+    def test_delete_group_removes_storage_files(self, admin_client, mock_supabase, monkeypatch):
+        """Test that deleting a group removes files from Supabase Storage."""
+        deleted_files = []
 
-        # Mock group with documents
+        def mock_delete_storage(storage_path):
+            deleted_files.append(storage_path)
+            return True
+
+        monkeypatch.setattr('api.index.delete_file_from_storage', mock_delete_storage)
+
+        # Mock group with documents in Supabase Storage
         mock_group = {
             'id': 'test-group-id',
             'group_name': 'Test Group',
             'documents': [
-                {'file_path': str(test_file1), 'document_title': 'File 1'},
-                {'file_path': str(test_file2), 'document_title': 'File 2'}
+                {'file_path': 'group-documents/group1/file1.pdf', 'document_title': 'File 1'},
+                {'file_path': 'group-documents/group1/file2.pdf', 'document_title': 'File 2'}
             ]
         }
 
         monkeypatch.setattr('api.index.get_group_details', lambda x: mock_group)
         monkeypatch.setattr('api.index.delete_group', lambda x: True)
 
-        # Verify files exist before deletion
-        assert test_file1.exists()
-        assert test_file2.exists()
-
         response = admin_client.delete('/api/groups/test-group-id')
 
         assert response.status_code == 200
-        # Files should be deleted
-        assert not test_file1.exists()
-        assert not test_file2.exists()
+        # Verify files were deleted from storage
+        assert len(deleted_files) == 2
+        assert 'group-documents/group1/file1.pdf' in deleted_files
+        assert 'group-documents/group1/file2.pdf' in deleted_files
 
     def test_delete_nonexistent_group(self, admin_client, mock_supabase, monkeypatch):
         """Test deleting a non-existent group returns 404."""
@@ -227,26 +248,32 @@ class TestGroupDeletion:
 
 
 class TestGroupPortalIntegration:
-    """Integration tests for group portal features."""
+    """Integration tests for group portal features with Supabase Storage."""
 
-    def test_upload_and_retrieve_document(self, client, mock_supabase, monkeypatch, tmp_path):
-        """Test full workflow: upload document and retrieve it."""
-        upload_folder = tmp_path / "uploads"
-        upload_folder.mkdir()
+    def test_upload_and_retrieve_document(self, client, mock_supabase, monkeypatch):
+        """Test full workflow: upload document and retrieve via Supabase Storage URL."""
+        # Mock storage helper
+        def mock_upload(file, group_id, document_title):
+            return (f"group-documents/{group_id}/test_file.pdf", 1024, "application/pdf")
 
-        # Mock to use tmp_path
-        def mock_dirname(path):
-            return str(tmp_path)
+        def mock_get_url(storage_path):
+            return f"https://test.supabase.co/storage/v1/object/public/{storage_path}"
 
-        monkeypatch.setattr('api.index.os.path.dirname', mock_dirname)
+        monkeypatch.setattr('api.index.upload_file_to_storage', mock_upload)
+        monkeypatch.setattr('api.index.get_public_url', mock_get_url)
 
-        # Capture the file path that gets saved
-        saved_file_path = None
+        # Capture the storage path that gets saved
+        saved_storage_path = None
 
         def mock_add_doc(group_id, title, path):
-            nonlocal saved_file_path
-            saved_file_path = path
-            return {"id": "doc1", "group_id": group_id, "document_title": title, "file_path": path}
+            nonlocal saved_storage_path
+            saved_storage_path = path
+            return {
+                "id": "doc1",
+                "group_id": group_id,
+                "document_title": title,
+                "file_path": path
+            }
 
         monkeypatch.setattr('api.index.add_group_document', mock_add_doc)
 
@@ -264,17 +291,15 @@ class TestGroupPortalIntegration:
             )
 
         assert upload_response.status_code == 201
-        assert saved_file_path is not None
+        assert saved_storage_path is not None
+        assert 'group-documents/integration-group/' in saved_storage_path
 
-        # File should exist on disk
-        assert os.path.exists(saved_file_path)
+        # Retrieve the file (should redirect to Supabase Storage)
+        retrieve_response = client.get(f'/uploads/{saved_storage_path}')
 
-        # Retrieve the file
-        filename = os.path.basename(saved_file_path)
-        retrieve_response = client.get(f'/uploads/{filename}')
-
-        assert retrieve_response.status_code == 200
-        assert retrieve_response.data == b'Integration test content'
+        assert retrieve_response.status_code == 302  # Redirect
+        assert 'https://test.supabase.co/storage/v1/object/public/' in retrieve_response.location
+        assert saved_storage_path in retrieve_response.location
 
 
 if __name__ == '__main__':

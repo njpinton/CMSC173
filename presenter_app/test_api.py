@@ -181,9 +181,15 @@ def test_upload_document_invalid_file_type(client, mock_supabase):
 
 
 def test_upload_document_valid(client, mock_supabase, monkeypatch):
-    """Test valid document upload."""
+    """Test valid document upload to Supabase Storage."""
+    # Mock storage upload
+    def mock_upload(file, group_id, document_title):
+        return (f"group-documents/{group_id}/test_file.pdf", 1024, "application/pdf")
+
+    monkeypatch.setattr('api.index.upload_file_to_storage', mock_upload)
+
     # Mock the add_group_document function
-    mock_doc = {"id": "doc1", "group_id": "group1", "document_title": "Test Doc"}
+    mock_doc = {"id": "doc1", "group_id": "group1", "document_title": "Test Doc", "file_path": "group-documents/group1/test_file.pdf"}
     monkeypatch.setattr('api.index.add_group_document', lambda *args: mock_doc)
 
     data = {

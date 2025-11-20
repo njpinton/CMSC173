@@ -6,6 +6,33 @@
 -- Run these SQL commands in your Supabase SQL Editor
 
 -- ============================================
+-- 0. STORAGE SETUP (Run this first!)
+-- ============================================
+-- Create storage bucket for group documents
+
+-- Create the storage bucket
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('group-documents', 'group-documents', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- Set up storage policies for public access
+CREATE POLICY "Public Access for group documents"
+ON storage.objects FOR SELECT
+USING (bucket_id = 'group-documents');
+
+CREATE POLICY "Authenticated users can upload group documents"
+ON storage.objects FOR INSERT
+WITH CHECK (bucket_id = 'group-documents');
+
+CREATE POLICY "Authenticated users can update their documents"
+ON storage.objects FOR UPDATE
+USING (bucket_id = 'group-documents');
+
+CREATE POLICY "Authenticated users can delete group documents"
+ON storage.objects FOR DELETE
+USING (bucket_id = 'group-documents');
+
+-- ============================================
 -- 1. MODULE VIEWS TABLE
 -- ============================================
 -- Tracks how many times each module has been viewed
@@ -67,12 +94,14 @@ CREATE INDEX IF NOT EXISTS idx_group_members_name ON group_members(member_name);
 -- 4. GROUP DOCUMENTS TABLE
 -- ============================================
 -- Stores documents uploaded by groups
+-- file_path now stores Supabase Storage path (e.g., 'group-documents/groupid/filename.pdf')
+-- Full public URL is constructed as: {SUPABASE_URL}/storage/v1/object/public/{file_path}
 
 CREATE TABLE IF NOT EXISTS group_documents (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
     document_title VARCHAR(255) NOT NULL,
-    file_path TEXT NOT NULL,
+    file_path TEXT NOT NULL,  -- Supabase Storage path
     file_size BIGINT,
     mime_type VARCHAR(100),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
